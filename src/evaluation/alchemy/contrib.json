@@ -1,0 +1,71 @@
+{
+    "comment": "AlchemyJS contributors",
+    "nodes": [
+        {
+            "id": 0,
+            "caption": "START",
+            "role": "project",
+            "node_type": "root"
+        },
+        {
+            "id": 1,
+            "caption": "'ialtest_split_images 1'",
+            "github": "hustonhedinger",
+            "role": "Maintainer",
+            "fun_fact": "hooligan"
+        },
+        {
+            "id": 2,
+            "caption": "correct 2",
+            "github": "Grace-Andrews",
+            "role": "Maintainer",
+            "fun_fact": "was born left handed, now right handed."
+        },
+        {
+            "id": 3,
+            "caption": "ialtest_combine_images 3",
+            "github": "ifjorissen",
+            "role": "Maintainer",
+            "fun_fact": "knows a lot of digits of pi. Also loves pie."
+        },
+        {
+            "id": 4,
+            "caption": "END",
+            "github": "MDCox",
+            "role": "Maintainer",
+            "fun_fact": "is not fun"
+        }
+    ],
+    "edges": [
+        {
+            "source": 0,
+            "target": 1,
+            "caption": "Maintains"
+        },
+        {
+            "source": 0,
+            "target": 1,
+            "caption": "Maintains 2"
+        },
+        {
+            "source": 0,
+            "target": 2,
+            "caption": "Maintains"
+        },
+        {
+            "source": 1,
+            "target": 2,
+            "caption": "Maintains"
+        },
+        {
+            "source": 2,
+            "target": 3,
+            "caption": "Often Breaks"
+        },
+        {
+            "source": 3,
+            "target": 4,
+            "caption": "contributes"
+        }
+    ]
+}

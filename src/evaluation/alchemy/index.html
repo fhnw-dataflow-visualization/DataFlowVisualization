@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+    <title>Alchemy graph</title>
+    <link rel="stylesheet" href="styles/vendor.css"/>
+    <link rel="stylesheet" href="alchemy.css"/>
+</head>
+<body>
+<div class="alchemy" id="alchemy"></div>
+<script src="scripts/vendor.js"></script>
+<script src="alchemy.js"></script>
+<script type="text/javascript">
+    const config = {
+        dataSource: 'contrib.json',
+        graphHeight: () => 600,
+        graphWidth: () => 600,
+        linkDistance: () => 40,
+        nodeTypes: {"node_type": ["Maintainer", "Contributor"]},
+        caption: (node) => node.caption,
+    };
+    alchemy = new Alchemy(config)
+</script>
+</body>
+</html>
