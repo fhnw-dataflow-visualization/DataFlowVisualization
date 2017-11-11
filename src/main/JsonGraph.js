@@ -4,7 +4,7 @@
  * @version 1.0
  */
 
-function Graph() {
+function JsonGraph() {
     let nodes;
     let edges;
     
@@ -16,8 +16,4 @@ function Graph() {
 
     this.nodes = () => nodes;
     this.edges = () => edges;
-
-    this.select = function () {
-        //todo selection handling
-    }
 }
