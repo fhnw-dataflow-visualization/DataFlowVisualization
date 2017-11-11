@@ -1,0 +1,77 @@
+{
+  "nodes": [
+    {
+      "id": 0,
+      "in": [],
+      "out": [0, 1, 2],
+      "attr": {
+        "name": "START"
+      }
+    },
+    {
+      "id": 1,
+      "in": [0],
+      "out": [0, 1],
+      "attr": {
+        "name": "NODE_1",
+        "key": "SomeKey"
+      }
+    },
+    {
+      "id": 2,
+      "in": [0, 1],
+      "out": [0],
+      "attr": {
+        "name": "NODE_2",
+        "OtherKey": "OtherKey"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": 0,
+      "from": {
+        "node": 0,
+        "port": 0
+      },
+      "to": {
+        "node": 1,
+        "port": 0
+      },
+      "attr": {
+        "name": "0.0 - 1.0",
+        "data": "Path-to-data-file"
+      }
+    },
+    {
+      "id": 1,
+      "from": {
+        "node": 0,
+        "port": 1
+      },
+      "to": {
+        "node": 2,
+        "port": 0
+      },
+      "attr": {
+        "name": "0.1 - 2.0",
+        "port": "Path-to-data-file"
+      }
+    },
+    {
+      "id": 2,
+      "from": {
+        "node": 0,
+        "port": 2
+      },
+      "to": {
+        "node": 2,
+        "port": 1
+      },
+      "attr": {
+        "name": "0.2 - 2.1",
+        "data": "Path-to-data-file"
+      }
+    }
+  ]
+}
