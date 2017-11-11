@@ -4,14 +4,16 @@
       "id": 0,
       "in": [],
       "out": [0, 1, 2],
+      "sub": [],
       "attr": {
         "name": "START"
-      }
+      },
     },
     {
       "id": 1,
       "in": [0],
       "out": [0, 1],
+      "sub": [],
       "attr": {
         "name": "NODE_1",
         "key": "SomeKey"
@@ -21,6 +23,7 @@
       "id": 2,
       "in": [0, 1],
       "out": [0],
+      "sub": [],
       "attr": {
         "name": "NODE_2",
         "OtherKey": "OtherKey"
