@@ -1,76 +1,31 @@
 //Zooming START
-var map = L.map('map').setView();
+var map = alchemy.map('map');
+alert("test");
+alchemy.map({
+    initialScale: 0.5,
+})
 
-//Todo define "L"
-
-}).addTo(map);
-
-map.on('zoomend', function (e) {
+map.on('zoomed', function (e) {
+    alert("test");
     zoom_based_layerchange();
 })
-//Todo find out what to use instead of geoJson
-var overviewlayer = L.geoJson(overview, {
-
-    style: function (feature) {
-        return feature.properties && feature.properties.style;
-    },
-
-    onEachFeature: onEachFeature
-});
-
-var detaillayer = L.geoJson(detail, {
-
-    style: function (feature) {
-        return feature.properties && feature.properties.style;
-    },
-
-    onEachFeature: onEachFeature
-});
-
-var filelayer = L.geoJson(file, {
-
-    style: function (feature) {
-        return feature.properties && feature.properties.style;
-    },
-
-    onEachFeature: onEachFeature
-});
 
 
-function clean_map() {
-    map.eachLayer(function (layer) {
-        if (layer instanceof L.GeoJSON)
-
-
-        {
-            map.removeLayer(layer);
-
-        }
-        //console.log(layer);
-
-
-    });
-}
-
-
+map.getZoom = function () {
+    initialScale: 0.5;
+};
 
 function zoom_based_layerchange() {
-    //console.log(map.getZoom());
-    $("#zoomlevel").html(map.getZoom());
     var currentZoom = map.getZoom();
     switch (currentZoom) {
         case 1:
-            clean_map();
-            overviewlayer.addTo(map); //show whole graph
+            nodes.caption;
             break;
         case 2:
-            clean_map();
-
-            detaillayer.addTo(map); //show details
+            nodes[caption];
             break;
         case 3:
-            clean_map();
-            filelayer.addTo(map); // files in Nodes
+            nodes[caption];
             break;
         default:
             // do nothing
@@ -78,4 +33,3 @@ function zoom_based_layerchange() {
     }
 }
 
-//Zooming END

@@ -1,13 +1,12 @@
 {
-  "nodes": [
-    {
+  "nodes": [{
       "id": 0,
       "in": [],
       "out": [0, 1, 2],
       "sub": [],
       "attr": {
         "name": "START"
-      },
+      }
     },
     {
       "id": 1,

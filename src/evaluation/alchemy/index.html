@@ -9,6 +9,7 @@
 <div class="alchemy" id="alchemy"></div>
 <script src="./lib/scripts/vendor.js"></script>
 <script src="./lib/alchemy.js"></script>
+<!--<script src="./zooming.js"></script>-->
 <script type="text/javascript">
     const config = {
         dataSource: 'contrib.json',
@@ -17,8 +18,9 @@
         linkDistance: () => 40,
         nodeTypes: {"node_type": ["Maintainer", "Contributor"]},
         caption: (node) => node.caption,
+        initialScale: 2
     };
-    alchemy = new Alchemy(config)
+    alchemy = new Alchemy(config);
 </script>
 </body>
 </html>
