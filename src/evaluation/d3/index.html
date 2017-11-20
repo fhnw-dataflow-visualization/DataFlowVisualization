@@ -6,6 +6,15 @@
     <link rel="stylesheet" href="./graph.css"/>
 </head>
 <body>
+    <svg>
+        <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="2" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,4 L6,2 z" fill="#000" ></path>
+            </marker>
+        </defs>
+    </svg>
+    <div class="tooltip" style="display: none">
+    </div>
 <script src="JsonGraph.js"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
@@ -18,12 +27,11 @@
     const portHeight = 5;
 
     /* graphics */
-    const svg = d3.select("body").append("svg")
+    const svg = d3.select("svg")
         .attr("width", width)
         .attr("height", height);
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("display", "none");
+
+    const tooltip = d3.select(".tooltip");
 
     const nodes = [];
     nodes.push({
@@ -212,6 +220,7 @@
         .attr('y1', (d) => calculateLine(d.from, 'out', 'y'))
         .attr('x2', (d) => calculateLine(d.to, 'in', 'x'))
         .attr('y2', (d) => calculateLine(d.to, 'in', 'y'))
+        .style('marker-end', 'url(#arrow)')
         .attr("class", "edge")
         /* mouse events */
         .on("mouseover", (d) => {
