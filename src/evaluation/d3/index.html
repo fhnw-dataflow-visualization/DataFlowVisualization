@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D3 Graph</title>
+    <link rel="stylesheet" href="./graph.css"/>
+</head>
+<body>
+<script src="JsonGraph.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+    /* layout */
+    const width = 800;
+    const height = 800;
+
+    const nodeWidth = 80;
+    const nodeHeight = 40;
+
+    /* graphics */
+    const svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+    const tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("display", "none");
+
+    const nodes = [];
+    nodes.push({
+            "name": "START",
+            "x": 400,
+            "y": 200,
+            "id": 0,
+            "in": [],
+            "out": [
+                {"port": 0, "attr": {}},
+                {"port": 1, "attr": {}},
+                {"port": 2, "attr": {}}
+            ],
+            "sub": [],
+            "attr": {
+                "a": "A",
+                "b": "B"
+            },
+        },
+        {
+            "name": "END",
+            "x": 400,
+            "y": 400,
+            "id": 1,
+            "in": [
+                {"port": 0, "attr": {}},
+                {"port": 1, "attr": {}},
+                {"port": 2, "attr": {}}
+            ],
+            "out": [],
+            "sub": [],
+            "attr": {
+                "a": "AA",
+                "b": "BB"
+            }
+        });
+
+    getAttrDesc = (obj) => {
+        const attr = obj.attr;
+        const keys = Object.keys(attr);
+        const len = keys.length;
+        let description = "";
+        if (len > 0) {
+            description += `${keys[0]}: ${attr[keys[0]]}`;
+        }
+        for (let i = 1; i < len; i++) {
+            description += `<br>${keys[i]}: ${attr[keys[i]]}`;
+        }
+        return description;
+    };
+
+
+    calculatePort = (posX, posY, i) => {
+        const x1 = -3;
+        const y1 = 0;
+        const x2 = 0;
+        const y2 = i * 5;
+        const x3 = 3;
+        const y3 = 0;
+        return `${posX + x1},${posY + y1} ${posX + x2},${posY + y2}, ${posX + x3},${posY + y3}`
+    };
+
+    /* draw nodes */
+    const n = svg.selectAll("g").data(nodes)
+        .enter().append("g")
+        .attr("transform", (d) => `translate(${d.x},${d.y})`);
+    n.append("rect")
+        .attr("class", "node")
+        .attr("width", nodeWidth)
+        .attr("height", nodeHeight)
+        /* mouse events */
+        .on("mouseover", (d) => {
+            tooltip.style("display", "block");
+            tooltip.html(`${getAttrDesc(d)}`);
+        })
+        .on("mouseout", (d) => {
+            tooltip.style("display", "none");
+        });
+    n.append("text")
+        .attr('x', 5)
+        .attr('y', nodeHeight / 2 + 5)
+        .html((d) => d.name);
+    const pin = n.selectAll('polygon').data((d) => d.in).enter();
+    const inLength = pin.size();
+    const sIn = 1 / (2 * inLength);
+    pin.append('polygon')
+        .attr('points', (d) => calculatePort((2 * d.port + 1) * sIn * nodeWidth, 0, 1))
+        .attr('class', 'port');
+    const pout = n.selectAll('polygon').data((d) => d.out).enter();
+    const outLength = pout.size();
+    const sOut = 1 / (2 * outLength);
+    pout.append('polygon')
+        .attr('points', (d) => calculatePort((2 * d.port + 1) * sOut * nodeWidth, nodeHeight, -1))
+        .attr('class', 'port');
+</script>
+</body>
+</html>

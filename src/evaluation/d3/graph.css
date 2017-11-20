@@ -1,0 +1,21 @@
+.node {
+    fill: white;
+    stroke: black;
+    stroke-width: 2;
+}
+
+.port {
+    fill: white;
+    stroke: black;
+    stroke-width: 1;
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 140px;
+    height: 70px;
+    padding: 2px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
