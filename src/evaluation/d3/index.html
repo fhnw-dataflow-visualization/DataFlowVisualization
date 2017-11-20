@@ -12,9 +12,10 @@
     /* layout */
     const width = 800;
     const height = 800;
-
     const nodeWidth = 80;
     const nodeHeight = 40;
+    const portWidthHalf = 6 / 2;
+    const portHeight = 5;
 
     /* graphics */
     const svg = d3.select("body").append("svg")
@@ -32,9 +33,15 @@
             "id": 0,
             "in": [],
             "out": [
-                {"port": 0, "attr": {}},
-                {"port": 1, "attr": {}},
-                {"port": 2, "attr": {}}
+                {"port": 0, "attr": {
+                    "name": "Output 0"
+                }},
+                {"port": 1, "attr": {
+                    "name": "Output 1"
+                }},
+                {"port": 2, "attr": {
+                    "name": "Output 1"
+                }}
             ],
             "sub": [],
             "attr": {
@@ -48,11 +55,24 @@
             "y": 400,
             "id": 1,
             "in": [
-                {"port": 0, "attr": {}},
-                {"port": 1, "attr": {}},
-                {"port": 2, "attr": {}}
+                {"port": 0, "attr": {
+                    "name": "Input 0"
+                }},
+                {"port": 1, "attr": {
+                    "name": "Input 1"
+                }},
+                {"port": 2, "attr": {
+                    "name": "Input 2"
+                }}
             ],
-            "out": [],
+            "out": [
+                {"port": 0, "attr": {
+                    "name": "Output 0"
+                }},
+                {"port": 1, "attr": {
+                    "name": "Output 1"
+                }},
+            ],
             "sub": [],
             "attr": {
                 "a": "AA",
@@ -107,11 +127,11 @@
 
 
     calculatePort = (posX, posY, i) => {
-        const x1 = posX - 3;
+        const x1 = posX - portWidthHalf;
         const y1 = posY;
         const x2 = posX;
-        const y2 = posY + i * 5;
-        const x3 = posX + 3;
+        const y2 = posY + i * portHeight;
+        const x3 = posX + portWidthHalf;
         return `${x1},${y1} ${x2},${y2}, ${x3},${y1}`
     };
 
@@ -119,8 +139,7 @@
         d3.select(`#n${port.node}${in_out}${port.port}`).attr(`data-${attr}`);
 
     /* draw nodes */
-    svg.selectAll("g").data(nodes).enter().each((d) => {
-        const node = d;
+    svg.selectAll(".node").data(nodes).enter().each((node) => {
         const n = svg.append("g")
             .attr("transform", `translate(${node.x},${node.y})`);
         n.append("rect")
@@ -143,16 +162,16 @@
             .attr('y', nodeHeight / 2 + 5)
             .html(node.name);
         /* draw in ports */
-        const inLength = d.in.length;
+        const inLength = node.in.length;
         const sIn = 1 / (2 * inLength);
-        n.selectAll('polygon').data(d.in).enter().each((port) => {
+        n.selectAll('.inPort').data(node.in).enter().each((port) => {
             const x = (2 * port.port + 1) * sIn * nodeWidth;
             n.append('polygon')
                 .attr('id', `n${node.id}in${port.port}`)
                 .attr('data-x', node.x + x)
                 .attr('data-y', node.y)
                 .attr('points', calculatePort(x, 0, 1))
-                .attr('class', 'port')
+                .attr('class', 'inPort')
                 .on("mouseover", () => {
                     tooltip.style("display", "block")
                         .style('left', `${node.x + x + 12}px`)
@@ -164,16 +183,16 @@
                 });
         });
         /* draw out ports */
-        const outLength = d.out.length;
+        const outLength = node.out.length;
         const sOut = 1 / (2 * outLength);
-        n.selectAll('polygon').data(d.out).enter().each((port) => {
+        n.selectAll('.outPort').data(node.out).enter().each((port) => {
             const x = (2 * port.port + 1) * sOut * nodeWidth;
             n.append('polygon')
                 .attr('id', `n${node.id}out${port.port}`)
                 .attr('data-x', node.x + x)
                 .attr('data-y', node.y + nodeHeight)
                 .attr('points', calculatePort(x, nodeHeight, -1))
-                .attr('class', 'port')
+                .attr('class', 'outPort')
                 .on("mouseover", () => {
                     tooltip.style("display", "block")
                         .style('left', `${node.x + x + 12}px`)
@@ -187,7 +206,7 @@
     });
 
     /* draw edges */
-    svg.selectAll("line").data(edges).enter().append("line")
+    svg.selectAll(".edge").data(edges).enter().append("line")
         .attr('id', (d) => `e${d.id}`)
         .attr('x1', (d) => calculateLine(d.from, 'out', 'x'))
         .attr('y1', (d) => calculateLine(d.from, 'out', 'y'))

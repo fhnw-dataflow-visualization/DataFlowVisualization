@@ -4,7 +4,13 @@
     stroke-width: 2;
 }
 
-.port {
+.inPort {
+    fill: white;
+    stroke: black;
+    stroke-width: 1;
+}
+
+.outPort {
     fill: white;
     stroke: black;
     stroke-width: 1;
