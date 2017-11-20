@@ -59,6 +59,22 @@
                 "b": "BB"
             }
         });
+    const edges = [];
+    edges.push({
+        "id": 0,
+        "from": {
+            "node": 0,
+            "port": 0
+        },
+        "to": {
+            "node": 1,
+            "port": 0
+        },
+        "attr": {
+            "name": "0.0 - 1.0",
+            "data": "Path-to-data-file"
+        }
+    });
 
     getAttrDesc = (obj) => {
         const attr = obj.attr;
@@ -76,23 +92,89 @@
 
 
     calculatePort = (posX, posY, i) => {
-        const x1 = -3;
-        const y1 = 0;
-        const x2 = 0;
-        const y2 = i * 5;
-        const x3 = 3;
-        const y3 = 0;
-        return `${posX + x1},${posY + y1} ${posX + x2},${posY + y2}, ${posX + x3},${posY + y3}`
+        const x1 = posX - 3;
+        const y1 = posY;
+        const x2 = posX;
+        const y2 = posY + i * 5;
+        const x3 = posX + 3;
+        const y3 = posY;
+        return `${x1},${y1} ${x2},${y2}, ${x3},${y3}`
+    };
+
+    calculateLine = (port, in_out, attr) => {
+        const n = d3.select(`#n${port.node}`).attr(`data-${attr}`);
+        const p = d3.select(`#n${port.node}${in_out}${port.port}`).attr(`data-${attr}`);
+        return parseFloat(n) + parseFloat(p);
     };
 
     /* draw nodes */
-    const n = svg.selectAll("g").data(nodes)
-        .enter().append("g")
-        .attr("transform", (d) => `translate(${d.x},${d.y})`);
-    n.append("rect")
+    svg.selectAll("g").data(nodes).enter().each((d) => {
+        const node = d;
+        const n = svg.append("g")
+            .attr("transform", `translate(${node.x},${node.y})`);
+        n.append("rect")
+            .attr('id', `n${node.id}`)
+            .attr('data-x', node.x)
+            .attr('data-y', node.y)
+            .attr("class", "node")
+            .attr("width", nodeWidth)
+            .attr("height", nodeHeight)
+            /* mouse events */
+            .on("mouseover", () => {
+                tooltip.style("display", "block");
+                tooltip.html(`${getAttrDesc(node)}`);
+            })
+            .on("mouseout", () => {
+                tooltip.style("display", "none");
+            });
+        n.append("text")
+            .attr('x', 5)
+            .attr('y', nodeHeight / 2 + 5)
+            .html(node.name);
+        /* draw in ports */
+        const inLength = d.in.length;
+        const sIn = 1 / (2 * inLength);
+        const pin = n.selectAll('polygon').data(d.in).enter();
+        pin.append('polygon')
+            .attr('id', (d) => `n${node.id}in${d.port}`)
+            .attr('data-x', (d) => (2 * d.port + 1) * sIn * nodeWidth)
+            .attr('data-y', 0)
+            .attr('points', (d) => calculatePort((2 * d.port + 1) * sIn * nodeWidth, 0, 1))
+            .attr('class', 'port')
+            .on("mouseover", (d) => {
+                tooltip.style("display", "block");
+                tooltip.html(`${getAttrDesc(d)}`);
+            })
+            .on("mouseout", (d) => {
+                tooltip.style("display", "none");
+            });
+        /* draw out ports */
+        const outLength = d.out.length;
+        const sOut = 1 / (2 * outLength);
+        const pout = n.selectAll('polygon').data(d.out).enter();
+        pout.append('polygon')
+            .attr('id', (d) => `n${node.id}out${d.port}`)
+            .attr('data-x', (d) => (2 * d.port + 1) * sOut * nodeWidth)
+            .attr('data-y', nodeHeight)
+            .attr('points', (d) => calculatePort((2 * d.port + 1) * sOut * nodeWidth, nodeHeight, -1))
+            .attr('class', 'port')
+            .on("mouseover", (d) => {
+                tooltip.style("display", "block");
+                tooltip.html(`${getAttrDesc(d)}`);
+            })
+            .on("mouseout", (d) => {
+                tooltip.style("display", "none");
+            });
+    });
+    /* draw edges */
+    svg.selectAll("line").data(edges)
+        .enter().append("line")
+        .attr('id', (d) => `e${d.id}`)
+        .attr('x1', (d) => calculateLine(d.from, 'out', 'x'))
+        .attr('y1', (d) => calculateLine(d.from, 'out', 'y'))
+        .attr('x2', (d) => calculateLine(d.to, 'in', 'x'))
+        .attr('y2', (d) => calculateLine(d.to, 'in', 'y'))
         .attr("class", "node")
-        .attr("width", nodeWidth)
-        .attr("height", nodeHeight)
         /* mouse events */
         .on("mouseover", (d) => {
             tooltip.style("display", "block");
@@ -101,22 +183,6 @@
         .on("mouseout", (d) => {
             tooltip.style("display", "none");
         });
-    n.append("text")
-        .attr('x', 5)
-        .attr('y', nodeHeight / 2 + 5)
-        .html((d) => d.name);
-    const pin = n.selectAll('polygon').data((d) => d.in).enter();
-    const inLength = pin.size();
-    const sIn = 1 / (2 * inLength);
-    pin.append('polygon')
-        .attr('points', (d) => calculatePort((2 * d.port + 1) * sIn * nodeWidth, 0, 1))
-        .attr('class', 'port');
-    const pout = n.selectAll('polygon').data((d) => d.out).enter();
-    const outLength = pout.size();
-    const sOut = 1 / (2 * outLength);
-    pout.append('polygon')
-        .attr('points', (d) => calculatePort((2 * d.port + 1) * sOut * nodeWidth, nodeHeight, -1))
-        .attr('class', 'port');
 </script>
 </body>
 </html>
