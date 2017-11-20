@@ -75,6 +75,21 @@
             "data": "Path-to-data-file"
         }
     });
+    edges.push({
+        "id": 1,
+        "from": {
+            "node": 0,
+            "port": 2
+        },
+        "to": {
+            "node": 1,
+            "port": 1
+        },
+        "attr": {
+            "name": "0.2 - 1.1",
+            "data": "Path-to-data-file2"
+        }
+    });
 
     getAttrDesc = (obj) => {
         const attr = obj.attr;
@@ -97,15 +112,11 @@
         const x2 = posX;
         const y2 = posY + i * 5;
         const x3 = posX + 3;
-        const y3 = posY;
-        return `${x1},${y1} ${x2},${y2}, ${x3},${y3}`
+        return `${x1},${y1} ${x2},${y2}, ${x3},${y1}`
     };
 
-    calculateLine = (port, in_out, attr) => {
-        const n = d3.select(`#n${port.node}`).attr(`data-${attr}`);
-        const p = d3.select(`#n${port.node}${in_out}${port.port}`).attr(`data-${attr}`);
-        return parseFloat(n) + parseFloat(p);
-    };
+    calculateLine = (port, in_out, attr) =>
+        d3.select(`#n${port.node}${in_out}${port.port}`).attr(`data-${attr}`);
 
     /* draw nodes */
     svg.selectAll("g").data(nodes).enter().each((d) => {
@@ -114,15 +125,15 @@
             .attr("transform", `translate(${node.x},${node.y})`);
         n.append("rect")
             .attr('id', `n${node.id}`)
-            .attr('data-x', node.x)
-            .attr('data-y', node.y)
             .attr("class", "node")
             .attr("width", nodeWidth)
             .attr("height", nodeHeight)
             /* mouse events */
             .on("mouseover", () => {
-                tooltip.style("display", "block");
-                tooltip.html(`${getAttrDesc(node)}`);
+                tooltip.style("display", "block")
+                    .style('left', `${node.x + nodeWidth + 12}px`)
+                    .style('top', `${node.y - 73}px`)
+                    .html(`${getAttrDesc(node)}`);
             })
             .on("mouseout", () => {
                 tooltip.style("display", "none");
@@ -134,53 +145,61 @@
         /* draw in ports */
         const inLength = d.in.length;
         const sIn = 1 / (2 * inLength);
-        const pin = n.selectAll('polygon').data(d.in).enter();
-        pin.append('polygon')
-            .attr('id', (d) => `n${node.id}in${d.port}`)
-            .attr('data-x', (d) => (2 * d.port + 1) * sIn * nodeWidth)
-            .attr('data-y', 0)
-            .attr('points', (d) => calculatePort((2 * d.port + 1) * sIn * nodeWidth, 0, 1))
-            .attr('class', 'port')
-            .on("mouseover", (d) => {
-                tooltip.style("display", "block");
-                tooltip.html(`${getAttrDesc(d)}`);
-            })
-            .on("mouseout", (d) => {
-                tooltip.style("display", "none");
-            });
+        n.selectAll('polygon').data(d.in).enter().each((port) => {
+            const x = (2 * port.port + 1) * sIn * nodeWidth;
+            n.append('polygon')
+                .attr('id', `n${node.id}in${port.port}`)
+                .attr('data-x', node.x + x)
+                .attr('data-y', node.y)
+                .attr('points', calculatePort(x, 0, 1))
+                .attr('class', 'port')
+                .on("mouseover", () => {
+                    tooltip.style("display", "block")
+                        .style('left', `${node.x + x + 12}px`)
+                        .style('top', `${node.y - 73}px`)
+                        .html(`${getAttrDesc(port)}`);
+                })
+                .on("mouseout", () => {
+                    tooltip.style("display", "none");
+                });
+        });
         /* draw out ports */
         const outLength = d.out.length;
         const sOut = 1 / (2 * outLength);
-        const pout = n.selectAll('polygon').data(d.out).enter();
-        pout.append('polygon')
-            .attr('id', (d) => `n${node.id}out${d.port}`)
-            .attr('data-x', (d) => (2 * d.port + 1) * sOut * nodeWidth)
-            .attr('data-y', nodeHeight)
-            .attr('points', (d) => calculatePort((2 * d.port + 1) * sOut * nodeWidth, nodeHeight, -1))
-            .attr('class', 'port')
-            .on("mouseover", (d) => {
-                tooltip.style("display", "block");
-                tooltip.html(`${getAttrDesc(d)}`);
-            })
-            .on("mouseout", (d) => {
-                tooltip.style("display", "none");
-            });
+        n.selectAll('polygon').data(d.out).enter().each((port) => {
+            const x = (2 * port.port + 1) * sOut * nodeWidth;
+            n.append('polygon')
+                .attr('id', `n${node.id}out${port.port}`)
+                .attr('data-x', node.x + x)
+                .attr('data-y', node.y + nodeHeight)
+                .attr('points', calculatePort(x, nodeHeight, -1))
+                .attr('class', 'port')
+                .on("mouseover", () => {
+                    tooltip.style("display", "block")
+                        .style('left', `${node.x + x + 12}px`)
+                        .style('top', `${node.y + nodeHeight + 12}px`)
+                        .html(`${getAttrDesc(port)}`);
+                })
+                .on("mouseout", () => {
+                    tooltip.style("display", "none");
+                });
+        });
     });
+
     /* draw edges */
-    svg.selectAll("line").data(edges)
-        .enter().append("line")
+    svg.selectAll("line").data(edges).enter().append("line")
         .attr('id', (d) => `e${d.id}`)
         .attr('x1', (d) => calculateLine(d.from, 'out', 'x'))
         .attr('y1', (d) => calculateLine(d.from, 'out', 'y'))
         .attr('x2', (d) => calculateLine(d.to, 'in', 'x'))
         .attr('y2', (d) => calculateLine(d.to, 'in', 'y'))
-        .attr("class", "node")
+        .attr("class", "edge")
         /* mouse events */
         .on("mouseover", (d) => {
-            tooltip.style("display", "block");
-            tooltip.html(`${getAttrDesc(d)}`);
+            tooltip.style("display", "block")
+                .html(`${getAttrDesc(d)}`);
         })
-        .on("mouseout", (d) => {
+        .on("mouseout", () => {
             tooltip.style("display", "none");
         });
 </script>
