@@ -10,10 +10,14 @@ function Graph(conf, data) {
     const svg = d3.select("svg")
         .attr("width", width)
         .attr("height", height);
+    const viewport = svg.append('g');
+    svg.call(d3.zoom()
+        .scaleExtent([0.1, 2])
+        .on('zoom', () => viewport.attr('transform', d3.event.transform)));
 
     const tooltip = d3.select(".tooltip");
 
-    const renderer = new Renderer(svg, tooltip, conf, data);
+    const renderer = new Renderer(viewport, tooltip, conf, data);
 
     /**
      * Draws the graph into the svg

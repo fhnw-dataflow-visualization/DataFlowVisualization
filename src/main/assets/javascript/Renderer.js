@@ -1,4 +1,4 @@
-function Renderer(svg, tooltip, conf, data) {
+function Renderer(viewport, tooltip, conf, data) {
     const nodeWidth = conf.node.width;
     const nodeWidthHalf = nodeWidth / 2;
     const nodeHeight = conf.node.height;
@@ -11,8 +11,8 @@ function Renderer(svg, tooltip, conf, data) {
      * Draws the nodes into the svg
      */
     this.drawNodes = (lod) => {
-        svg.selectAll(".node").data(data.nodes).enter().each((node) => {
-            const n = svg.append("g")
+        viewport.selectAll(".node").data(data.nodes).enter().each((node) => {
+            const n = viewport.append("g")
                 .attr("class", "node")
                 .attr("transform", `translate(${node.x},${node.y})`);
             n.append("rect")
@@ -88,8 +88,8 @@ function Renderer(svg, tooltip, conf, data) {
      * @param lod level of detail
      */
     this.drawEdges = (lod) => {
-        svg.selectAll(".edge").data(data.edges).enter().each((line) => {
-            const lineg = svg.append('g')
+        viewport.selectAll(".edge").data(data.edges).enter().each((line) => {
+            const lineg = viewport.append('g')
                 .attr("class", "edge");
             if (lod === 0 && line['ports']) {
                 //draw multi lines port to port
