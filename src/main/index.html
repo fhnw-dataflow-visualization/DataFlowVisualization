@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>D3 Graph</title>
-    <link rel="stylesheet" href="./graph.css"/>
+    <link rel="stylesheet" href="./assets/css/graph.css"/>
 </head>
 <body>
     <svg>
@@ -15,25 +15,11 @@
     </svg>
     <div class="tooltip" style="display: none">
     </div>
-<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js" type="text/javascript"></script>
+<script src="./assets/javascript/Graph.js" type="text/javascript"></script>
+<script src="./assets/javascript/GraphUtils.js" type="text/javascript"></script>
+<script src="./assets/javascript/Renderer.js" type="text/javascript"></script>
 <script>
-    /* layout */
-    const width = 800;
-    const height = 800;
-    const nodeWidth = 80;
-    const nodeWidthHalf = nodeWidth / 2;
-    const nodeHeight = 40;
-    const portWidthHalf = 6 / 2;
-    const portHeight = 5;
-    const levelOfDetail = 1;
-
-    /* graphics */
-    const svg = d3.select("svg")
-        .attr("width", width)
-        .attr("height", height);
-
-    const tooltip = d3.select(".tooltip");
-
     const nodes = [];
     nodes.push({
             "name": "START",
@@ -113,156 +99,21 @@
         ]
     });
 
-    getAttrDesc = (obj) => {
-        let description = "";
-        if (obj['attr']) {
-            const attr = obj.attr;
-            const keys = Object.keys(attr);
-            const len = keys.length;
-            if (len > 0) {
-                description += `${keys[0]}: ${attr[keys[0]]}`;
-            }
-            for (let i = 1; i < len; i++) {
-                description += `<br>${keys[i]}: ${attr[keys[i]]}`;
-            }
+    const config = {
+        width: 800,
+        height: 800,
+        node: {
+            width: 80,
+            height: 40,
+        },
+        port: {
+            width: 6,
+            height: 5,
         }
-        return description;
     };
 
-    calculatePort = (posX, posY, i) => {
-        const x1 = posX - portWidthHalf;
-        const y1 = posY;
-        const x2 = posX;
-        const y2 = posY + i * portHeight;
-        const x3 = posX + portWidthHalf;
-        return `${x1},${y1} ${x2},${y2}, ${x3},${y1}`
-    };
-
-    findPort = (node, port, type) =>
-        d3.select(`#n${node}${type}${port}`);
-
-    findNode = (node) => d3.select(`#n${node}`);
-
-    /* draw nodes */
-    svg.selectAll(".node").data(nodes).enter().each((node) => {
-        const n = svg.append("g")
-            .attr("class", "node")
-            .attr("transform", `translate(${node.x},${node.y})`);
-        n.append("rect")
-            .attr('id', `n${node.id}`)
-            .attr("width", nodeWidth)
-            .attr("height", nodeHeight)
-            .attr('data-x', node.x)
-            .attr('data-y', node.y)
-            /* mouse events */
-            .on("mouseover", () => {
-                tooltip.style("display", "block")
-                    .style('left', `${node.x + nodeWidth + 12}px`)
-                    .style('top', `${node.y - 73}px`)
-                    .html(`${getAttrDesc(node)}`);
-            })
-            .on("mouseout", () => {
-                tooltip.style("display", "none");
-            });
-        n.append("text")
-            .attr('x', 5)
-            .attr('y', nodeHeight / 2 + 5)
-            .html(node.name);
-        /* draw in ports */
-        if (levelOfDetail === 0 && ['in']) {
-            const inLength = node.in.length;
-            const sIn = 1 / (2 * inLength);
-            n.selectAll('.inPort').data(node.in).enter().each((port) => {
-                const x = (2 * port.port + 1) * sIn * nodeWidth;
-                n.append('polygon')
-                    .attr('id', `n${node.id}in${port.port}`)
-                    .attr('data-x', node.x + x)
-                    .attr('data-y', node.y)
-                    .attr('points', calculatePort(x, 0, 1))
-                    .attr('class', 'inPort')
-                    .on("mouseover", () => {
-                        tooltip.style("display", "block")
-                            .style('left', `${node.x + x + 12}px`)
-                            .style('top', `${node.y - 73}px`)
-                            .html(`${getAttrDesc(port)}`);
-                    })
-                    .on("mouseout", () => {
-                        tooltip.style("display", "none");
-                    });
-            });
-        }
-        /* draw out ports */
-        if (levelOfDetail === 0 && node['out']) {
-            const outLength = node.out.length;
-            const sOut = 1 / (2 * outLength);
-            n.selectAll('.outPort').data(node.out).enter().each((port) => {
-                const x = (2 * port.port + 1) * sOut * nodeWidth;
-                n.append('polygon')
-                    .attr('id', `n${node.id}out${port.port}`)
-                    .attr('data-x', node.x + x)
-                    .attr('data-y', node.y + nodeHeight)
-                    .attr('points', calculatePort(x, nodeHeight, -1))
-                    .attr('class', 'outPort')
-                    .on("mouseover", () => {
-                        tooltip.style("display", "block")
-                            .style('left', `${node.x + x + 12}px`)
-                            .style('top', `${node.y + nodeHeight + 12}px`)
-                            .html(`${getAttrDesc(port)}`);
-                    })
-                    .on("mouseout", () => {
-                        tooltip.style("display", "none");
-                    });
-            });
-        }
-
-    });
-
-    /* draw edges */
-    svg.selectAll(".edge").data(edges).enter().each((line) =>  {
-        const lineg = svg.append('g')
-            .attr("class", "edge");
-        if (levelOfDetail === 0 && line['ports']) {
-            //draw multi lines port to port
-            lineg.selectAll('line').data(line.ports).enter().each((port) => {
-                const from = findPort(line.from, port.out, 'out');
-                const to = findPort(line.to, port.in, 'in');
-                lineg.append('line')
-                    .attr('x1', from.attr('data-x'))
-                    .attr('y1', from.attr('data-y'))
-                    .attr('x2', to.attr('data-x'))
-                    .attr('y2', to.attr('data-y'))
-                    .style('marker-end', 'url(#arrow)')
-                    .attr("class", "edge")
-                    /* mouse events */
-                    .on("mouseover", () => {
-                        tooltip.style("display", "block")
-                            .html(`${getAttrDesc(port)}`);
-                    })
-                    .on("mouseout", () => {
-                        tooltip.style("display", "none");
-                    });
-            });
-        } else {
-            //draw line node to node
-            const from = findNode(line.from);
-            const to = findNode(line.to);
-            lineg.append('line')
-                .attr('x1', parseFloat(from.attr('data-x')) + nodeWidthHalf)
-                .attr('y1', parseFloat(from.attr('data-y')) + nodeHeight)
-                .attr('x2', parseFloat(to.attr('data-x')) + nodeWidthHalf)
-                .attr('y2', to.attr('data-y'))
-                .style('marker-end', 'url(#arrow)')
-                .attr("class", "edge")
-                /* mouse events */
-                .on("mouseover", () => {
-                    tooltip.style("display", "block")
-                        .html(`${getAttrDesc(line)}`);
-                })
-                .on("mouseout", () => {
-                    tooltip.style("display", "none");
-                });
-        }
-    });
+    const graph = new Graph(config, {nodes, edges});
+    graph.draw(1);
 </script>
 </body>
 </html>

@@ -6,8 +6,8 @@
   /**
    * This is the sigma instances constructor. One instance of sigma represent
    * one graph. It is possible to represent this grapĥ with several renderers
-   * at the same time. By default, the default renderer (WebGL + Canvas
-   * polyfill) will be used as the only renderer, with the container specified
+   * at the same time. By default, the default Renderer (WebGL + Canvas
+   * polyfill) will be used as the only Renderer, with the container specified
    * in the configuration.
    *
    * @param  {?*}    conf The configuration of the instance. There are a lot of
@@ -19,7 +19,7 @@
    * Instanciating sigma:
    * ********************
    * If no parameter is given to the constructor, the instance will be created
-   * without any renderer or camera. It will just instantiate the graph, and
+   * without any Renderer or camera. It will just instantiate the graph, and
    * other modules will have to be instantiated through the public methods,
    * like "addRenderer" etc:
    *
@@ -29,7 +29,7 @@
    *  >   container: 'my-container-id'
    *  > });
    *
-   * In most of the cases, sigma will simply be used with the default renderer.
+   * In most of the cases, sigma will simply be used with the default Renderer.
    * Then, since the only required parameter is the DOM container, there are
    * some simpler way to call the constructor. The four following calls do the
    * exact same things:
@@ -80,11 +80,11 @@
     // Little shortcut:
     // ****************
     // The configuration is supposed to have a list of the configuration
-    // objects for each renderer.
+    // objects for each Renderer.
     //  - If there are no configuration at all, then nothing is done.
-    //  - If there are no renderer list, the given configuration object will be
-    //    considered as describing the first and only renderer.
-    //  - If there are no renderer list nor "container" object, it will be
+    //  - If there are no Renderer list, the given configuration object will be
+    //    considered as describing the first and only Renderer.
+    //  - If there are no Renderer list nor "container" object, it will be
     //    considered as the container itself (a DOM element).
     //  - If the argument passed to sigma() is a string, it will be considered
     //    as the ID of the DOM container.
@@ -100,8 +100,8 @@
         renderers: _conf
       };
 
-    // Also check "renderer" and "container" keys:
-    o = _conf.renderers || _conf.renderer || _conf.container;
+    // Also check "Renderer" and "container" keys:
+    o = _conf.renderers || _conf.Renderer || _conf.container;
     if (!_conf.renderers || _conf.renderers.length === 0)
       if (
         typeof o === 'string' ||
@@ -196,7 +196,7 @@
       for (k in e.data)
         data[k] = e.data[k];
 
-      data.renderer = e.target;
+      data.Renderer = e.target;
       this.dispatchEvent(e.type, data);
     }).bind(this);
 
@@ -275,7 +275,7 @@
   };
 
   /**
-   * This method kills a camera, and every renderer attached to it.
+   * This method kills a camera, and every Renderer attached to it.
    *
    * @param  {string|camera} v The camera to kill or its ID.
    * @return {sigma}           Returns the instance.
@@ -304,24 +304,24 @@
   };
 
   /**
-   * This methods will instantiate and reference a new renderer. The "type"
+   * This methods will instantiate and reference a new Renderer. The "type"
    * argument can be the constructor or its name in the "sigma.renderers"
    * package. If no type is specified, then "sigma.renderers.def" will be used.
    * If no id is specified, then an automatic id will be generated.
    *
-   * @param  {?object}  options Eventually some options to give to the renderer
+   * @param  {?object}  options Eventually some options to give to the Renderer
    *                            constructor.
-   * @return {renderer}         The fresh new renderer instance.
+   * @return {Renderer}         The fresh new Renderer instance.
    *
    * Recognized parameters:
    * **********************
    * Here is the exhaustive list of every accepted parameters in the "options"
    * object:
    *
-   *   {?string}            id     Eventually the renderer id.
-   *   {?(function|string)} type   Eventually the renderer constructor or its
+   *   {?string}            id     Eventually the Renderer id.
+   *   {?(function|string)} type   Eventually the Renderer constructor or its
    *                               name in the "sigma.renderers" package.
-   *   {?(camera|string)}   camera Eventually the renderer camera or its
+   *   {?(camera|string)}   camera Eventually the Renderer camera or its
    *                               id.
    */
   sigma.prototype.addRenderer = function(options) {
@@ -345,7 +345,7 @@
     if (typeof o.container === 'string')
       o.container = document.getElementById(o.container);
 
-    // Reference the new renderer:
+    // Reference the new Renderer:
     if (!('id' in o)) {
       id = 0;
       while (this.renderers['' + id])
@@ -355,7 +355,7 @@
       id = o.id;
 
     if (this.renderers[id])
-      throw 'sigma.addRenderer: The renderer "' + id + '" already exists.';
+      throw 'sigma.addRenderer: The Renderer "' + id + '" already exists.';
 
     // Find the good constructor:
     fn = typeof o.type === 'function' ? o.type : sigma.renderers[o.type];
@@ -374,15 +374,15 @@
       throw 'sigma.addRenderer: The camera is not properly referenced.';
 
     // Instantiate:
-    renderer = new fn(this.graph, camera, this.settings, o);
-    this.renderers[id] = renderer;
-    Object.defineProperty(renderer, 'id', {
+    Renderer = new fn(this.graph, camera, this.settings, o);
+    this.renderers[id] = Renderer;
+    Object.defineProperty(Renderer, 'id', {
       value: id
     });
 
     // Bind events:
-    if (renderer.bind)
-      renderer.bind(
+    if (Renderer.bind)
+      Renderer.bind(
         [
           'click',
           'rightClick',
@@ -421,23 +421,23 @@
         this._handler
       );
 
-    // Reference the renderer by its camera:
-    this.renderersPerCamera[camera.id].push(renderer);
+    // Reference the Renderer by its camera:
+    this.renderersPerCamera[camera.id].push(Renderer);
 
-    return renderer;
+    return Renderer;
   };
 
   /**
-   * This method kills a renderer.
+   * This method kills a Renderer.
    *
-   * @param  {string|renderer} v The renderer to kill or its ID.
+   * @param  {string|Renderer} v The Renderer to kill or its ID.
    * @return {sigma}             Returns the instance.
    */
   sigma.prototype.killRenderer = function(v) {
     v = typeof v === 'string' ? this.renderers[v] : v;
 
     if (!v)
-      throw 'sigma.killRenderer: The renderer is undefined.';
+      throw 'sigma.killRenderer: The Renderer is undefined.';
 
     var a = this.renderersPerCamera[v.camera.id],
         i = a.indexOf(v);
@@ -457,8 +457,8 @@
 
 
   /**
-   * This method calls the "render" method of each renderer, with the same
-   * arguments than the "render" method, but will also check if the renderer
+   * This method calls the "render" method of each Renderer, with the same
+   * arguments than the "render" method, but will also check if the Renderer
    * has a "process" method, and call it if it exists.
    *
    * It is useful for quadtrees or WebGL processing, for instance.
@@ -558,7 +558,7 @@
       }
     }
 
-    // Call each renderer:
+    // Call each Renderer:
     a = Object.keys(this.renderers);
     for (i = 0, l = a.length; i < l; i++)
       if (this.renderers[a[i]].process) {
@@ -567,7 +567,7 @@
             this.renderers[a[i]].process();
           } catch (e) {
             console.log(
-              'Warning: The renderer "' + a[i] + '" crashed on ".process()"'
+              'Warning: The Renderer "' + a[i] + '" crashed on ".process()"'
             );
           }
         else
@@ -580,7 +580,7 @@
   };
 
   /**
-   * This method calls the "render" method of each renderer.
+   * This method calls the "render" method of each Renderer.
    *
    * @return {sigma} Returns the instance itself.
    */
@@ -590,7 +590,7 @@
         a,
         prefix = 0;
 
-    // Call each renderer:
+    // Call each Renderer:
     a = Object.keys(this.renderers);
     for (i = 0, l = a.length; i < l; i++)
       if (this.settings('skipErrors'))
@@ -599,7 +599,7 @@
         } catch (e) {
           if (this.settings('verbose'))
             console.log(
-              'Warning: The renderer "' + a[i] + '" crashed on ".render()"'
+              'Warning: The Renderer "' + a[i] + '" crashed on ".render()"'
             );
         }
       else
@@ -609,7 +609,7 @@
   };
 
   /**
-   * This method calls the "render" method of each renderer that is bound to
+   * This method calls the "render" method of each Renderer that is bound to
    * the specified camera. To improve the performances, if this method is
    * called too often, the number of effective renderings is limitated to one
    * per frame, unless you are using the "force" flag.
@@ -634,7 +634,7 @@
           } catch (e) {
             if (this.settings('verbose'))
               console.log(
-                'Warning: The renderer "' + a[i].id + '" crashed on ".render()"'
+                'Warning: The Renderer "' + a[i].id + '" crashed on ".render()"'
               );
           }
         else
@@ -649,7 +649,7 @@
             } catch (e) {
               if (this.settings('verbose'))
                 console.log(
-                  'Warning: The renderer "' +
+                  'Warning: The Renderer "' +
                     a[i].id +
                     '" crashed on ".render()"'
                 );
@@ -682,7 +682,7 @@
     // Kill middlewares:
     delete this.middlewares;
 
-    // Kill each renderer:
+    // Kill each Renderer:
     for (k in this.renderers)
       this.killRenderer(this.renderers[k]);
 
@@ -2906,7 +2906,7 @@ if (typeof exports !== 'undefined') {
     labelSizeRatio: 1,
     // {number} The minimum size a node must have to see its label displayed.
     labelThreshold: 8,
-    // {number} The oversampling factor used in WebGL renderer.
+    // {number} The oversampling factor used in WebGL Renderer.
     webglOversamplingRatio: 2,
     // {number} The size of the border of hovered nodes.
     borderSize: 0,
@@ -6802,14 +6802,14 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.renderers');
 
   /**
-   * This function is the constructor of the canvas sigma's renderer.
+   * This function is the constructor of the canvas sigma's Renderer.
    *
    * @param  {sigma.classes.graph}            graph    The graph to render.
    * @param  {sigma.classes.camera}           camera   The camera.
    * @param  {configurable}           settings The sigma instance settings
    *                                           function.
    * @param  {object}                 object   The options object.
-   * @return {sigma.renderers.canvas}          The renderer instance.
+   * @return {sigma.renderers.canvas}          The Renderer instance.
    */
   sigma.renderers.canvas = function(graph, camera, settings, options) {
     if (typeof options !== 'object')
@@ -6852,7 +6852,7 @@ if (typeof exports !== 'undefined') {
     this.jobs = {};
 
     // Find the prefix:
-    this.options.prefix = 'renderer' + this.conradId + ':';
+    this.options.prefix = 'Renderer' + this.conradId + ':';
 
     // Initialize the DOM elements:
     if (
@@ -7222,8 +7222,8 @@ if (typeof exports !== 'undefined') {
   /**
    * The labels, nodes and edges renderers are stored in the three following
    * objects. When an element is drawn, its type will be checked and if a
-   * renderer with the same name exists, it will be used. If not found, the
-   * default renderer will be used instead.
+   * Renderer with the same name exists, it will be used. If not found, the
+   * default Renderer will be used instead.
    *
    * They are stored in different files, in the "./canvas" folder.
    */
@@ -7242,14 +7242,14 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.renderers');
 
   /**
-   * This function is the constructor of the canvas sigma's renderer.
+   * This function is the constructor of the canvas sigma's Renderer.
    *
    * @param  {sigma.classes.graph}            graph    The graph to render.
    * @param  {sigma.classes.camera}           camera   The camera.
    * @param  {configurable}           settings The sigma instance settings
    *                                           function.
    * @param  {object}                 object   The options object.
-   * @return {sigma.renderers.canvas}          The renderer instance.
+   * @return {sigma.renderers.canvas}          The Renderer instance.
    */
   sigma.renderers.webgl = function(graph, camera, settings, options) {
     if (typeof options !== 'object')
@@ -7411,12 +7411,12 @@ if (typeof exports !== 'undefined') {
 
     // Push edges:
     for (k in this.edgeFloatArrays) {
-      renderer = sigma.webgl.edges[k];
+      Renderer = sigma.webgl.edges[k];
       a = this.edgeFloatArrays[k].edges;
 
       // Creating the necessary arrays
       this.edgeFloatArrays[k].array = new Float32Array(
-        a.length * renderer.POINTS * renderer.ATTRIBUTES
+        a.length * Renderer.POINTS * Renderer.ATTRIBUTES
       );
 
       for (i = 0, l = a.length; i < l; i++) {
@@ -7427,47 +7427,47 @@ if (typeof exports !== 'undefined') {
           !graph.nodes(a[i].source).hidden &&
           !graph.nodes(a[i].target).hidden
         )
-          renderer.addEdge(
+          Renderer.addEdge(
             a[i],
             graph.nodes(a[i].source),
             graph.nodes(a[i].target),
             this.edgeFloatArrays[k].array,
-            i * renderer.POINTS * renderer.ATTRIBUTES,
+            i * Renderer.POINTS * Renderer.ATTRIBUTES,
             options.prefix,
             this.settings
           );
       }
 
-      if (typeof renderer.computeIndices === 'function')
-        this.edgeIndicesArrays[k] = renderer.computeIndices(
+      if (typeof Renderer.computeIndices === 'function')
+        this.edgeIndicesArrays[k] = Renderer.computeIndices(
           this.edgeFloatArrays[k].array
         );
     }
 
     // Push nodes:
     for (k in this.nodeFloatArrays) {
-      renderer = sigma.webgl.nodes[k];
+      Renderer = sigma.webgl.nodes[k];
       a = this.nodeFloatArrays[k].nodes;
 
       // Creating the necessary arrays
       this.nodeFloatArrays[k].array = new Float32Array(
-        a.length * renderer.POINTS * renderer.ATTRIBUTES
+        a.length * Renderer.POINTS * Renderer.ATTRIBUTES
       );
 
       for (i = 0, l = a.length; i < l; i++) {
         if (!this.nodeFloatArrays[k].array)
           this.nodeFloatArrays[k].array = new Float32Array(
-            a.length * renderer.POINTS * renderer.ATTRIBUTES
+            a.length * Renderer.POINTS * Renderer.ATTRIBUTES
           );
 
         // Just check that the edge and both its extremities are visible:
         if (
           !a[i].hidden
         )
-          renderer.addNode(
+          Renderer.addNode(
             a[i],
             this.nodeFloatArrays[k].array,
-            i * renderer.POINTS * renderer.ATTRIBUTES,
+            i * Renderer.POINTS * Renderer.ATTRIBUTES,
             options.prefix,
             this.settings
           );
@@ -7483,9 +7483,9 @@ if (typeof exports !== 'undefined') {
   /**
    * This method renders the graph. It basically calls each program (and
    * generate them if they do not exist yet) to render nodes and edges, batched
-   * per renderer.
+   * per Renderer.
    *
-   * As in the canvas renderer, it is possible to display edges, nodes and / or
+   * As in the canvas Renderer, it is possible to display edges, nodes and / or
    * labels in batches, to make the whole thing way more scalable.
    *
    * @param  {?object}               params Eventually an object of options.
@@ -7554,23 +7554,23 @@ if (typeof exports !== 'undefined') {
           if (!a.length)
             return;
           i = 0;
-          renderer = sigma.webgl.edges[a[i]];
+          Renderer = sigma.webgl.edges[a[i]];
           arr = this.edgeFloatArrays[a[i]].array;
           indices = this.edgeIndicesArrays[a[i]];
           start = 0;
           end = Math.min(
-            start + batchSize * renderer.POINTS,
-            arr.length / renderer.ATTRIBUTES
+            start + batchSize * Renderer.POINTS,
+            arr.length / Renderer.ATTRIBUTES
           );
 
           job = function() {
             // Check program:
             if (!this.edgePrograms[a[i]])
-              this.edgePrograms[a[i]] = renderer.initProgram(edgesGl);
+              this.edgePrograms[a[i]] = Renderer.initProgram(edgesGl);
 
             if (start < end) {
               edgesGl.useProgram(this.edgePrograms[a[i]]);
-              renderer.render(
+              Renderer.render(
                 edgesGl,
                 this.edgePrograms[a[i]],
                 arr,
@@ -7593,27 +7593,27 @@ if (typeof exports !== 'undefined') {
 
             // Catch job's end:
             if (
-              end >= arr.length / renderer.ATTRIBUTES &&
+              end >= arr.length / Renderer.ATTRIBUTES &&
               i === a.length - 1
             ) {
               delete this.jobs[id];
               return false;
             }
 
-            if (end >= arr.length / renderer.ATTRIBUTES) {
+            if (end >= arr.length / Renderer.ATTRIBUTES) {
               i++;
               arr = this.edgeFloatArrays[a[i]].array;
-              renderer = sigma.webgl.edges[a[i]];
+              Renderer = sigma.webgl.edges[a[i]];
               start = 0;
               end = Math.min(
-                start + batchSize * renderer.POINTS,
-                arr.length / renderer.ATTRIBUTES
+                start + batchSize * Renderer.POINTS,
+                arr.length / Renderer.ATTRIBUTES
               );
             } else {
               start = end;
               end = Math.min(
-                start + batchSize * renderer.POINTS,
-                arr.length / renderer.ATTRIBUTES
+                start + batchSize * Renderer.POINTS,
+                arr.length / Renderer.ATTRIBUTES
               );
             }
 
@@ -7625,16 +7625,16 @@ if (typeof exports !== 'undefined') {
         }).call(this);
       else {
         for (k in this.edgeFloatArrays) {
-          renderer = sigma.webgl.edges[k];
+          Renderer = sigma.webgl.edges[k];
 
           // Check program:
           if (!this.edgePrograms[k])
-            this.edgePrograms[k] = renderer.initProgram(edgesGl);
+            this.edgePrograms[k] = Renderer.initProgram(edgesGl);
 
           // Render
           if (this.edgeFloatArrays[k]) {
             edgesGl.useProgram(this.edgePrograms[k]);
-            renderer.render(
+            Renderer.render(
               edgesGl,
               this.edgePrograms[k],
               this.edgeFloatArrays[k].array,
@@ -7659,16 +7659,16 @@ if (typeof exports !== 'undefined') {
       nodesGl.enable(nodesGl.BLEND);
 
       for (k in this.nodeFloatArrays) {
-        renderer = sigma.webgl.nodes[k];
+        Renderer = sigma.webgl.nodes[k];
 
         // Check program:
         if (!this.nodePrograms[k])
-          this.nodePrograms[k] = renderer.initProgram(nodesGl);
+          this.nodePrograms[k] = Renderer.initProgram(nodesGl);
 
         // Render
         if (this.nodeFloatArrays[k]) {
           nodesGl.useProgram(this.nodePrograms[k]);
-          renderer.render(
+          Renderer.render(
             nodesGl,
             this.nodePrograms[k],
             this.nodeFloatArrays[k].array,
@@ -7871,7 +7871,7 @@ if (typeof exports !== 'undefined') {
   /**
    * The object "sigma.webgl.nodes" contains the different WebGL node
    * renderers. The default one draw nodes as discs. Here are the attributes
-   * any node renderer must have:
+   * any node Renderer must have:
    *
    * {number}   POINTS      The number of points required to draw a node.
    * {number}   ATTRIBUTES  The number of attributes needed to draw one point.
@@ -7906,7 +7906,7 @@ if (typeof exports !== 'undefined') {
   /**
    * The object "sigma.webgl.edges" contains the different WebGL edge
    * renderers. The default one draw edges as direct lines. Here are the
-   * attributes any edge renderer must have:
+   * attributes any edge Renderer must have:
    *
    * {number}   POINTS      The number of points required to draw an edge.
    * {number}   ATTRIBUTES  The number of attributes needed to draw one point.
@@ -7940,12 +7940,12 @@ if (typeof exports !== 'undefined') {
 
   /**
    * The object "sigma.canvas.labels" contains the different
-   * label renderers for the WebGL renderer. Since displaying texts in WebGL is
+   * label renderers for the WebGL Renderer. Since displaying texts in WebGL is
    * definitely painful and since there a way less labels to display than nodes
-   * or edges, the default renderer simply renders them in a canvas.
+   * or edges, the default Renderer simply renders them in a canvas.
    *
-   * A labels renderer is a simple function, taking as arguments the related
-   * node, the renderer and a settings function.
+   * A labels Renderer is a simple function, taking as arguments the related
+   * node, the Renderer and a settings function.
    */
   sigma.utils.pkg('sigma.canvas.labels');
 }).call(this);
@@ -7963,14 +7963,14 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.renderers');
 
   /**
-   * This function is the constructor of the svg sigma's renderer.
+   * This function is the constructor of the svg sigma's Renderer.
    *
    * @param  {sigma.classes.graph}            graph    The graph to render.
    * @param  {sigma.classes.camera}           camera   The camera.
    * @param  {configurable}           settings The sigma instance settings
    *                                           function.
    * @param  {object}                 object   The options object.
-   * @return {sigma.renderers.svg}             The renderer instance.
+   * @return {sigma.renderers.svg}             The Renderer instance.
    */
   sigma.renderers.svg = function(graph, camera, settings, options) {
     if (typeof options !== 'object')
@@ -8008,7 +8008,7 @@ if (typeof exports !== 'undefined') {
         settings.embedObjects(options.settings) :
         settings;
 
-    // Is the renderer meant to be freestyle?
+    // Is the Renderer meant to be freestyle?
     this.settings('freeStyle', !!this.options.freeStyle);
 
     // SVG xmlns
@@ -8019,7 +8019,7 @@ if (typeof exports !== 'undefined') {
     this.edgesOnScreen = [];
 
     // Find the prefix:
-    this.options.prefix = 'renderer' + sigma.utils.id() + ':';
+    this.options.prefix = 'Renderer' + sigma.utils.id() + ':';
 
     // Initialize the DOM elements
     this.initDOM('svg');
@@ -8272,7 +8272,7 @@ if (typeof exports !== 'undefined') {
    * This method hides a batch of SVG DOM elements.
    *
    * @param  {array}                  elements  An array of elements to hide.
-   * @param  {object}                 renderer  The renderer to use.
+   * @param  {object}                 Renderer  The Renderer to use.
    * @return {sigma.renderers.svg}              Returns the instance itself.
    */
   sigma.renderers.svg.prototype.hideDOMElements = function(elements) {
@@ -8288,9 +8288,9 @@ if (typeof exports !== 'undefined') {
   };
 
   /**
-   * This method binds the hover events to the renderer.
+   * This method binds the hover events to the Renderer.
    *
-   * @param  {string} prefix The renderer prefix.
+   * @param  {string} prefix The Renderer prefix.
    */
   // TODO: add option about whether to display hovers or not
   sigma.renderers.svg.prototype.bindHovers = function(prefix) {
@@ -8420,8 +8420,8 @@ if (typeof exports !== 'undefined') {
   /**
    * The labels, nodes and edges renderers are stored in the three following
    * objects. When an element is drawn, its type will be checked and if a
-   * renderer with the same name exists, it will be used. If not found, the
-   * default renderer will be used instead.
+   * Renderer with the same name exists, it will be used. If not found, the
+   * default Renderer will be used instead.
    *
    * They are stored in different files, in the "./svg" folder.
    */
@@ -8454,7 +8454,7 @@ if (typeof exports !== 'undefined') {
     }
   }
 
-  // Copy the good renderer:
+  // Copy the good Renderer:
   sigma.renderers.def = webgl ?
     sigma.renderers.webgl :
     sigma.renderers.canvas;
@@ -8466,14 +8466,14 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.webgl.nodes');
 
   /**
-   * This node renderer will display nodes as discs, shaped in triangles with
+   * This node Renderer will display nodes as discs, shaped in triangles with
    * the gl.TRIANGLES display mode. So, to be more precise, to draw one node,
    * it will store three times the center of node, with the color and the size,
    * and an angle indicating which "corner" of the triangle to draw.
    *
    * The fragment shader does not deal with anti-aliasing, so make sure that
    * you deal with it somewhere else in the code (by default, the WebGL
-   * renderer will oversample the rendering through the webglOversamplingRatio
+   * Renderer will oversample the rendering through the webglOversamplingRatio
    * value).
    */
   sigma.webgl.nodes.def = {
@@ -8668,11 +8668,11 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.webgl.nodes');
 
   /**
-   * This node renderer will display nodes in the fastest way: Nodes are basic
+   * This node Renderer will display nodes in the fastest way: Nodes are basic
    * squares, drawn through the gl.POINTS drawing method. The size of the nodes
    * are represented with the "gl_PointSize" value in the vertex shader.
    *
-   * It is the fastest node renderer here since the buffer just takes one line
+   * It is the fastest node Renderer here since the buffer just takes one line
    * to draw each node (with attributes "x", "y", "size" and "color").
    *
    * Nevertheless, this method has some problems, especially due to some issues
@@ -8680,7 +8680,7 @@ if (typeof exports !== 'undefined') {
    *  - First, if the center of a node is outside the scene, the point will not
    *    be drawn, even if it should be partly on screen.
    *  - I tried applying a fragment shader similar to the one in the default
-   *    node renderer to display them as discs, but it did not work fine on
+   *    node Renderer to display them as discs, but it did not work fine on
    *    some computers settings, filling the discs with weird gradients not
    *    depending on the actual color.
    */
@@ -8845,7 +8845,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.webgl.edges');
 
   /**
-   * This edge renderer will display edges as lines going from the source node
+   * This edge Renderer will display edges as lines going from the source node
    * to the target node. To deal with edge thicknesses, the lines are made of
    * two triangles forming rectangles, with the gl.TRIANGLES drawing mode.
    *
@@ -9104,7 +9104,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.webgl.edges');
 
   /**
-   * This edge renderer will display edges as lines with the gl.LINES display
+   * This edge Renderer will display edges as lines with the gl.LINES display
    * mode. Since this mode does not support well thickness, edges are all drawn
    * with the same thickness (3px), independantly of the edge attributes or the
    * zooming ratio.
@@ -9252,7 +9252,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.webgl.edges');
 
   /**
-   * This edge renderer will display edges as arrows going from the source node
+   * This edge Renderer will display edges as arrows going from the source node
    * to the target node. To deal with edge thicknesses, the lines are made of
    * three triangles: two forming rectangles, with the gl.TRIANGLES drawing
    * mode.
@@ -9648,7 +9648,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.canvas.labels');
 
   /**
-   * This label renderer will just display the label on the right of the node.
+   * This label Renderer will just display the label on the right of the node.
    *
    * @param  {object}                   node     The node object.
    * @param  {CanvasRenderingContext2D} context  The canvas context.
@@ -9693,7 +9693,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.canvas.hovers');
 
   /**
-   * This hover renderer will basically display the label with a background.
+   * This hover Renderer will basically display the label with a background.
    *
    * @param  {object}                   node     The node object.
    * @param  {CanvasRenderingContext2D} context  The canvas context.
@@ -9796,7 +9796,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.canvas.nodes');
 
   /**
-   * The default node renderer. It renders the node as a simple disc.
+   * The default node Renderer. It renders the node as a simple disc.
    *
    * @param  {object}                   node     The node object.
    * @param  {CanvasRenderingContext2D} context  The canvas context.
@@ -9827,7 +9827,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.canvas.edges');
 
   /**
-   * The default edge renderer. It renders the edge as a simple line.
+   * The default edge Renderer. It renders the edge as a simple line.
    *
    * @param  {object}                   edge         The edge object.
    * @param  {object}                   source node  The edge source node.
@@ -9877,7 +9877,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.canvas.edges');
 
   /**
-   * This edge renderer will display edges as arrows going from the source node
+   * This edge Renderer will display edges as arrows going from the source node
    *
    * @param  {object}                   edge         The edge object.
    * @param  {object}                   source node  The edge source node.
@@ -9944,7 +9944,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.canvas.edgehovers');
 
   /**
-   * This hover renderer will display the edge with a different color or size.
+   * This hover Renderer will display the edge with a different color or size.
    *
    * @param  {object}                   edge         The edge object.
    * @param  {object}                   source node  The edge source node.
@@ -10002,7 +10002,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.canvas.edgehovers');
 
   /**
-   * This hover renderer will display the edge with a different color or size.
+   * This hover Renderer will display the edge with a different color or size.
    *
    * @param  {object}                   edge         The edge object.
    * @param  {object}                   source node  The edge source node.
@@ -10067,7 +10067,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.canvas.edgehovers');
 
   /**
-   * This hover renderer will display the edge with a different color or size.
+   * This hover Renderer will display the edge with a different color or size.
    *
    * @param  {object}                   edge         The edge object.
    * @param  {object}                   source node  The edge source node.
@@ -10144,7 +10144,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.canvas.edgehovers');
 
   /**
-   * This hover renderer will display the edge with a different color or size.
+   * This hover Renderer will display the edge with a different color or size.
    *
    * @param  {object}                   edge         The edge object.
    * @param  {object}                   source node  The edge source node.
@@ -10245,7 +10245,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.canvas.extremities');
 
   /**
-   * The default renderer for hovered edge extremities. It renders the edge
+   * The default Renderer for hovered edge extremities. It renders the edge
    * extremities as hovered.
    *
    * @param  {object}                   edge         The edge object.
@@ -10280,7 +10280,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.svg.utils');
 
   /**
-   * Some useful functions used by sigma's SVG renderer.
+   * Some useful functions used by sigma's SVG Renderer.
    */
   sigma.svg.utils = {
 
@@ -10312,7 +10312,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.svg.nodes');
 
   /**
-   * The default node renderer. It renders the node as a simple disc.
+   * The default node Renderer. It renders the node as a simple disc.
    */
   sigma.svg.nodes.def = {
 
@@ -10371,7 +10371,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.svg.edges');
 
   /**
-   * The default edge renderer. It renders the node as a simple line.
+   * The default edge Renderer. It renders the node as a simple line.
    */
   sigma.svg.edges.def = {
 
@@ -10445,7 +10445,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.svg.edges');
 
   /**
-   * The curve edge renderer. It renders the node as a bezier curve.
+   * The curve edge Renderer. It renders the node as a bezier curve.
    */
   sigma.svg.edges.curve = {
 
@@ -10534,7 +10534,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.svg.labels');
 
   /**
-   * The default label renderer. It renders the label as a simple text.
+   * The default label Renderer. It renders the label as a simple text.
    */
   sigma.svg.labels.def = {
 
@@ -10615,7 +10615,7 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.svg.hovers');
 
   /**
-   * The default hover renderer.
+   * The default hover Renderer.
    */
   sigma.svg.hovers.def = {
 
@@ -10625,7 +10625,7 @@ if (typeof exports !== 'undefined') {
      * @param  {object}           node               The node object.
      * @param  {CanvasElement}    measurementCanvas  A fake canvas handled by
      *                            the svg to perform some measurements and
-     *                            passed by the renderer.
+     *                            passed by the Renderer.
      * @param  {DOMElement}       nodeCircle         The node DOM Element.
      * @param  {configurable}     settings           The settings function.
      */
@@ -10731,7 +10731,7 @@ if (typeof exports !== 'undefined') {
 
   /**
    * This middleware will rescale the graph such that it takes an optimal space
-   * on the renderer.
+   * on the Renderer.
    *
    * As each middleware, this function is executed in the scope of the sigma
    * instance.
@@ -11195,11 +11195,11 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.misc');
 
   /**
-   * This helper will bind any no-DOM renderer (for instance canvas or WebGL)
+   * This helper will bind any no-DOM Renderer (for instance canvas or WebGL)
    * to its captors, to properly dispatch the good events to the sigma instance
    * to manage clicking, hovering etc...
    *
-   * It has to be called in the scope of the related renderer.
+   * It has to be called in the scope of the related Renderer.
    */
   sigma.misc.bindEvents = function(prefix) {
     var i,
@@ -11283,9 +11283,9 @@ if (typeof exports !== 'undefined') {
 
       if (!isCanvas) {
         // A quick hardcoded rule to prevent people from using this feature
-        // with the WebGL renderer (which is not good enough at the moment):
+        // with the WebGL Renderer (which is not good enough at the moment):
         throw new Error(
-          'The edge events feature is not compatible with the WebGL renderer'
+          'The edge events feature is not compatible with the WebGL Renderer'
         );
       }
 
@@ -11349,7 +11349,7 @@ if (typeof exports !== 'undefined') {
           edge = edges[i];
           source = self.graph.nodes(edge.source);
           target = self.graph.nodes(edge.target);
-          // (HACK) we can't get edge[prefix + 'size'] on WebGL renderer:
+          // (HACK) we can't get edge[prefix + 'size'] on WebGL Renderer:
           s = edge[prefix + 'size'] ||
               edge['read_' + prefix + 'size'];
 
@@ -11705,11 +11705,11 @@ if (typeof exports !== 'undefined') {
   sigma.utils.pkg('sigma.misc');
 
   /**
-   * This helper will bind any DOM renderer (for instance svg)
+   * This helper will bind any DOM Renderer (for instance svg)
    * to its captors, to properly dispatch the good events to the sigma instance
    * to manage clicking, hovering etc...
    *
-   * It has to be called in the scope of the related renderer.
+   * It has to be called in the scope of the related Renderer.
    */
   sigma.misc.bindDOMEvents = function(container) {
     var self = this,
@@ -11863,11 +11863,11 @@ if (typeof exports !== 'undefined') {
 
   /**
    * This method listens to "overNode", "outNode", "overEdge" and "outEdge"
-   * events from a renderer and renders the nodes differently on the top layer.
+   * events from a Renderer and renders the nodes differently on the top layer.
    * The goal is to make any node label readable with the mouse, and to
    * highlight hovered nodes and edges.
    *
-   * It has to be called in the scope of the related renderer.
+   * It has to be called in the scope of the related Renderer.
    */
   sigma.misc.drawHovers = function(prefix) {
     var self = this,

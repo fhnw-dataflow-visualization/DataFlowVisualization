@@ -42549,7 +42549,7 @@ function Network(container, data, options) {
   this.selectionHandler = new SelectionHandler(this.body, this.canvas); // Selection handler
   this.interactionHandler = new InteractionHandler(this.body, this.canvas, this.selectionHandler); // Interaction handler handles all the hammer bindings (that are bound by canvas), key
   this.view = new View(this.body, this.canvas); // camera handler, does animations and zooms
-  this.renderer = new CanvasRenderer(this.body, this.canvas); // renderer, starts renderloop, has events that modules can hook into
+  this.Renderer = new CanvasRenderer(this.body, this.canvas); // Renderer, starts renderloop, has events that modules can hook into
   this.physics = new PhysicsEngine(this.body); // physics engine, does all the simulations
   this.layoutEngine = new LayoutEngine(this.body); // layout engine for inital layout and hierarchical layout
   this.clustering = new ClusterEngine(this.body); // clustering api
@@ -42604,7 +42604,7 @@ Network.prototype.setOptions = function (options) {
     this.manipulation.setOptions(options.manipulation, options, this.options); // manipulation uses the locales in the globals
 
     this.interactionHandler.setOptions(options.interaction);
-    this.renderer.setOptions(options.interaction); // options for rendering are in interaction
+    this.Renderer.setOptions(options.interaction); // options for rendering are in interaction
     this.selectionHandler.setOptions(options.interaction); // options for selection are in interaction
 
     // reload the settings of the nodes to apply changes in groups that are not referenced by pointer.
@@ -42631,7 +42631,7 @@ Network.prototype.setOptions = function (options) {
       util.deepExtend(networkOptions.layout, this.layoutEngine.options);
       // load the selectionHandler and render default options in to the interaction group
       util.deepExtend(networkOptions.interaction, this.selectionHandler.options);
-      util.deepExtend(networkOptions.interaction, this.renderer.options);
+      util.deepExtend(networkOptions.interaction, this.Renderer.options);
 
       util.deepExtend(networkOptions.interaction, this.interactionHandler.options);
       util.deepExtend(networkOptions.manipulation, this.manipulation.options);
@@ -42810,7 +42810,7 @@ Network.prototype.destroy = function () {
   delete this.selectionHandler;
   delete this.interactionHandler;
   delete this.view;
-  delete this.renderer;
+  delete this.Renderer;
   delete this.physics;
   delete this.layoutEngine;
   delete this.clustering;
@@ -43006,7 +43006,7 @@ Network.prototype.unselectAll = function () {
   this.redraw();
 };
 Network.prototype.redraw = function () {
-  return this.renderer.redraw.apply(this.renderer, arguments);
+  return this.Renderer.redraw.apply(this.Renderer, arguments);
 };
 Network.prototype.getScale = function () {
   return this.view.getScale.apply(this.view, arguments);
@@ -52187,7 +52187,7 @@ function _initRequestAnimationFrame() {
 var util = __webpack_require__(2);
 
 /**
- * The canvas renderer
+ * The canvas Renderer
  */
 
 var CanvasRenderer = function () {
