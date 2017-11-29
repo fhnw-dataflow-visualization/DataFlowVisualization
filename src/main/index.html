@@ -35,7 +35,92 @@
                     "name": "Output 1"
                 }},
                 {"port": 2, "attr": {
-                    "name": "Output 1"
+                    "name": "Output 2"
+                }}
+            ],
+            "sub": [],
+            "attr": {
+                "a": "A",
+                "b": "B"
+            },
+        },
+
+        {
+            "name": "SPLIT2",
+            "x": 400,
+            "y": 400,
+            "id": 1,
+            "in": [
+                {"port": 0, "attr": {
+                    "name": "Input 1"
+                }},
+            ],
+
+            "out": [
+                {"port": 0, "attr": {
+                    "name": "Output 3"
+                }},
+                {"port": 1, "attr": {
+                    "name": "Output 4"
+                }},
+                {"port": 2, "attr": {
+                    "name": "Output 5"
+                }}
+            ],
+            "sub": [],
+            "attr": {
+                "a": "A",
+                "b": "B"
+            },
+        },
+
+        {
+            "name": "SPLIT1",
+            "x": 200,
+            "y": 400,
+            "id": 2,
+            "in": [
+                {"port": 0, "attr": {
+                    "name": "Input 3"
+                }},
+            ],
+            "out": [
+                {"port": 0, "attr": {
+                    "name": "Output 6"
+                }},
+                {"port": 1, "attr": {
+                    "name": "Output 7"
+                }},
+                {"port": 2, "attr": {
+                    "name": "Output 8"
+                }}
+            ],
+            "sub": [],
+            "attr": {
+                "a": "A",
+                "b": "B"
+            },
+        },
+
+        {
+            "name": "SPLIT3",
+            "x": 600,
+            "y": 400,
+            "id": 3,
+            "in": [
+                {"port": 0, "attr": {
+                    "name": "Input 8"
+                }}
+            ],
+            "out": [
+                {"port": 0, "attr": {
+                    "name": "Output 9"
+                }},
+                {"port": 1, "attr": {
+                    "name": "Output 10"
+                }},
+                {"port": 2, "attr": {
+                    "name": "Output 11"
                 }}
             ],
             "sub": [],
@@ -47,27 +132,20 @@
         {
             "name": "END",
             "x": 400,
-            "y": 400,
-            "id": 1,
+            "y": 600,
+            "id": 4,
             "in": [
                 {"port": 0, "attr": {
-                    "name": "Input 0"
+                    "name": "Input 9"
                 }},
                 {"port": 1, "attr": {
-                    "name": "Input 1"
+                    "name": "Input 10"
                 }},
                 {"port": 2, "attr": {
-                    "name": "Input 2"
+                    "name": "Input 11"
                 }}
             ],
-            "out": [
-                {"port": 0, "attr": {
-                    "name": "Output 0"
-                }},
-                {"port": 1, "attr": {
-                    "name": "Output 1"
-                }},
-            ],
+            "out": [],
             "sub": [],
             "attr": {
                 "a": "AA",
@@ -81,23 +159,91 @@
         "to": 1,
         "ports": [
             {
-                "out": 0,
+                "out": 1,
                 "in": 0,
                 "attr": {
                     "name": "0.0 - 1.0",
                     "data": "Path-to-data-file"
                 }
             },
-            {
-                "out": 2,
-                "in": 1,
-                "attr": {
-                    "name": "0.0 - 1.0",
-                    "data": "Path-to-data-file"
-                }
-            },
         ]
-    });
+    },
+    {
+        "id": 1,
+        "from": 0,
+        "to": 2,
+        "ports": [
+        {
+            "out": 0,
+            "in": 0,
+            "attr": {
+                "name": "0.0 - 1.0",
+                "data": "Path-to-data-file"
+            }
+        },
+    ]
+    },
+        {
+            "id": 2,
+            "from": 0,
+            "to": 3,
+            "ports": [
+                {
+                    "out": 2,
+                    "in": 0,
+                    "attr": {
+                        "name": "0.0 - 1.0",
+                        "data": "Path-to-data-file"
+                    }
+                },
+            ]
+        },
+    {
+        "id": 3,
+        "from": 1,
+        "to": 4,
+        "ports": [
+        {
+            "out": 1,
+            "in": 1,
+            "attr": {
+                "name": "0.0 - 1.0",
+                "data": "Path-to-data-file"
+            }
+        },
+    ]
+    },
+    {
+        "id": 4,
+        "from": 2,
+        "to": 4,
+        "ports": [
+        {
+            "out": 0,
+            "in": 0,
+            "attr": {
+                "name": "0.0 - 1.0",
+                "data": "Path-to-data-file"
+            }
+        },
+    ]
+    },
+    {
+        "id": 5,
+        "from": 3,
+        "to": 4,
+        "ports": [
+        {
+            "out": 2,
+            "in": 2,
+            "attr": {
+                "name": "0.0 - 1.0",
+                "data": "Path-to-data-file"
+            }
+        },
+    ]
+    }
+    );
 
     const config = {
         width: 800,
