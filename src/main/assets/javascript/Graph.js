@@ -6,20 +6,30 @@
 function Graph(conf, data) {
     const width = conf.width;
     const height = conf.height;
+    const zoom = conf.zoom;
 
-    let zoom = 1;
+    let scale = 1;
+    let lod = 2;
 
     const svg = d3.select("svg")
         .attr("width", width)
         .attr("height", height);
     const viewport = svg.append('g');
     svg.call(d3.zoom()
-        .scaleExtent([0.1, 2])
+        .scaleExtent([zoom[0], zoom[zoom.length - 1]])
         .on('zoom', () => {
             const e = d3.event.transform;
-            if (zoom !== e.k){
-                zoom = e.k;
-                console.log(`event: ${e.k}`);
+            if (scale !== e.k) {
+                //new scale
+                scale = e.k;
+                if (scale < zoom[lod]) {
+                    lod--;
+                    console.log(`scale: ${scale}\nlevel of detail: ${lod}`);
+                } else if (scale >= zoom[lod + 1] && lod < zoom.length - 2) {
+                    lod++;
+                    console.log(`scale: ${scale}\nlevel of detail: ${lod}`);
+                }
+                // this.draw(lod);
             }
             viewport.attr('transform', e);
         }));
