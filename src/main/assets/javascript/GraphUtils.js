@@ -35,7 +35,7 @@ findNode = (node) => d3.select(`#n${node}`);
 findPort = (node, port, type) => d3.select(`#n${node}${type}${port}`);
 
 /**
- * Finds the node group in DOM
+ * Finds the edge group in DOM
  * @param edge edge id
  */
 findEdge = (edge) => d3.select(`#e${edge}`);

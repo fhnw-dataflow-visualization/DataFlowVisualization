@@ -35,18 +35,22 @@ function Graph(conf, data) {
         }));
 
     const tooltip = d3.select(".tooltip");
-
     const renderer = new Renderer(viewport, tooltip, conf, data);
 
     /**
-     * Draws the graph into the svg
+     * Draws the graph
      * @param lod level of detail
      */
     this.draw = (lod) => {
-        renderer.drawNodes(lod);
-        renderer.drawEdges(lod);
+        renderer.initNodes(lod);
+        renderer.initEdges(lod);
     };
 
+    /**
+     * Updates the graph
+     * Actually used for changed lod
+     * @param lod level of detail
+     */
     let update = (lod) => {
         renderer.updateNode(lod);
         renderer.updateEdges(lod);

@@ -8,9 +8,10 @@ function Renderer(viewport, tooltip, conf, data) {
     const portHeight = conf.port.height;
 
     /**
-     * Draws the nodes into the svg
+     * Initializes all nodes in the graph
+     * @param lod level of detail
      */
-    this.drawNodes = (lod) => {
+    this.initNodes = (lod) => {
         viewport.selectAll(".node").data(data.nodes).enter().each((node) => {
             const n = viewport.append("g")
                 .attr('id', `n${node.id}`)
@@ -18,108 +19,125 @@ function Renderer(viewport, tooltip, conf, data) {
                 .attr('data-y', node.y)
                 .attr("class", "node")
                 .attr("transform", `translate(${node.x},${node.y})`);
-            n.append("rect")
+            const r = n.append("rect")
                 .attr("width", nodeWidth)
-                .attr("height", nodeHeight)
-                /* mouse events */
-                .on("mouseover", () => {
-                    tooltip.style("display", "block")
-                        .style('left', `${node.x + nodeWidth + 12}px`)
-                        .style('top', `${node.y - 73}px`)
-                        .html(`${getAttrDesc(node)}`);
-                })
-                .on("mouseout", () => {
-                    tooltip.style("display", "none");
-                });
+                .attr("height", nodeHeight);
             n.append("text")
                 .attr('x', 5)
                 .attr('y', nodeHeightHalf + 5)
                 .html(node.name);
+            addHover(r, node, node.x + nodeWidth + 12, node.y - 73);
             /* draw in ports */
-            if (lod === 2 && node['in'] && node.in.length > 0) {
-                drawInPort(n, node);
+            if (node['in']) {
+                const ports = n.append('g')
+                    .attr('class', 'inPort');
+                if (lod === 2 && node.in.length > 0) {
+                    drawInPort(ports, node);
+                }
             }
             /* draw out ports */
-            if (lod === 2 && node['out'] && node.out.length > 0) {
-                drawOutPort(n, node);
+            if (node['out']) {
+                const ports = n.append('g')
+                    .attr('class', 'outPort');
+                if (lod === 2 && node.out.length > 0) {
+                    drawOutPort(ports, node);
+                }
             }
         });
-    };
-
-    this.updateNode = (lod) => {
-        const n = viewport.selectAll(".node");
-        if (lod === 2) {
-            n.data(data.nodes).each((node) => {
-                const s = findNode(node.id);
-                if (node['in']) {
-                    drawInPort(s, node);
-                }
-                if (node['out']) {
-                    drawOutPort(s, node);
-                }
-            });
-        } else {
-            removePorts(n);
-        }
-    };
-
-    let drawInPort = (n, node) => {
-        const inPorts = n.append('g')
-            .attr('class', 'inPort');
-        const inLength = node.in.length;
-        const sIn = 1 / (2 * inLength);
-        inPorts.selectAll('polygon').data(node.in).enter().each((port) => {
-            const x = (2 * port.port + 1) * sIn * nodeWidth;
-            inPorts.append('polygon')
-                .attr('id', `n${node.id}in${port.port}`)
-                .attr('data-x', node.x + x)
-                .attr('data-y', node.y)
-                .attr('points', calculatePort(x, 0, 1))
-                .on("mouseover", () => {
-                    tooltip.style("display", "block")
-                        .style('left', `${node.x + x + 12}px`)
-                        .style('top', `${node.y - 73}px`)
-                        .html(`${getAttrDesc(port)}`);
-                })
-                .on("mouseout", () => {
-                    tooltip.style("display", "none");
-                });
-        });
-    };
-
-    let drawOutPort = (n, node) => {
-        const outPorts = n.append('g')
-            .attr('class', 'outPort');
-        const outLength = node.out.length;
-        const sOut = 1 / (2 * outLength);
-        outPorts.selectAll('.outPort').data(node.out).enter().each((port) => {
-            const x = (2 * port.port + 1) * sOut * nodeWidth;
-            outPorts.append('polygon')
-                .attr('id', `n${node.id}out${port.port}`)
-                .attr('data-x', node.x + x)
-                .attr('data-y', node.y + nodeHeight)
-                .attr('points', calculatePort(x, nodeHeight, -1))
-                .on("mouseover", () => {
-                    tooltip.style("display", "block")
-                        .style('left', `${node.x + x + 12}px`)
-                        .style('top', `${node.y + nodeHeight + 12}px`)
-                        .html(`${getAttrDesc(port)}`);
-                })
-                .on("mouseout", () => {
-                    tooltip.style("display", "none");
-                });
-        });
-    };
-
-    let removePorts = (n) => {
-        n.selectAll('g').remove();
     };
 
     /**
-     * Draws the edges into the svg
+     * Updates all nodes in the graph
+     * Actually used for changed level of detail
      * @param lod level of detail
      */
-    this.drawEdges = (lod) => {
+    this.updateNode = (lod) => {
+        const n = viewport.selectAll('.node');
+        n.data(data.nodes).each((node) => {
+            const n = findNode(node.id);
+            const inPorts = n.select('.inPort');
+            const outPorts = n.select('.outPort');
+            if (lod === 2) {
+                if (node['in']) {
+                    drawInPort(inPorts, node);
+                }
+                if (node['out']) {
+                    drawOutPort(outPorts, node);
+                }
+            } else {
+                removePorts(inPorts);
+                removePorts(outPorts);
+            }
+        });
+    };
+
+    /**
+     * Draws all input ports of current node
+     * @param g <g> node
+     * @param node js node
+     */
+    let drawInPort = (g, node) => {
+        const inLength = node.in.length;
+        const sIn = 1 / (2 * inLength);
+        g.selectAll('polygon').data(node.in).enter().each((port) => {
+            const x = (2 * port.port + 1) * sIn * nodeWidth;
+            g.append('polygon')
+                .attr('id', `n${node.id}in${port.port}`)
+                .attr('data-x', node.x + x)
+                .attr('data-y', node.y)
+                .attr('points', calculatePort(x, 0, 1));
+            addHover(g, port, node.x + x + 12, node.y - 73);
+        });
+    };
+
+    /**
+     * Draws all <polygon> output ports of current node
+     * @param g <g> node
+     * @param node js node
+     */
+    let drawOutPort = (g, node) => {
+        const outLength = node.out.length;
+        const sOut = 1 / (2 * outLength);
+        g.selectAll('polygon').data(node.out).enter().each((port) => {
+            const x = (2 * port.port + 1) * sOut * nodeWidth;
+            g.append('polygon')
+                .attr('id', `n${node.id}out${port.port}`)
+                .attr('data-x', node.x + x)
+                .attr('data-y', node.y + nodeHeight)
+                .attr('points', calculatePort(x, nodeHeight, -1));
+            addHover(g, port, node.x + x + 12, node.y + nodeHeight + 12);
+        });
+    };
+
+    /**
+     * Calculates all point coordinates of this port number
+     * @param posX node x coordinate
+     * @param posY node y coordinate
+     * @param i port number
+     * @return {string} points
+     */
+    let calculatePort = (posX, posY, i) => {
+        const x1 = posX - portWidthHalf;
+        const y1 = posY;
+        const x2 = posX;
+        const y2 = posY + i * portHeight;
+        const x3 = posX + portWidthHalf;
+        return `${x1},${y1} ${x2},${y2}, ${x3},${y1}`
+    };
+
+    /**
+     * Removes all <polygon> ports from current node
+     * @param g <g> in- or output ports
+     */
+    let removePorts = (g) => {
+        g.selectAll('polygon').remove();
+    };
+
+    /**
+     * Initializes all edges in the graph
+     * @param lod level of detail
+     */
+    this.initEdges = (lod) => {
         viewport.selectAll(".edge").data(data.edges).enter().each((line) => {
             const g = viewport.append('g')
                 .attr('id', `e${line.id}`)
@@ -128,6 +146,11 @@ function Renderer(viewport, tooltip, conf, data) {
         });
     };
 
+    /**
+     * Updates all edges in the graph
+     * Actually used for changed level of detail
+     * @param lod level of detail
+     */
     this.updateEdges = (lod) => {
         viewport.selectAll(".edge").data(data.edges).each((line) => {
             const g = findEdge(line.id);
@@ -136,9 +159,18 @@ function Renderer(viewport, tooltip, conf, data) {
         });
     };
 
+    /**
+     * Draws all <line> of current edge
+     * lod = 2: Draws all port-to-port edges
+     * lod < 2: Draws node-to-node edge
+     *
+     * @param e <g> edge
+     * @param line js edge
+     * @param lod level of detail
+     */
     let drawLines = (e, line, lod) => {
         if (lod === 2 && line['ports']) {
-            //draw multi lines port to port
+            //draw multi lines port-to-port
             e.selectAll('line').data(line.ports).enter().each((port) => {
                 const from = findPort(line.from, port.out, 'out');
                 const to = findPort(line.to, port.in, 'in');
@@ -147,16 +179,8 @@ function Renderer(viewport, tooltip, conf, data) {
                     .attr('y1', from.attr('data-y'))
                     .attr('x2', to.attr('data-x'))
                     .attr('y2', to.attr('data-y'))
-                    .style('marker-end', 'url(#arrow)')
-                    .attr("class", "edge")
-                    /* mouse events */
-                    .on("mouseover", () => {
-                        tooltip.style("display", "block")
-                            .html(`${getAttrDesc(port)}`);
-                    })
-                    .on("mouseout", () => {
-                        tooltip.style("display", "none");
-                    });
+                    .style('marker-end', 'url(#arrow)');
+                addHover(e, port);
             });
         } else {
             //draw line node to node
@@ -167,25 +191,20 @@ function Renderer(viewport, tooltip, conf, data) {
                 .attr('y1', parseFloat(from.attr('data-y')) + nodeHeight)
                 .attr('x2', parseFloat(to.attr('data-x')) + nodeWidthHalf)
                 .attr('y2', to.attr('data-y'))
-                .style('marker-end', 'url(#arrow)')
-                .attr("class", "edge")
-                /* mouse events */
-                .on("mouseover", () => {
-                    tooltip.style("display", "block")
-                        .html(`${getAttrDesc(line)}`);
-                })
-                .on("mouseout", () => {
-                    tooltip.style("display", "none");
-                });
+                .style('marker-end', 'url(#arrow)');
+            addHover(e, line);
         }
     };
 
-    let calculatePort = (posX, posY, i) => {
-        const x1 = posX - portWidthHalf;
-        const y1 = posY;
-        const x2 = posX;
-        const y2 = posY + i * portHeight;
-        const x3 = posX + portWidthHalf;
-        return `${x1},${y1} ${x2},${y2}, ${x3},${y1}`
+    let addHover = (tag, o, x, y) => {
+        tag.on("mouseover", () => {
+            tooltip.style("display", "block")
+                .style('left', `${x}px`)
+                .style('top', `${y}px`)
+                .html(`${getAttrDesc(o)}`);
+            })
+            .on("mouseout", () => {
+                tooltip.style("display", "none");
+            });
     };
 }
