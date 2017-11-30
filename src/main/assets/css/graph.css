@@ -4,6 +4,11 @@
     stroke-width: 2;
 }
 
+text {
+    font-size: 0.7em;
+    stroke-width: 1;
+}
+
 .inPort {
     fill: white;
     stroke: black;

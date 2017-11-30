@@ -37,14 +37,11 @@ function Graph(conf, data) {
     const tooltip = d3.select(".tooltip");
     const renderer = new Renderer(viewport, tooltip, conf, data);
 
-    /**
-     * Draws the graph
-     * @param lod level of detail
+    /*
+     * Initializes the graph
      */
-    this.draw = (lod) => {
-        renderer.initNodes(lod);
-        renderer.initEdges(lod);
-    };
+    renderer.initNodes(lod);
+    renderer.initEdges(lod);
 
     /**
      * Updates the graph
