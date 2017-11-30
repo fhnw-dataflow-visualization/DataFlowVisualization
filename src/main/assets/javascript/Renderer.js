@@ -86,7 +86,7 @@ function Renderer(viewport, tooltip, conf, data) {
                 .attr('data-x', node.x + x)
                 .attr('data-y', node.y)
                 .attr('points', calculatePort(x, 0, 1));
-            addHover(g, port, node.x + x + 12, node.y - 73);
+            addHover(g, port);
         });
     };
 
@@ -105,7 +105,7 @@ function Renderer(viewport, tooltip, conf, data) {
                 .attr('data-x', node.x + x)
                 .attr('data-y', node.y + nodeHeight)
                 .attr('points', calculatePort(x, nodeHeight, -1));
-            addHover(g, port, node.x + x + 12, node.y + nodeHeight + 12);
+            addHover(g, port);
         });
     };
 
@@ -196,14 +196,14 @@ function Renderer(viewport, tooltip, conf, data) {
         }
     };
 
-    let addHover = (tag, o, x, y) => {
-        tag.on("mouseover", () => {
+    let addHover = (tag, o) => {
+        tag.on('mousemove', () => {
             tooltip.style("display", "block")
-                .style('left', `${x}px`)
-                .style('top', `${y}px`)
+                .style('left', `${d3.event.pageX + 5}px`)
+                .style('top', `${d3.event.pageY + 5}px`)
                 .html(`${getAttrDesc(o)}`);
             })
-            .on("mouseout", () => {
+            .on('mouseout', () => {
                 tooltip.style("display", "none");
             });
     };
