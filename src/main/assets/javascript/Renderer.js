@@ -203,10 +203,19 @@ function Renderer(viewport, tooltip, conf, data) {
             tooltip.style("display", "block")
                 .style('left', `${d3.event.pageX + 5}px`)
                 .style('top', `${d3.event.pageY + 5}px`)
-                .html(`${getAttrDesc(o)}`);
+                .html(`${getAttrDesc(o)}`)
+                //Add tool tip link
+                .html('<a href= "'+link+'" target="_blank">' + //with a link
+                    formatTime(d.date) +
+                    "</a>" +
+                    "<br/>"  + d.close)
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
         })
             .on('mouseout', () => {
                 tooltip.style("display", "none");
+
+
             });
     };
 }
