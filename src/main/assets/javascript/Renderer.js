@@ -22,6 +22,8 @@ function Renderer(viewport, tooltip, conf, data) {
             const r = n.append("rect")
                 .attr("width", nodeWidth)
                 .attr("height", nodeHeight);
+            if (node['color'])
+                r.style('stroke', `${node.color}`);
             n.append("text")
                 .attr('x', 5)
                 .attr('y', nodeHeightHalf + 5)
@@ -202,7 +204,7 @@ function Renderer(viewport, tooltip, conf, data) {
                 .style('left', `${d3.event.pageX + 5}px`)
                 .style('top', `${d3.event.pageY + 5}px`)
                 .html(`${getAttrDesc(o)}`);
-            })
+        })
             .on('mouseout', () => {
                 tooltip.style("display", "none");
             });
