@@ -1,11 +1,13 @@
 function Layouter(data, width, height) {
     const dg = new dagre.graphlib.Graph();
     dg.setGraph({});
-    dg.setDefaultEdgeLabel(() => { return {} });
+    dg.setDefaultEdgeLabel(() => {
+        return {}
+    });
 
     data.nodes.forEach((n) => {
-        dg['width'] = width;
-        dg['height'] = height;
+        n['width'] = width;
+        n['height'] = height;
         dg.setNode(n.id, n);
     });
     data.edges.forEach((e) => {
