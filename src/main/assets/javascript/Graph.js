@@ -33,8 +33,13 @@ function Graph(conf, data) {
                 }
             }
         }));
-
     const tooltip = d3.select(".tooltip");
+    const layouter = new Layouter(data, conf.node.width, conf.node.height);
+    layouter.layout();
+    data.nodes.forEach((n) => {
+        console.log(JSON.stringify(n));
+    });
+
     const renderer = new Renderer(viewport, tooltip, conf, data);
 
     /*
