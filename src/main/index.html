@@ -15,17 +15,16 @@
 </svg>
 <div class="tooltip" style="display: none">
 </div>
-<script src="https://d3js.org/d3.v4.min.js" type="text/javascript"></script>
-<script src="https://github.com/cpettitt/dagre/blob/master/dist/dagre.min.js" type="text/javascript"></script>
+<script src="./assets/d3v4.min.js" type="text/javascript"></script>
+<script src="./assets/dagre.min.js" type="text/javascript"></script>
 <script src="./assets/javascript/Graph.js" type="text/javascript"></script>
 <script src="./assets/javascript/GraphUtils.js" type="text/javascript"></script>
+<script src="./assets/javascript/Layouter.js" type="text/javascript"></script>
 <script src="./assets/javascript/Renderer.js" type="text/javascript"></script>
 <script>
     const nodes = [];
     nodes.push({
             "name": "START",
-            "x": 400,
-            "y": 200,
             "id": 0,
             "in": [],
             "out": [
@@ -56,8 +55,6 @@
 
         {
             "name": "ialtest_split_images 1",
-            "x": 300,
-            "y": 300,
             "id": 1,
             "in": [
                 {
@@ -92,8 +89,6 @@
         },
         {
             "name": "correct 2",
-            "x": 400,
-            "y": 400,
             "id": 2,
             "in": [
                 {
@@ -137,8 +132,6 @@
         },
         {
             "name": "ialtest_combine_images 3",
-            "x": 400,
-            "y": 500,
             "id": 3,
             "in": [
                 {
@@ -172,8 +165,6 @@
         },
         {
             "name": "END",
-            "x": 400,
-            "y": 600,
             "id": 4,
             "in": [
                 {
@@ -314,7 +305,6 @@
     };
 
     const graph = new Graph(config, {nodes, edges});
-    graph.draw();
 </script>
 </body>
 </html>
