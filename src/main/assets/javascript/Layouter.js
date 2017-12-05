@@ -11,7 +11,7 @@ function Layouter(data, width, height) {
         dg.setNode(n.id, n);
     });
     data.edges.forEach((e) => {
-        dg.setEdge(e.from, e.to);
+        dg.setEdge(e.from, e.to, e);
     });
 
     this.layout = () => {

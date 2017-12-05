@@ -189,10 +189,10 @@ function Renderer(viewport, tooltip, conf, data) {
             const from = findNode(line.from);
             const to = findNode(line.to);
             e.append('line')
-                .attr('x1', parseFloat(from.attr('data-x')) + nodeWidthHalf)
-                .attr('y1', parseFloat(from.attr('data-y')) + nodeHeight)
-                .attr('x2', parseFloat(to.attr('data-x')) + nodeWidthHalf)
-                .attr('y2', to.attr('data-y'))
+                .attr('x1', line.points[0].x)
+                .attr('y1', line.points[0].y)
+                .attr('x2', line.points[line.points.length - 1].x)
+                .attr('y2', line.points[line.points.length - 1].x)
                 .style('marker-end', 'url(#arrow)');
             addHover(e, line);
         }
