@@ -189,10 +189,10 @@ function Renderer(viewport, tooltip, conf, data) {
             const from = findNode(line.from);
             const to = findNode(line.to);
             e.append('line')
-                .attr('x1', line.points[0].x)
-                .attr('y1', line.points[0].y)
-                .attr('x2', line.points[line.points.length - 1].x)
-                .attr('y2', line.points[line.points.length - 1].x)
+                .attr('x1', from.x)
+                .attr('y1', from.y)
+                .attr('x2', to.x)
+                .attr('y2', to.x)
                 .style('marker-end', 'url(#arrow)');
             addHover(e, line);
         }
@@ -207,8 +207,6 @@ function Renderer(viewport, tooltip, conf, data) {
         })
             .on('mouseout'&& 'click', () => {
                 tooltip.style("display", "none");
-
-
             });
     };
 }
