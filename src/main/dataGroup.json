@@ -1,0 +1,257 @@
+{
+  "nodes": [
+    {
+      "name": "START",
+      "id": 0,
+      "in": [],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 0.0"
+          }
+        }
+      ],
+      "attr": {
+        "link": {
+          "url": "hello.html",
+          "text": "example"
+        },
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "map",
+      "id": 1,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 1.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 1.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "A",
+      "id": 2,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 2.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 2.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "B",
+      "id": 3,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 3.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 3.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "reduce",
+      "id": 4,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 4.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 4.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "END",
+      "id": 5,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 5.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "AA",
+        "b": "BB"
+      }
+    }
+  ],
+
+  "edges": [
+    {
+      "id": 0,
+      "from": 0,
+      "to": 1,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "0.0 - 1.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "from": 1,
+      "to": 2,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "1.0 - 2.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "from": 1,
+      "to": 3,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "1.0 - 3.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "from": 1,
+      "to": 4,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "1.0 - 4.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "from": 2,
+      "to": 4,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "2.0 - 4.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "from": 3,
+      "to": 4,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "3.0 - 4.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "from": 4,
+      "to": 5,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "4.0 - 5.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "id": 10,
+      "name": "Group 0",
+      "children": [
+        1, 2, 3, 4
+      ],
+      "attr": {
+        "info": "text"
+      }
+    }
+  ]
+}

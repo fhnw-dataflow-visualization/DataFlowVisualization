@@ -15,10 +15,8 @@ function Renderer(viewport, tooltip, conf, data) {
         viewport.selectAll(".node").data(data.nodes).enter().each((node) => {
             const n = viewport.append("g")
                 .attr('id', `n${node.id}`)
-                .attr('data-x', node.x)
-                .attr('data-y', node.y)
                 .attr("class", "node")
-                .attr("transform", `translate(${node.x},${node.y})`);
+                .attr("transform", `translate(${node.x - nodeWidthHalf},${node.y - nodeHeightHalf})`);
             const r = n.append("rect")
                 .attr("width", nodeWidth)
                 .attr("height", nodeHeight);
@@ -85,8 +83,8 @@ function Renderer(viewport, tooltip, conf, data) {
             const x = (2 * port.port + 1) * sIn * nodeWidth;
             g.append('polygon')
                 .attr('id', `n${node.id}in${port.port}`)
-                .attr('data-x', node.x + x)
-                .attr('data-y', node.y)
+                .attr('data-x', node.x - nodeWidthHalf + x)
+                .attr('data-y', node.y - nodeHeightHalf)
                 .attr('points', calculatePort(x, 0, 1));
             addHover(g, port);
         });
@@ -104,8 +102,8 @@ function Renderer(viewport, tooltip, conf, data) {
             const x = (2 * port.port + 1) * sOut * nodeWidth;
             g.append('polygon')
                 .attr('id', `n${node.id}out${port.port}`)
-                .attr('data-x', node.x + x)
-                .attr('data-y', node.y + nodeHeight)
+                .attr('data-x', node.x - nodeWidthHalf + x)
+                .attr('data-y', node.y + nodeHeightHalf)
                 .attr('points', calculatePort(x, nodeHeight, -1));
             addHover(g, port);
         });
@@ -157,6 +155,7 @@ function Renderer(viewport, tooltip, conf, data) {
         viewport.selectAll(".edge").data(data.edges).each((line) => {
             const g = findEdge(line.id);
             g.selectAll('line').remove();
+            g.selectAll('path').remove();
             drawLines(g, line, lod);
         });
     };
@@ -186,16 +185,22 @@ function Renderer(viewport, tooltip, conf, data) {
             });
         } else {
             //draw line node to node
-            const from = findNode(line.from);
-            const to = findNode(line.to);
-            e.append('line')
-                .attr('x1', from.x)
-                .attr('y1', from.y)
-                .attr('x2', to.x)
-                .attr('y2', to.x)
+            // const from = findNode(line.from);
+            // const to = findNode(line.to);
+            e.append('path')
+                .attr('d', createPath(line.points))
                 .style('marker-end', 'url(#arrow)');
             addHover(e, line);
         }
+    };
+
+    let createPath = (points) => {
+        const path = [];
+        path.push(`M${points[0].x},${points[0].y}`);
+        for (let i = 1; i < points.length; i++) {
+            path.push(`L${points[i].x},${points[i].y}`);
+        }
+        return path.join(' ');
     };
 
     let addHover = (tag, o) => {

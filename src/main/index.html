@@ -35,7 +35,7 @@
         },
         zoom: [0.1, 0.4, 1, 2]
     };
-    d3.json('./data.json', (data) => {
+    d3.json('./dataGroup.json', (data) => {
         const graph = new Graph(config, data);
     });
 

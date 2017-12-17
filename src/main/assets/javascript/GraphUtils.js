@@ -20,9 +20,11 @@ getAttrDesc = (obj) => {
         for (let i = 1; i < len; i++) {
             if (keys[i] === 'link') {
                 const link = attr[keys[i]];
+                // language=HTML
                 description += `<br> <a href='${link.url}'>${link.text}</a>`;
             } else {
-                description += `<br>${keys[i]}: ${attr[keys[i]]}`;
+                // language=HTML
+                description += `<br>${keys[i]}:${attr[keys[i]]}`;
             }
         }
     }

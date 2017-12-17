@@ -34,8 +34,29 @@ function Graph(conf, data) {
             }
         }));
     const tooltip = d3.select(".tooltip");
-    const layouter = new Layouter(data, conf.node.width, conf.node.height);
-    layouter.layout();
+
+    //layout
+    const dg = new dagre.graphlib.Graph({compound: true});
+    dg.setGraph({});
+    dg.setDefaultEdgeLabel(() => {
+        return {}
+    });
+
+    data.nodes.forEach((n) => {
+        n['width'] = conf.node.width;
+        n['height'] = conf.node.height;
+        dg.setNode(n.id, n);
+    });
+    data.edges.forEach((e) => {
+        dg.setEdge(e.from, e.to, e);
+    });
+    // data.groups.forEach((g) => {
+    //     dg.setNode(g.id, g);
+    //     g.children.forEach((child) => {
+    //         dg.setParent(child, g.id);
+    //     });
+    // });
+    dagre.layout(dg);
 
     const renderer = new Renderer(viewport, tooltip, conf, data);
 
@@ -53,5 +74,6 @@ function Graph(conf, data) {
     let update = (lod) => {
         renderer.updateNode(lod);
         renderer.updateEdges(lod);
-    }
+    };
+
 }
