@@ -204,14 +204,25 @@ function Renderer(viewport, tooltip, conf, data) {
     };
 
     let addHover = (tag, o) => {
+
         tag.on('mouseover', () => {
             tooltip.style("display", "block")
                 .style('left', `${d3.event.pageX + 5}px`)
                 .style('top', `${d3.event.pageY + 5}px`)
                 .html(`${getAttrDesc(o)}`);
         })
-            .on('mouseout'&& 'click', () => {
-                tooltip.style("display", "none");
+
+            .on('mouseout', () => {
+                if (o.attr['link']) {
+                    tooltip
+                        .transition()
+                        .duration(1000)
+                        .delay(2000)
+                        .style("display", "none")
+                } else {
+                    tooltip
+                        .style("display", "none")
+                }
             });
     };
 }
