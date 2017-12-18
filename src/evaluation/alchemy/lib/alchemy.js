@@ -2078,7 +2078,7 @@
         drawNode.setInteractions(node);
         return node.exit().remove();
       },
-      updateNode: function(alchemyNode) {
+      updateNodes: function(alchemyNode) {
         var drawNode, node;
         drawNode = this.a.drawing.DrawNode;
         node = this.a.vis.select("#node-" + alchemyNode.id);
@@ -2365,7 +2365,7 @@
         if ((key !== "") && (value !== "")) {
           alchemy._nodes[nodeID].setProperty("" + key, "" + value);
           drawNodes = alchemy._drawNodes;
-          drawNodes.updateNode(alchemy.viz.select("#node-" + nodeID));
+          drawNodes.updateNodes(alchemy.viz.select("#node-" + nodeID));
           if (newProperty === true) {
             alchemy.dash.select("#node-add-prop-key").attr("value", "property added/updated to key: " + key);
             return alchemy.dash.select("#node-add-prop-value").attr("value", "property at " + key + " updated to: " + value);
@@ -2635,7 +2635,7 @@
       var dragLine, editor, selectedElements;
       alchemy.set.state("interactions", "editor");
       dragLine = alchemy.vis.append("line").attr("id", "dragline");
-      this.drawNodes.updateNode(alchemy.node);
+      this.drawNodes.updateNodes(alchemy.node);
       this.drawEdges.updateEdge(alchemy.edge);
       selectedElements = alchemy.vis.selectAll(".selected");
       editor = new alchemy.editor.Editor;
@@ -2659,7 +2659,7 @@
       alchemy.vis.select("#dragline").remove();
       alchemy.dash.select("#node-editor").transition().duration(300).style("opacity", 0);
       alchemy.dash.select("#node-editor").transition().delay(300).attr("class", "hidden");
-      this.drawNodes.updateNode(alchemy.node);
+      this.drawNodes.updateNodes(alchemy.node);
       return alchemy.vis.selectAll(".node").classed({
         "selected": false
       });
@@ -3089,7 +3089,7 @@
           this._style[key] = value;
         }
         this._setD3Properties(this.a.svgStyles.node.populate(this));
-        this.a._drawNodes.updateNode(this._d3);
+        this.a._drawNodes.updateNodes(this._d3);
         return this;
       };
 
