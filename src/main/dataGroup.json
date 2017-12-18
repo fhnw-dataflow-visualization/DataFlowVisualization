@@ -1,8 +1,8 @@
 {
   "nodes": [
     {
-      "name": "START",
       "id": 0,
+      "name": "START",
       "in": [],
       "out": [
         {
@@ -22,104 +22,110 @@
       }
     },
     {
-      "name": "map",
-      "id": 1,
-      "in": [
+      "name": "group",
+      "id": 10,
+      "children": [
         {
-          "port": 0,
+          "id": 1,
+          "name": "map",
+          "in": [
+            {
+              "port": 0,
+              "attr": {
+                "name": "Input 1.0"
+              }
+            }
+          ],
+          "out": [
+            {
+              "port": 0,
+              "attr": {
+                "name": "Output 1.0"
+              }
+            }
+          ],
           "attr": {
-            "name": "Input 1.0"
+            "a": "A",
+            "b": "B"
+          }
+        },
+        {
+          "id": 2,
+          "name": "A",
+          "in": [
+            {
+              "port": 0,
+              "attr": {
+                "name": "Input 2.0"
+              }
+            }
+          ],
+          "out": [
+            {
+              "port": 0,
+              "attr": {
+                "name": "Output 2.0"
+              }
+            }
+          ],
+          "attr": {
+            "a": "A",
+            "b": "B"
+          }
+        },
+        {
+          "id": 3,
+          "name": "B",
+          "in": [
+            {
+              "port": 0,
+              "attr": {
+                "name": "Input 3.0"
+              }
+            }
+          ],
+          "out": [
+            {
+              "port": 0,
+              "attr": {
+                "name": "Output 3.0"
+              }
+            }
+          ],
+          "attr": {
+            "a": "A",
+            "b": "B"
+          }
+        },
+        {
+          "id": 4,
+          "name": "reduce",
+          "in": [
+            {
+              "port": 0,
+              "attr": {
+                "name": "Input 4.0"
+              }
+            }
+          ],
+          "out": [
+            {
+              "port": 0,
+              "attr": {
+                "name": "Output 4.0"
+              }
+            }
+          ],
+          "attr": {
+            "a": "A",
+            "b": "B"
           }
         }
-      ],
-      "out": [
-        {
-          "port": 0,
-          "attr": {
-            "name": "Output 1.0"
-          }
-        }
-      ],
-      "attr": {
-        "a": "A",
-        "b": "B"
-      }
+      ]
     },
     {
-      "name": "A",
-      "id": 2,
-      "in": [
-        {
-          "port": 0,
-          "attr": {
-            "name": "Input 2.0"
-          }
-        }
-      ],
-      "out": [
-        {
-          "port": 0,
-          "attr": {
-            "name": "Output 2.0"
-          }
-        }
-      ],
-      "attr": {
-        "a": "A",
-        "b": "B"
-      }
-    },
-    {
-      "name": "B",
-      "id": 3,
-      "in": [
-        {
-          "port": 0,
-          "attr": {
-            "name": "Input 3.0"
-          }
-        }
-      ],
-      "out": [
-        {
-          "port": 0,
-          "attr": {
-            "name": "Output 3.0"
-          }
-        }
-      ],
-      "attr": {
-        "a": "A",
-        "b": "B"
-      }
-    },
-    {
-      "name": "reduce",
-      "id": 4,
-      "in": [
-        {
-          "port": 0,
-          "attr": {
-            "name": "Input 4.0"
-          }
-        }
-      ],
-      "out": [
-        {
-          "port": 0,
-          "attr": {
-            "name": "Output 4.0"
-          }
-        }
-      ],
-      "attr": {
-        "a": "A",
-        "b": "B"
-      }
-    },
-    {
-      "name": "END",
       "id": 5,
+      "name": "END",
       "in": [
         {
           "port": 0,
@@ -240,18 +246,6 @@
           }
         }
       ]
-    }
-  ],
-  "groups": [
-    {
-      "id": 10,
-      "name": "Group 0",
-      "children": [
-        1, 2, 3, 4
-      ],
-      "attr": {
-        "info": "text"
-      }
     }
   ]
 }

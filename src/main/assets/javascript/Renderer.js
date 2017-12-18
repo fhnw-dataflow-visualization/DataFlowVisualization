@@ -46,6 +46,8 @@ function Renderer(viewport, tooltip, conf, data) {
         });
     };
 
+
+
     /**
      * Updates all nodes in the graph
      * Actually used for changed level of detail
