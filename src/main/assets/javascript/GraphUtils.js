@@ -1,34 +1,26 @@
 /**
- *
- * @param obj
- * @return {string}
+ *Returns the object's attribute object as a html text
+ * @param obj js object
+ * @return {string} attribute description
  */
 getAttrDesc = (obj) => {
-    let description = "";
+    let description = [];
     if (obj['attr']) {
         const attr = obj.attr;
         const keys = Object.keys(attr);
         const len = keys.length;
-        if (len > 0) {
-            if (keys[0] === 'link') {
-                const link = attr[keys[0]];
-                description += `<a href='${link.url}'>${link.text}</a>`;
-            } else {
-                description += `${keys[0]}: ${attr[keys[0]]}`;
-            }
-        }
-        for (let i = 1; i < len; i++) {
+        for (let i = 0; i < len; i++) {
             if (keys[i] === 'link') {
                 const link = attr[keys[i]];
                 // language=HTML
-                description += `<br> <a href='${link.url}'>${link.text}</a>`;
+                description.push(`<a href='${link.url}'>${link.text}</a>`);
             } else {
                 // language=HTML
-                description += `<br>${keys[i]}:${attr[keys[i]]}`;
+                description.push(`${keys[i]}:${attr[keys[i]]}`);
             }
         }
     }
-    return description;
+    return description.join('<br>');
 };
 
 /**

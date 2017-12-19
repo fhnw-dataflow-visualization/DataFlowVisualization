@@ -13,10 +13,29 @@ function Renderer(viewport, tooltip, conf, data) {
      */
     this.initNodes = (lod) => {
         viewport.selectAll(".node").data(data.nodes).enter().each((node) => {
-            const n = viewport.append("g")
+            initNode(node, viewport, 0, 0, lod);
+        });
+    };
+
+    let initNode = (node, parent, x, y, lod) => {
+        if (node['children']) {
+            //group node
+            const n = parent.append("g")
                 .attr('id', `n${node.id}`)
                 .attr("class", "node")
-                .attr("transform", `translate(${node.x - nodeWidthHalf},${node.y - nodeHeightHalf})`);
+                .attr("transform", `translate(${node.x - node.width * 0.5},${node.y - node.height * 0.5})`);
+            const r = n.append("rect")
+                .attr("width", node.width)
+                .attr("height", node.height);
+            node.children.forEach((child) => {
+                initNode(child, n, node.x - node.width * 0.5, node.y - node.height * 0.5, lod);
+            });
+        } else {
+            //normal node
+            const n = parent.append("g")
+                .attr('id', `n${node.id}`)
+                .attr("class", "node")
+                .attr("transform", `translate(${node.x - x - nodeWidthHalf},${node.y - y - nodeHeightHalf})`);
             const r = n.append("rect")
                 .attr("width", nodeWidth)
                 .attr("height", nodeHeight);
@@ -43,17 +62,28 @@ function Renderer(viewport, tooltip, conf, data) {
                     drawOutPort(ports, node);
                 }
             }
-        });
+        }
     };
+
 
     /**
      * Updates all nodes in the graph
      * Actually used for changed level of detail
      * @param lod level of detail
      */
-    this.updateNode = (lod) => {
+    this.updateNodes = (lod) => {
         const n = viewport.selectAll('.node');
         n.data(data.nodes).each((node) => {
+            updateNode(node, lod)
+        });
+    };
+
+    let updateNode = (node, lod) => {
+        if (node['children']) {
+            node.children.forEach((child) => {
+                updateNode(child, lod);
+            });
+        } else {
             const n = findNode(node.id);
             const inPorts = n.select('.inPort');
             const outPorts = n.select('.outPort');
@@ -68,7 +98,7 @@ function Renderer(viewport, tooltip, conf, data) {
                 removePorts(inPorts);
                 removePorts(outPorts);
             }
-        });
+        }
     };
 
     /**
@@ -204,25 +234,22 @@ function Renderer(viewport, tooltip, conf, data) {
     };
 
     let addHover = (tag, o) => {
-
         tag.on('mouseover', () => {
             tooltip.style("display", "block")
                 .style('left', `${d3.event.pageX + 5}px`)
                 .style('top', `${d3.event.pageY + 5}px`)
                 .html(`${getAttrDesc(o)}`);
-        })
-
-            .on('mouseout', () => {
-                if (o.attr['link']) {
-                    tooltip
-                        .transition()
-                        .duration(1000)
-                        .delay(2000)
-                        .style("display", "none")
-                } else {
-                    tooltip
-                        .style("display", "none")
-                }
-            });
+        }).on('mouseout', () => {
+            if (o['attr'] && o.attr['link']) {
+                tooltip
+                    .transition()
+                    .duration(1000)
+                    .delay(2000)
+                    .style("display", "none")
+            } else {
+                tooltip
+                    .style("display", "none")
+            }
+        });
     };
 }

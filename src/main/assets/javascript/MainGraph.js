@@ -1,4 +1,7 @@
 /**
+ * @author Claudio Seitz
+ * @version 1.0
+ *
  * @param conf graph configuration
  * @param data graph data {nodes, edges}
  * @constructor
@@ -34,32 +37,11 @@ function Graph(conf, data) {
             }
         }));
     const tooltip = d3.select(".tooltip");
+    const viewGraph = new ViewGraph(conf, data, viewport, tooltip);
+    viewGraph.layout();
 
-    //layout
-    const dg = new dagre.graphlib.Graph({compound: true});
-    dg.setGraph({});
-    dg.setDefaultEdgeLabel(() => {
-        return {}
-    });
-
-    data.nodes.forEach((n) => {
-        n['width'] = conf.node.width;
-        n['height'] = conf.node.height;
-        dg.setNode(n.id, n);
-    });
-    data.edges.forEach((e) => {
-        dg.setEdge(e.from, e.to, e);
-    });
-    // data.groups.forEach((g) => {
-    //     dg.setNode(g.id, g);
-    //     g.children.forEach((child) => {
-    //         dg.setParent(child, g.id);
-    //     });
-    // });
-    dagre.layout(dg);
 
     const renderer = new Renderer(viewport, tooltip, conf, data);
-
     /*
      * Initializes the graph
      */
@@ -72,7 +54,7 @@ function Graph(conf, data) {
      * @param lod level of detail
      */
     let update = (lod) => {
-        renderer.updateNode(lod);
+        renderer.updateNodes(lod);
         renderer.updateEdges(lod);
     };
 
