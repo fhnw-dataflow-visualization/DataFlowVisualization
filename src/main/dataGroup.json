@@ -94,7 +94,7 @@
       }
     },
     {
-      "name": "reduce",
+      "name": "C",
       "id": 4,
       "in": [
         {
@@ -118,7 +118,7 @@
       }
     },
     {
-      "name": "END",
+      "name": "D",
       "id": 5,
       "in": [
         {
@@ -128,13 +128,300 @@
           }
         }
       ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 5.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "E",
+      "id": 6,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 6.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 6.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "F",
+      "id": 7,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 7.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 7.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "reduce",
+      "id": 8,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 8.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 8.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "reduce",
+      "id": 9,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 9.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 9.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "reduce",
+      "id": 10,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 10.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 10.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "G",
+      "id": 11,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 11.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 11.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "H",
+      "id": 12,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 12.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 12.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "I",
+      "id": 13,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 13.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 13.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "reduce",
+      "id": 14,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 14.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 14.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "J",
+      "id": 15,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 15.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 15.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "reduce",
+      "id": 16,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 16.0"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 16.0"
+          }
+        }
+      ],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "END",
+      "id": 17,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 10.0"
+          }
+        }
+      ],
       "attr": {
         "a": "AA",
         "b": "BB"
       }
     }
   ],
-
   "edges": [
     {
       "id": 0,
@@ -175,7 +462,7 @@
           "out": 0,
           "in": 0,
           "attr": {
-            "name": "1.0 - 3.0",
+            "name": "1.0 - 2.0",
             "data": "Path-to-data-file"
           }
         }
@@ -183,6 +470,21 @@
     },
     {
       "id": 3,
+      "from": 1,
+      "to": 3,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "1.0 - 3.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
       "from": 1,
       "to": 4,
       "ports": [
@@ -197,30 +499,15 @@
       ]
     },
     {
-      "id": 4,
-      "from": 2,
-      "to": 4,
-      "ports": [
-        {
-          "out": 0,
-          "in": 0,
-          "attr": {
-            "name": "2.0 - 4.0",
-            "data": "Path-to-data-file"
-          }
-        }
-      ]
-    },
-    {
       "id": 5,
-      "from": 3,
-      "to": 4,
+      "from": 1,
+      "to": 5,
       "ports": [
         {
           "out": 0,
           "in": 0,
           "attr": {
-            "name": "3.0 - 4.0",
+            "name": "1.0 - 5.0",
             "data": "Path-to-data-file"
           }
         }
@@ -228,26 +515,286 @@
     },
     {
       "id": 6,
-      "from": 4,
-      "to": 5,
+      "from": 1,
+      "to": 6,
       "ports": [
         {
           "out": 0,
           "in": 0,
           "attr": {
-            "name": "4.0 - 5.0",
+            "name": "1.0 - 6.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "from": 1,
+      "to": 7,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "1.0 - 7.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "from": 2,
+      "to": 8,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "2.0 - 8.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "from": 3,
+      "to": 8,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "3.0 - 8.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+
+
+    {
+      "id": 9,
+      "from": 4,
+      "to": 9,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "4.0 - 9.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 9,
+      "from": 5,
+      "to": 9,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "5.0 - 9.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+
+
+
+    {
+      "id": 10,
+      "from": 6,
+      "to": 10,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "6.0 - 10.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 10,
+      "from": 7,
+      "to": 10,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "7.0 - 10.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+
+
+
+    {
+      "id": 11,
+      "from": 8,
+      "to": 11,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "8.0 - 11.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "from": 9,
+      "to": 12,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "9.0 - 12.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+
+
+    {
+      "id": 13,
+      "from": 10,
+      "to": 13,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "10.0 - 13.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 14,
+      "from": 11,
+      "to": 14,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "11.0 -14.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 14,
+      "from": 12,
+      "to": 14,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "12.0 -14.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 15,
+      "from": 14,
+      "to": 15,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "14.0 - 15.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "from": 15,
+      "to": 16,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "15.0 - 16.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "from": 13,
+      "to": 16,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "13.0 - 16.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+
+    {
+      "id": 17,
+      "from": 16,
+      "to": 17,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "16.0 - 17.0",
             "data": "Path-to-data-file"
           }
         }
       ]
     }
   ],
+
   "groups": [
     {
       "id": 10,
       "name": "Group 0",
       "children": [
-        1, 2, 3, 4
+        1,
+        2,
+        3,
+        4
       ],
       "attr": {
         "info": "text"
