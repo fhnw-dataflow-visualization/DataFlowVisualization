@@ -205,22 +205,22 @@ function Renderer(viewport, tooltip, conf, data) {
             e.selectAll('line').data(line.ports).enter().each((port) => {
                 const from = findPort(line.from, port.out, 'out');
                 const to = findPort(line.to, port.in, 'in');
-                e.append('line')
+                const L = e.append('line')
                     .attr('x1', from.attr('data-x'))
                     .attr('y1', from.attr('data-y'))
                     .attr('x2', to.attr('data-x'))
                     .attr('y2', to.attr('data-y'))
                     .style('marker-end', 'url(#arrow)');
-                addHover(e, port);
+                addHover(L, port);
             });
         } else {
             //draw line node to node
             // const from = findNode(line.from);
             // const to = findNode(line.to);
-            e.append('path')
+            const p = e.append('path')
                 .attr('d', createPath(line.points))
                 .style('marker-end', 'url(#arrow)');
-            addHover(e, line);
+            addHover(p, line);
         }
     };
 
@@ -234,22 +234,24 @@ function Renderer(viewport, tooltip, conf, data) {
     };
 
     let addHover = (tag, o) => {
-        tag.on('mouseover', () => {
-            tooltip.style("display", "block")
-                .style('left', `${d3.event.pageX + 5}px`)
-                .style('top', `${d3.event.pageY + 5}px`)
-                .html(`${getAttrDesc(o)}`);
-        }).on('mouseout', () => {
-            if (o['attr'] && o.attr['link']) {
-                tooltip
-                    .transition()
-                    .duration(1000)
-                    .delay(2000)
-                    .style("display", "none")
-            } else {
-                tooltip
-                    .style("display", "none")
-            }
-        });
+        if (o['attr']) {
+            tag.on('mouseover', () => {
+                tooltip.style("display", "block")
+                    .style('left', `${d3.event.pageX + 5}px`)
+                    .style('top', `${d3.event.pageY + 5}px`)
+                    .html(`${getAttrDesc(o)}`);
+            }).on('mouseout', () => {
+                if (o['attr'] && o.attr['link']) {
+                    tooltip
+                        .transition()
+                        .duration(1000)
+                        .delay(2000)
+                        .style("display", "none")
+                } else {
+                    tooltip
+                        .style("display", "none")
+                }
+            });
+        }
     };
 }

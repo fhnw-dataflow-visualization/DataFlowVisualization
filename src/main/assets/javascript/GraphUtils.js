@@ -5,7 +5,6 @@
  */
 getAttrDesc = (obj) => {
     let description = [];
-    if (obj['attr']) {
         const attr = obj.attr;
         const keys = Object.keys(attr);
         const len = keys.length;
@@ -19,7 +18,6 @@ getAttrDesc = (obj) => {
                 description.push(`${keys[i]}:${attr[keys[i]]}`);
             }
         }
-    }
     return description.join('<br>');
 };
 
