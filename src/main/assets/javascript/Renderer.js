@@ -23,7 +23,7 @@ function Renderer(viewport, tooltip, conf, data) {
             const n = parent.append("g")
                 .attr('id', `n${node.id}`)
                 .attr("class", "node")
-                .attr("transform", `translate(${node.x - node.width * 0.5},${node.y - node.height * 0.5})`);
+                .attr("transform", `translate(${node.x - x - node.width * 0.5},${node.y - y - node.height * 0.5})`);
             const r = n.append("rect")
                 .attr("width", node.width)
                 .attr("height", node.height);

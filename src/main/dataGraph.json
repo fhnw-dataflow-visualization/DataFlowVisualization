@@ -23,40 +23,118 @@
     },
     {
       "name": "group",
-      "id": 10,
+      "id": 11,
       "children": [
         {
-          "name": "map",
-          "id": 1,
-          "in": [
+          "name": "group",
+          "id": 10,
+          "children": [
             {
-              "port": 0,
+              "name": "map",
+              "id": 1,
+              "in": [
+                {
+                  "port": 0,
+                  "attr": {
+                    "name": "Input 1.0"
+                  }
+                }
+              ],
+              "out": [
+                {
+                  "port": 0,
+                  "attr": {
+                    "name": "Output 1.0"
+                  }
+                }
+              ],
               "attr": {
-                "name": "Input 1.0"
+                "a": "A",
+                "b": "B"
+              }
+            },
+            {
+              "name": "A",
+              "id": 2,
+              "in": [
+                {
+                  "port": 0,
+                  "attr": {
+                    "name": "Input 2.0"
+                  }
+                }
+              ],
+              "out": [
+                {
+                  "port": 0,
+                  "attr": {
+                    "name": "Output 2.0"
+                  }
+                }
+              ],
+              "attr": {
+                "a": "A",
+                "b": "B"
+              }
+            },
+            {
+              "name": "B",
+              "id": 3,
+              "in": [
+                {
+                  "port": 0,
+                  "attr": {
+                    "name": "Input 3.0"
+                  }
+                }
+              ],
+              "out": [
+                {
+                  "port": 0,
+                  "attr": {
+                    "name": "Output 3.0"
+                  }
+                }
+              ],
+              "attr": {
+                "a": "A",
+                "b": "B"
+              }
+            },
+            {
+              "name": "reduce",
+              "id": 4,
+              "in": [
+                {
+                  "port": 0,
+                  "attr": {
+                    "name": "Input 4.0"
+                  }
+                }
+              ],
+              "out": [
+                {
+                  "port": 0,
+                  "attr": {
+                    "name": "Output 4.0"
+                  }
+                }
+              ],
+              "attr": {
+                "a": "A",
+                "b": "B"
               }
             }
-          ],
-          "out": [
-            {
-              "port": 0,
-              "attr": {
-                "name": "Output 1.0"
-              }
-            }
-          ],
-          "attr": {
-            "a": "A",
-            "b": "B"
-          }
+          ]
         },
         {
-          "name": "A",
-          "id": 2,
+          "name": "C",
+          "id": 6,
           "in": [
             {
               "port": 0,
               "attr": {
-                "name": "Input 2.0"
+                "name": "Input 6.0"
               }
             }
           ],
@@ -64,55 +142,7 @@
             {
               "port": 0,
               "attr": {
-                "name": "Output 2.0"
-              }
-            }
-          ],
-          "attr": {
-            "a": "A",
-            "b": "B"
-          }
-        },
-        {
-          "name": "B",
-          "id": 3,
-          "in": [
-            {
-              "port": 0,
-              "attr": {
-                "name": "Input 3.0"
-              }
-            }
-          ],
-          "out": [
-            {
-              "port": 0,
-              "attr": {
-                "name": "Output 3.0"
-              }
-            }
-          ],
-          "attr": {
-            "a": "A",
-            "b": "B"
-          }
-        },
-        {
-          "name": "reduce",
-          "id": 4,
-          "in": [
-            {
-              "port": 0,
-              "attr": {
-                "name": "Input 4.0"
-              }
-            }
-          ],
-          "out": [
-            {
-              "port": 0,
-              "attr": {
-                "name": "Output 4.0"
+                "name": "Output 6.0"
               }
             }
           ],
@@ -234,13 +264,28 @@
     {
       "id": 6,
       "from": 4,
+      "to": 6,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "4.0 - 6.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "from": 6,
       "to": 5,
       "ports": [
         {
           "out": 0,
           "in": 0,
           "attr": {
-            "name": "4.0 - 5.0",
+            "name": "6.0 - 5.0",
             "data": "Path-to-data-file"
           }
         }

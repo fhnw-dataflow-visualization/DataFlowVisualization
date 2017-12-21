@@ -23,6 +23,9 @@ function ViewGraph(conf, data, viewport, tooltip) {
         if (node['children']){
             //group node
             dg.setNode(node.id, node);
+            if (parent !== null) {
+                dg.setParent(node.id, parent.id);
+            }
             node.children.forEach((child) => {
                 addNode(child, node);
             });
