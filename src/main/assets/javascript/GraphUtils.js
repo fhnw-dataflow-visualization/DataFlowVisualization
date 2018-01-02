@@ -21,6 +21,10 @@ getAttrDesc = (obj) => {
     return description.join('<br>');
 };
 
+toString = (o) => `{id: ${o.id}, name: ${o.name}}`;
+
+edgeToString = (e) => `{id: ${e.id}, from: ${e.from}, to: ${e.to}}`;
+
 /**
  * Finds the node group in DOM
  * @param node node id

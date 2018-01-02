@@ -37393,7 +37393,7 @@ DataGroup.prototype._setRangeDefaults = function (range, defaultMin, defaultMax)
 
   // This is the original way that the default min/max values were adjusted.
   // TODO: Perhaps it's better if an error is thrown if the values do not agree.
-  //       But this will change the behaviour.
+  //       But this will change the view.
   if (range.max <= range.min) range.max = range.min + 1;
 };
 
@@ -44546,7 +44546,7 @@ var LabelSplitter = function () {
    * - if `font.multi : true`, every sequence of spaces is compressed to a single space
    *
    * This might not be the best way to do it, but this is as it has been working till now.
-   * In order not to break existing functionality, for the time being this behaviour will
+   * In order not to break existing functionality, for the time being this view will
    * be retained in any code changes. 
    *
    * @param {string} text  text to split
@@ -48221,7 +48221,7 @@ var BezierEdgeDynamic = function (_BezierEdgeBase) {
       if (this.from === undefined || this.to === undefined || this.options.physics === false) {
         this.via.setOptions({ physics: false });
       } else {
-        // fix weird behaviour where a self referencing node has physics enabled
+        // fix weird view where a self referencing node has physics enabled
         if (this.from.id === this.to.id) {
           this.via.setOptions({ physics: false });
         } else {
@@ -57925,7 +57925,7 @@ var VerticalStrategy = function (_DirectionInterface) {
     key: 'sort',
     value: function sort(nodeArray) {
       nodeArray.sort(function (a, b) {
-        // Test on 'undefined' takes care of divergent behaviour in chrome
+        // Test on 'undefined' takes care of divergent view in chrome
         if (a.x === undefined || b.x === undefined) return 0; // THIS HAPPENS
         return a.x - b.x;
       });
@@ -58023,7 +58023,7 @@ var HorizontalStrategy = function (_DirectionInterface2) {
     key: 'sort',
     value: function sort(nodeArray) {
       nodeArray.sort(function (a, b) {
-        // Test on 'undefined' takes care of divergent behaviour in chrome
+        // Test on 'undefined' takes care of divergent view in chrome
         if (a.y === undefined || b.y === undefined) return 0; // THIS HAPPENS
         return a.y - b.y;
       });

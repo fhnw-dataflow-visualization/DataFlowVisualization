@@ -7,17 +7,22 @@
  * @constructor
  */
 function Graph(conf, data) {
+    this.conf = conf;
+
     const width = conf.width;
     const height = conf.height;
     const zoom = conf.zoom;
 
     let scale = 1;
-    let lod = 2;
+    let lod = 1;
 
     const svg = d3.select("svg")
         .attr("width", width)
         .attr("height", height);
-    const viewport = svg.append('g');
+    const tooltip = d3.select(".tooltip");
+    const viewGraph = new ViewGraph(conf, data);
+    viewGraph.create();
+    let viewport = svg.append('g');
     svg.call(d3.zoom()
         .scaleExtent([zoom[0], zoom[zoom.length - 1]])
         .on('zoom', () => {
@@ -36,17 +41,8 @@ function Graph(conf, data) {
                 }
             }
         }));
-    const tooltip = d3.select(".tooltip");
-    const viewGraph = new ViewGraph(conf, data, viewport, tooltip);
-    viewGraph.layout();
-
-
-    const renderer = new Renderer(viewport, tooltip, conf, data);
-    /*
-     * Initializes the graph
-     */
-    renderer.initNodes(lod);
-    renderer.initEdges(lod);
+    const renderer = new Renderer(this, tooltip);
+    renderer.initGraph(viewport, viewGraph.mdata, lod);
 
     /**
      * Updates the graph
@@ -54,8 +50,15 @@ function Graph(conf, data) {
      * @param lod level of detail
      */
     let update = (lod) => {
-        renderer.updateNodes(lod);
-        renderer.updateEdges(lod);
+        renderer.updateNodes(viewport, lod);
+        renderer.updateEdges(viewport, lod);
+    };
+
+    this.updateGroup = (group) => {
+        console.log(`Updated group ${group}`);
+        viewport.selectAll('*').remove();
+        viewGraph.create();
+        renderer.initGraph(viewport, viewGraph.mdata, lod);
     };
 
 }
