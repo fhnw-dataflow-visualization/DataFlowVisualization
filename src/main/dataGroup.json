@@ -957,21 +957,6 @@
       ]
     },
     {
-      "id": 21,
-      "from": 17,
-      "to": 20,
-      "ports": [
-        {
-          "out": 0,
-          "in": 0,
-          "attr": {
-            "name": "17.0 - 20.0",
-            "data": "Path-to-data-file"
-          }
-        }
-      ]
-    },
-    {
       "id": 22,
       "from": 16,
       "to": 19,

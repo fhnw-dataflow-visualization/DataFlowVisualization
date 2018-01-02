@@ -1,4 +1,5 @@
-function Renderer(viewport, tooltip, conf, data) {
+function Renderer(mg, tooltip) {
+    const conf = mg.conf;
     const nodeWidth = conf.node.width;
     const nodeWidthHalf = nodeWidth / 2;
     const nodeHeight = conf.node.height;
@@ -7,13 +8,17 @@ function Renderer(viewport, tooltip, conf, data) {
     const portWidthHalf = portWidth / 2;
     const portHeight = conf.port.height;
 
-    /**
-     * Initializes all nodes in the graph
-     * @param lod level of detail
-     */
-    this.initNodes = (lod) => {
+    this.initGraph = (viewport, data, lod) => {
+        //init nodes
         viewport.selectAll(".node").data(data.nodes).enter().each((node) => {
             initNode(node, viewport, 0, 0, lod);
+        });
+        //init edges
+        viewport.selectAll(".edge").data(data.edges).enter().each((line) => {
+            const g = viewport.append('g')
+                .attr('id', `e${line.id}`)
+                .attr('class', 'edge');
+            drawLines(g, line, lod);
         });
     };
 
@@ -27,9 +32,25 @@ function Renderer(viewport, tooltip, conf, data) {
             const r = n.append("rect")
                 .attr("width", node.width)
                 .attr("height", node.height);
-            node.children.forEach((child) => {
-                initNode(child, n, node.x - node.width * 0.5, node.y - node.height * 0.5, lod);
-            });
+            const circle = n.append("circle")
+                .attr("cx", node.width - 20)
+                .attr("cy", 20)
+                .attr("r", 10)
+                .attr("class", "groupF");
+            if (node.view === 'expanded') {
+                node.children.forEach((child) => {
+                    initNode(child, n, node.x - node.width * 0.5, node.y - node.height * 0.5, lod);
+                });
+                circle.on('click', () => {
+                    node.view = 'collapsed';
+                    mg.updateGroup(node);
+                });
+            } else {
+                circle.on('click', () => {
+                    node.view = 'expanded';
+                    mg.updateGroup(node);
+                });
+            }
         } else {
             //normal node
             const n = parent.append("g")
@@ -69,9 +90,10 @@ function Renderer(viewport, tooltip, conf, data) {
     /**
      * Updates all nodes in the graph
      * Actually used for changed level of detail
+     * @param viewport <g> viewport
      * @param lod level of detail
      */
-    this.updateNodes = (lod) => {
+    this.updateNodes = (viewport, lod) => {
         const n = viewport.selectAll('.node');
         n.data(data.nodes).each((node) => {
             updateNode(node, lod)
@@ -164,24 +186,12 @@ function Renderer(viewport, tooltip, conf, data) {
     };
 
     /**
-     * Initializes all edges in the graph
-     * @param lod level of detail
-     */
-    this.initEdges = (lod) => {
-        viewport.selectAll(".edge").data(data.edges).enter().each((line) => {
-            const g = viewport.append('g')
-                .attr('id', `e${line.id}`)
-                .attr('class', 'edge');
-            drawLines(g, line, lod);
-        });
-    };
-
-    /**
      * Updates all edges in the graph
      * Actually used for changed level of detail
+     * @param viewport <g> viewport
      * @param lod level of detail
      */
-    this.updateEdges = (lod) => {
+    this.updateEdges = (viewport,  lod) => {
         viewport.selectAll(".edge").data(data.edges).each((line) => {
             const g = findEdge(line.id);
             g.selectAll('line').remove();
@@ -200,28 +210,34 @@ function Renderer(viewport, tooltip, conf, data) {
      * @param lod level of detail
      */
     let drawLines = (e, line, lod) => {
-        if (lod === 2 && line['ports']) {
-            //draw multi lines port-to-port
-            e.selectAll('line').data(line.ports).enter().each((port) => {
-                const from = findPort(line.from, port.out, 'out');
-                const to = findPort(line.to, port.in, 'in');
-                const L = e.append('line')
-                    .attr('x1', from.attr('data-x'))
-                    .attr('y1', from.attr('data-y'))
-                    .attr('x2', to.attr('data-x'))
-                    .attr('y2', to.attr('data-y'))
-                    .style('marker-end', 'url(#arrow)');
-                addHover(L, port);
-            });
-        } else {
+        // if (lod === 2 && line['ports']) {
+        //     //draw multi lines port-to-port
+        //     e.selectAll('line').data(line.ports).enter().each((port) => {
+        //         const from = findPort(line.from, port.out, 'out');
+        //         const to = findPort(line.to, port.in, 'in');
+        //         const L = e.append('line')
+        //             .attr('x1', from.attr('data-x'))
+        //             .attr('y1', from.attr('data-y'))
+        //             .attr('x2', to.attr('data-x'))
+        //             .attr('y2', to.attr('data-y'))
+        //             .style('marker-end', 'url(#arrow)');
+        //         addHover(L, port);
+        //     });
+        // } else {
             //draw line node to node
             // const from = findNode(line.from);
             // const to = findNode(line.to);
-            const p = e.append('path')
-                .attr('d', createPath(line.points))
-                .style('marker-end', 'url(#arrow)');
-            addHover(p, line);
-        }
+            //todo remove debug
+            if(!line['points']) {
+                console.log(`No points at edge: ${toString(line)}`)
+            } else {
+                const p = e.append('path')
+                    .attr('d', createPath(line.points))
+                    .style('marker-end', 'url(#arrow)');
+                addHover(p, line);
+            }
+
+        // }
     };
 
     let createPath = (points) => {
