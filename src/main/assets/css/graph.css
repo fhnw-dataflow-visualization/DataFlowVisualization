@@ -1,7 +1,14 @@
-.node {
-    fill: white;
+.nodes {
     stroke: black;
     stroke-width: 2;
+}
+
+.nodes .node {
+    fill: white;
+}
+
+.nodes .group {
+    fill: #FFEEEE;
 }
 
 .groupF {

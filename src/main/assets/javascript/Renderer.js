@@ -27,11 +27,12 @@ function Renderer(mg, tooltip) {
             //group node
             const n = parent.append("g")
                 .attr('id', `n${node.id}`)
-                .attr("class", "node")
+                .attr("class", "nodes")
                 .attr("transform", `translate(${node.x - x - node.width * 0.5},${node.y - y - node.height * 0.5})`);
             const r = n.append("rect")
                 .attr("width", node.width)
-                .attr("height", node.height);
+                .attr("height", node.height)
+                .attr("class", "group");
             const circle = n.append("circle")
                 .attr("cx", node.width - 20)
                 .attr("cy", 20)
@@ -55,11 +56,12 @@ function Renderer(mg, tooltip) {
             //normal node
             const n = parent.append("g")
                 .attr('id', `n${node.id}`)
-                .attr("class", "node")
+                .attr("class", "nodes")
                 .attr("transform", `translate(${node.x - x - nodeWidthHalf},${node.y - y - nodeHeightHalf})`);
             const r = n.append("rect")
                 .attr("width", nodeWidth)
-                .attr("height", nodeHeight);
+                .attr("height", nodeHeight)
+                .attr("class", "node");
             if (node['color'])
                 r.style('stroke', `${node.color}`);
             n.append("text")
