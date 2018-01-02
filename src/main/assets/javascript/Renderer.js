@@ -8,6 +8,13 @@ function Renderer(mg, tooltip) {
     const portWidthHalf = portWidth / 2;
     const portHeight = conf.port.height;
 
+    /**
+     * Creates the dom graph and appends it on the viewport element
+     *
+     * @param viewport <g> viewport element
+     * @param data aligned graph data {node: [], edges: []}
+     * @param lod init level of detail
+     */
     this.initGraph = (viewport, data, lod) => {
         //init nodes
         viewport.selectAll(".node").data(data.nodes).enter().each((node) => {
@@ -39,14 +46,16 @@ function Renderer(mg, tooltip) {
                 .attr("r", 10)
                 .attr("class", "groupF");
             if (node.view === 'expanded') {
-                node.children.forEach((child) => {
-                    initNode(child, n, node.x - node.width * 0.5, node.y - node.height * 0.5, lod);
-                });
+                //expanded group
                 circle.on('click', () => {
                     node.view = 'collapsed';
                     mg.updateGroup(node);
                 });
+                node.children.forEach((child) => {
+                    initNode(child, n, node.x - node.width * 0.5, node.y - node.height * 0.5, lod);
+                });
             } else {
+                //reduced group
                 circle.on('click', () => {
                     node.view = 'expanded';
                     mg.updateGroup(node);
@@ -242,6 +251,12 @@ function Renderer(mg, tooltip) {
         // }
     };
 
+    /**
+     * Creates a svg path according to the point array
+     *
+     * @param points point array
+     * @return {string} svg path
+     */
     let createPath = (points) => {
         const path = [];
         path.push(`M${points[0].x},${points[0].y}`);
@@ -251,6 +266,11 @@ function Renderer(mg, tooltip) {
         return path.join(' ');
     };
 
+    /**
+     * Adds hover function to a tag using field attr of o
+     * @param tag dom element
+     * @param o js object
+     */
     let addHover = (tag, o) => {
         if (o['attr']) {
             tag.on('mouseover', () => {

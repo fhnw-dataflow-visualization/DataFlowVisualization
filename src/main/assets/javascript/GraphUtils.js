@@ -21,8 +21,16 @@ getAttrDesc = (obj) => {
     return description.join('<br>');
 };
 
+/**
+ * Returns an object as string, containing id and name
+ * @param o object to stringify
+ */
 toString = (o) => `{id: ${o.id}, name: ${o.name}}`;
 
+/**
+ * Returns an edge as string, containing id, from and to
+ * @param e edge to stringify
+ */
 edgeToString = (e) => `{id: ${e.id}, from: ${e.from}, to: ${e.to}}`;
 
 /**

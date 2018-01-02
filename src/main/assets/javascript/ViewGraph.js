@@ -2,16 +2,33 @@
  * @author Claudio Seitz
  * @version 1.0
  *
+ * Layouts the graph and stores the modification on this graph
+ *
  * @param conf graph configuration
- * @param data graph data {nodes, edges}
+ * @param data main graph data {nodes, edges}
  * @constructor
  */
 function ViewGraph(conf, data) {
-    let dg;
+    let dg; //internal dagre graph used to layout the graph
     let idEdges;
+    /**
+     * Stores hidden node ids
+     * Each node id refers to its root node id
+     * @type {{}}
+     */
     this.mod = {};
+    /**
+     * Stores the selected (modified) graph, used for further rendering
+     * @type {{nodes: Array, edges: Array}}
+     */
     this.mdata = {nodes: [], edges: []};
 
+    /**
+     * Creates a graph in dagre, depended if groups are expanded or reduced
+     * Layouts this created graph
+     * Hidden node ids are stored in {@link mod}
+     * Modified graph elements are stored in {@link mdata}
+     */
     this.create = () => {
         idEdges = {};
         this.mdata.nodes = [];
@@ -33,21 +50,22 @@ function ViewGraph(conf, data) {
 
     /**
      * Recursive function to add grouped graph to dagre
+     * @param rootId id of the root node of a collapse, only used for hidden children
      * @param node current js node
      * @param parent parent js node
      */
-    let addNode = (node, parent, rootid) => {
+    let addNode = (node, parent, rootId) => {
         //check node id
         if (dg.hasNode(`${node.id}`)) {
             throw new Error(`Id of node: ${toString(node)} is already in use from node: ${toString(dg.node(node.id))}`);
         }
 
-        if (rootid !== undefined) {
+        if (rootId !== undefined) {
             //replacement for edges to children
-            this.mod[`${node.id}`] = rootid;
+            this.mod[`${node.id}`] = rootId;
             if (node['children']) {
                 node.children.forEach((child) => {
-                    addNode(child, node, rootid);
+                    addNode(child, node, rootId);
                 });
             }
         } else {
@@ -62,8 +80,8 @@ function ViewGraph(conf, data) {
                 //group node
                 if (!node['view']) {
                     node['view'] = 'expanded';
-                } else if (node['view'] !== 'expanded' && node['view'] !== 'collapsed') {
-                    throw new Error(`node attribute \'view\' is not \'expanded\' or \'collapsed\' at node: ${toString(node)}`);
+                } else if (node['view'] !== 'expanded' && node['view'] !== 'reduced') {
+                    throw new Error(`node attribute \'view\' is not \'expanded\' or \'reduced\' at node: ${toString(node)}`);
                 }
 
                 if (node['view'] === 'expanded') {
@@ -85,6 +103,10 @@ function ViewGraph(conf, data) {
         }
     };
 
+    /**
+     * Adds an edge to the dagre graph
+     * @param e current js edge
+     */
     let addEdge = (e) => {
         if (idEdges[`${e.id}`]) {
             throw new Error(`Id of edge: ${edgeToString(e)} is already in use from edge: ${idEdges[`${e.id}`]}.`);

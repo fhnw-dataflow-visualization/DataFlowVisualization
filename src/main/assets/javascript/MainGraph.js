@@ -54,8 +54,13 @@ function Graph(conf, data) {
         renderer.updateEdges(viewport, lod);
     };
 
+    //todo improve update group, not entire graph
+    /**
+     * Update the group in the graph
+     * @param group group node
+     */
     this.updateGroup = (group) => {
-        console.log(`Updated group ${group}`);
+        console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
         viewport.selectAll('*').remove();
         viewGraph.create();
         renderer.initGraph(viewport, viewGraph.mdata, lod);
