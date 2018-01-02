@@ -27,6 +27,11 @@ function Renderer(viewport, tooltip, conf, data) {
             const r = n.append("rect")
                 .attr("width", node.width)
                 .attr("height", node.height);
+            const c = n.append("circle")
+                .attr("cx", node.width - 20)
+                .attr("cy", 20)
+                .attr("r", 10)
+                .attr("class", "groupF");
             node.children.forEach((child) => {
                 initNode(child, n, node.x - node.width * 0.5, node.y - node.height * 0.5, lod);
             });
