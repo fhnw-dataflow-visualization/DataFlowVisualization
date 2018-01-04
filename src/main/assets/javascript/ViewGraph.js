@@ -120,5 +120,33 @@ function ViewGraph(conf, data) {
         }
     };
 
+    // this.updateGroup = (group) => {
+    //     if (group['view'] === 'expanded') {
+    //         // expandGroup(child, group.id);
+    //     } else {
+    //         group.children.forEach((child) => {
+    //             reduceGroup(group, group.id)
+    //         });
+    //     }
+    //     dagre.layout(dg);
+    // };
+    //
+    // let reduceGroup = (node, rootId) => {
+    //     this.mod[`${node.id}`] = rootId;
+    //     dg.
+    //     dg.removeNode(node.id);
+    //     if (node['children']) {
+    //         node.children.forEach((child) => {
+    //             reduceGroup(child, rootId);
+    //         });
+    //     }
+    // };
+    //
+    // let expandGroup = (group) => {
+    //     // group.children.forEach((child) => {
+    //     //
+    //     // });
+    // };
+
     this.create();
 }

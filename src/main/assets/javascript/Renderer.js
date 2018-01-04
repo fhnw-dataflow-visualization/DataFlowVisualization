@@ -48,7 +48,7 @@ function Renderer(mg, tooltip) {
             if (node.view === 'expanded') {
                 //expanded group
                 circle.on('click', () => {
-                    node.view = 'collapsed';
+                    node.view = 'reduced';
                     mg.updateGroup(node);
                 });
                 node.children.forEach((child) => {
