@@ -33,8 +33,15 @@ function ViewGraph(conf, data) {
         idEdges = {};
         this.mdata.nodes = [];
         this.mdata.edges = [];
-        dg = new dagre.graphlib.Graph({compound: true});
-        dg.setGraph({});
+        dg = new dagre.graphlib.Graph({
+            directed: true,
+            compound: true,
+            multigraph: true
+        });
+        //todo calculate exact value
+        dg.setGraph({
+            edgesep: conf.port.width * 5
+        });
         dg.setDefaultEdgeLabel(() => {
             return {}
         });
@@ -115,7 +122,15 @@ function ViewGraph(conf, data) {
         const to = dg.hasNode(e.to) ? e.to : this.mod[`${e.to}`];
         if (from !== to && !dg.hasEdge(from, to)) {
             idEdges[`${e.id}`] = edgeToString(e);
-            dg.setEdge(from, to, e);
+
+            //todo
+            if (e['ports']){
+                e.ports.forEach((port) => {
+                    dg.setEdge(from, to, port, `${e.id}.${port.out}.${port.in}`);
+                });
+            } else {
+                dg.setEdge(from, to, e);
+            }
             this.mdata.edges.push(e);
         }
     };
@@ -147,6 +162,4 @@ function ViewGraph(conf, data) {
     //     //
     //     // });
     // };
-
-    this.create();
 }

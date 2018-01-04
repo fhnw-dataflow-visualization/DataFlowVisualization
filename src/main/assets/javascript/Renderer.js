@@ -202,7 +202,7 @@ function Renderer(mg, tooltip) {
      * @param viewport <g> viewport
      * @param lod level of detail
      */
-    this.updateEdges = (viewport,  lod) => {
+    this.updateEdges = (viewport, lod) => {
         viewport.selectAll(".edge").data(data.edges).each((line) => {
             const g = findEdge(line.id);
             g.selectAll('line').remove();
@@ -222,32 +222,20 @@ function Renderer(mg, tooltip) {
      */
     let drawLines = (e, line, lod) => {
         // if (lod === 2 && line['ports']) {
-        //     //draw multi lines port-to-port
-        //     e.selectAll('line').data(line.ports).enter().each((port) => {
-        //         const from = findPort(line.from, port.out, 'out');
-        //         const to = findPort(line.to, port.in, 'in');
-        //         const L = e.append('line')
-        //             .attr('x1', from.attr('data-x'))
-        //             .attr('y1', from.attr('data-y'))
-        //             .attr('x2', to.attr('data-x'))
-        //             .attr('y2', to.attr('data-y'))
-        //             .style('marker-end', 'url(#arrow)');
-        //         addHover(L, port);
-        //     });
-        // } else {
-            //draw line node to node
-            // const from = findNode(line.from);
-            // const to = findNode(line.to);
-            //todo remove debug
-            if(!line['points']) {
-                console.log(`No points at edge: ${toString(line)}`)
-            } else {
+            //draw multi lines port-to-port
+            e.selectAll('line').data(line.ports).enter().each((port) => {
+                // const from = findPort(line.from, port.out, 'out');
+                // const to = findPort(line.to, port.in, 'in');
                 const p = e.append('path')
-                    .attr('d', createPath(line.points))
+                    .attr('d', createPath(port.points))
                     .style('marker-end', 'url(#arrow)');
-                addHover(p, line);
-            }
-
+                addHover(p, port);
+            });
+        // } else {
+        //     const p = e.append('path')
+        //         .attr('d', createPath(line.points))
+        //         .style('marker-end', 'url(#arrow)');
+        //     addHover(p, line);
         // }
     };
 

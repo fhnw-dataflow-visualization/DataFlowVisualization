@@ -1,0 +1,81 @@
+{
+  "nodes": [
+    {
+      "name": "START",
+      "id": 0,
+      "in": [],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 0"
+          }
+        },
+        {
+          "port": 1,
+          "attr": {
+            "name": "Output 1"
+          }
+        }
+      ],
+      "sub": [],
+      "attr": {
+        "link": {
+          "url": "hello.html",
+          "text": "example"
+        },
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "END",
+      "id": 1,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 0"
+          }
+        },
+        {
+          "port": 1,
+          "attr": {
+            "name": "Input 1"
+          }
+        }
+      ],
+      "out": [],
+      "sub": [],
+      "attr": {
+        "a": "AA",
+        "b": "BB"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": 0,
+      "from": 0,
+      "to": 1,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "0.0 - 1.0",
+            "data": "Path-to-data-file"
+          }
+        },
+        {
+          "out": 1,
+          "in": 1,
+          "attr": {
+            "name": "0.1 - 1.1",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    }
+  ]
+}
