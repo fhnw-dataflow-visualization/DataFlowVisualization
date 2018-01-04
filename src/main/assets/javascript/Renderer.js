@@ -82,7 +82,7 @@ function Renderer(mg, tooltip) {
             if (node['in']) {
                 const ports = n.append('g')
                     .attr('class', 'inPort');
-                if (lod === 2 && node.in.length > 0) {
+                if (lod === 2) {
                     drawInPort(ports, node);
                 }
             }
@@ -90,7 +90,7 @@ function Renderer(mg, tooltip) {
             if (node['out']) {
                 const ports = n.append('g')
                     .attr('class', 'outPort');
-                if (lod === 2 && node.out.length > 0) {
+                if (lod === 2) {
                     drawOutPort(ports, node);
                 }
             }
@@ -104,9 +104,9 @@ function Renderer(mg, tooltip) {
      * @param viewport <g> viewport
      * @param lod level of detail
      */
-    this.updateNodes = (viewport, lod) => {
-        const n = viewport.selectAll('.node');
-        n.data(data.nodes).each((node) => {
+    this.updateNodes = (viewport, nodes, lod) => {
+        const n = viewport.selectAll('.nodes');
+        n.data(nodes).each((node) => {
             updateNode(node, lod)
         });
     };
@@ -140,17 +140,17 @@ function Renderer(mg, tooltip) {
      * @param node js node
      */
     let drawInPort = (g, node) => {
-        const inLength = node.in.length;
-        const sIn = 1 / (2 * inLength);
-        g.selectAll('polygon').data(node.in).enter().each((port) => {
-            const x = (2 * port.port + 1) * sIn * nodeWidth;
-            g.append('polygon')
-                .attr('id', `n${node.id}in${port.port}`)
-                .attr('data-x', node.x - nodeWidthHalf + x)
-                .attr('data-y', node.y - nodeHeightHalf)
-                .attr('points', calculatePort(x, 0, 1));
-            addHover(g, port);
-        });
+        for (let key in node.in){
+            if (node.in.hasOwnProperty(key)) {
+                const port = node.in[key];
+                const x = port.anchor.x - node.x + nodeWidthHalf;
+                const y = port.anchor.y - node.y + nodeHeightHalf;
+                g.append('polygon')
+                    .attr('id', `n${node.id}in${port.port}`)
+                    .attr('points', calculatePort(x, y, 1));
+                addHover(g, port);
+            }
+        }
     };
 
     /**
@@ -159,17 +159,17 @@ function Renderer(mg, tooltip) {
      * @param node js node
      */
     let drawOutPort = (g, node) => {
-        const outLength = node.out.length;
-        const sOut = 1 / (2 * outLength);
-        g.selectAll('polygon').data(node.out).enter().each((port) => {
-            const x = (2 * port.port + 1) * sOut * nodeWidth;
-            g.append('polygon')
-                .attr('id', `n${node.id}out${port.port}`)
-                .attr('data-x', node.x - nodeWidthHalf + x)
-                .attr('data-y', node.y + nodeHeightHalf)
-                .attr('points', calculatePort(x, nodeHeight, -1));
-            addHover(g, port);
-        });
+        for (let key in node.out) {
+            if (node.out.hasOwnProperty(key)) {
+                const port = node.out[key];
+                const x = port.anchor.x - node.x + nodeWidthHalf;
+                const y = port.anchor.y - node.y + nodeHeightHalf;
+                g.append('polygon')
+                    .attr('id', `n${node.id}out${port.port}`)
+                    .attr('points', calculatePort(x, y, -1));
+                addHover(g, port);
+            }
+        }
     };
 
     /**
@@ -202,8 +202,8 @@ function Renderer(mg, tooltip) {
      * @param viewport <g> viewport
      * @param lod level of detail
      */
-    this.updateEdges = (viewport, lod) => {
-        viewport.selectAll(".edge").data(data.edges).each((line) => {
+    this.updateEdges = (viewport, edges, lod) => {
+        viewport.selectAll(".edge").data(edges).each((line) => {
             const g = findEdge(line.id);
             g.selectAll('line').remove();
             g.selectAll('path').remove();

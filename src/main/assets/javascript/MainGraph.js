@@ -14,7 +14,7 @@ function Graph(conf, data) {
     const zoom = conf.zoom;
 
     let scale = 1;
-    let lod = 1;
+    let lod = 2;
 
     const svg = d3.select("svg")
         .attr("width", width)
@@ -49,10 +49,10 @@ function Graph(conf, data) {
      * Actually used for changed lod
      * @param lod level of detail
      */
-    let update = (lod) => {
-        renderer.updateNodes(viewport, lod);
-        renderer.updateEdges(viewport, lod);
-    };
+    // let update = (lod) => {
+    //     renderer.updateNodes(viewport, viewGraph.mdata.nodes, lod);
+    //     renderer.updateEdges(viewport, viewGraph.mdata.edges, lod);
+    // };
 
     //todo improve update group, not entire graph
     /**

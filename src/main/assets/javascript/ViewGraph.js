@@ -33,6 +33,7 @@ function ViewGraph(conf, data) {
         idEdges = {};
         this.mdata.nodes = [];
         this.mdata.edges = [];
+        //configure dagre graph
         dg = new dagre.graphlib.Graph({
             directed: true,
             compound: true,
@@ -45,14 +46,30 @@ function ViewGraph(conf, data) {
         dg.setDefaultEdgeLabel(() => {
             return {}
         });
-
-        data.nodes.forEach((n) => {
-            addNode(n, null);
+        // select elements from main graph to show
+        data.nodes.forEach((node) => {
+            addNode(node, null);
         });
-        data.edges.forEach((e) => {
-            addEdge(e);
+        data.edges.forEach((edge) => {
+            addEdge(edge);
         });
+        //layout graph
         dagre.layout(dg);
+        //layout ports of each node
+        data.edges.forEach((edge) => {
+            if (edge['ports']) {
+                const fromId = edge.from;
+                const toId = edge.to;
+                edge.ports.forEach((port) => {
+                    const from = dg.node(fromId);
+                    const outPort = from.out[port.out];
+                    outPort['anchor'] = port.points[0];
+                    const to = dg.node(toId);
+                    const inPort = to.in[port.in];
+                    inPort['anchor'] = port.points[port.points.length - 1];
+                });
+            }
+        });
     };
 
     /**

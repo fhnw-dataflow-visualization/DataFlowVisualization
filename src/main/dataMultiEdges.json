@@ -3,22 +3,18 @@
     {
       "name": "START",
       "id": 0,
-      "in": [],
-      "out": [
-        {
-          "port": 0,
+      "out": {
+        "0": {
           "attr": {
             "name": "Output 0"
           }
         },
-        {
-          "port": 1,
+        "1": {
           "attr": {
             "name": "Output 1"
           }
         }
-      ],
-      "sub": [],
+      },
       "attr": {
         "link": {
           "url": "hello.html",
@@ -31,22 +27,18 @@
     {
       "name": "END",
       "id": 1,
-      "in": [
-        {
-          "port": 0,
+      "in": {
+        "0": {
           "attr": {
             "name": "Input 0"
           }
         },
-        {
-          "port": 1,
+        "1": {
           "attr": {
             "name": "Input 1"
           }
         }
-      ],
-      "out": [],
-      "sub": [],
+      },
       "attr": {
         "a": "AA",
         "b": "BB"
