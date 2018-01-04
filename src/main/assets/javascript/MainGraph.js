@@ -33,28 +33,20 @@ function Graph(conf, data) {
                 if (scale < zoom[lod]) {
                     lod--;
                     console.log(`scale: ${scale}\nlevel of detail: ${lod}`);
-                    update(lod);
+                    this.updateLod(lod);
                 } else if (scale >= zoom[lod + 1] && lod < zoom.length - 2) {
                     lod++;
                     console.log(`scale: ${scale}\nlevel of detail: ${lod}`);
-                    update(lod);
+                    this.updateLod(lod);
                 }
             }
         }));
-    const renderer = new Renderer(this, tooltip);
-    renderer.initGraph(viewport, viewGraph.mdata, lod);
+    const renderer = new Renderer(this, viewport, tooltip);
+    renderer.initGraph(viewGraph.mdata, lod);
 
-    /**
-     * Updates the graph
-     * Actually used for changed lod
-     * @param lod level of detail
-     */
-    // let update = (lod) => {
-    //     renderer.updateNodes(viewport, viewGraph.mdata.nodes, lod);
-    //     renderer.updateEdges(viewport, viewGraph.mdata.edges, lod);
-    // };
 
-    //todo improve update group, not entire graph
+    this.updateLod = (lod) => renderer.updateLod(lod);
+
     /**
      * Update the group in the graph
      * @param group group node
@@ -63,7 +55,7 @@ function Graph(conf, data) {
         console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
         viewport.selectAll('*').remove();
         viewGraph.create();
-        renderer.initGraph(viewport, viewGraph.mdata, lod);
+        renderer.initGraph(viewGraph.mdata, lod);
     };
 
 }
