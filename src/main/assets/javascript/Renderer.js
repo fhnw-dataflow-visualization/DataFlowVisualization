@@ -22,11 +22,11 @@ function Renderer(mg, tooltip) {
     this.renderDetailed = (data, root0, root1, root2) => {
         //init nodes
         data.nodes.forEach((node) => {
-            initNode(node, root0, root1, 0, 0, 2);
+            initNode(node, root0, root2, 0, 0, 2);
         });
         //init edges
         data.edges.forEach((edge) => {
-            initEdges(edge, root2, root1, 2);
+            initEdges(edge, root1, root2, 2);
         });
     };
 

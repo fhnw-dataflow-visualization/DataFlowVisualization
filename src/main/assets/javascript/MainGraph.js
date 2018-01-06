@@ -42,19 +42,19 @@ function Graph(conf, data) {
                 scale = e.k;
                 if (scale < zoom[lod]) {
                     lod--;
-                    console.log(`scale: ${scale}\nlevel of detail: ${lod}`);
+                    console.log(`Changed level of detail to: ${lod}\nscale: ${scale}`);
                     this.updateLod(lod);
                 } else if (scale >= zoom[lod + 1] && lod < zoom.length - 2) {
                     lod++;
-                    console.log(`scale: ${scale}\nlevel of detail: ${lod}`);
+                    console.log(`Changed level of detail to: ${lod}\nscale: ${scale}`);
                     this.updateLod(lod);
                 }
             }
         }));
 
     this.updateLod = (lod) => {
-        view1.style('display', lod === 2 ? 'block' : 'none');
-        view2.style('display', lod === 2 ? 'none' : 'block');
+        view1.style('display', lod === 2 ? 'none' : 'block');
+        view2.style('display', lod === 2 ? 'block' : 'none');
     };
 
     /**
