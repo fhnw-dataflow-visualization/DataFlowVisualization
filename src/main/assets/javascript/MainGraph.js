@@ -14,23 +14,25 @@ function Graph(conf, data) {
     const zoom = conf.zoom;
 
     let scale = 1;
-    // let lod = 2;
-    let lod = 1;
+    let lod = 2;
+    // let lod = 1;
 
     const svg = d3.select("svg")
         .attr("width", width)
         .attr("height", height);
     const tooltip = d3.select(".tooltip");
     const viewGraph = new ViewGraph(conf, data);
-    viewGraph.render(lod);
+    const mdata = viewGraph.render(lod);
     const viewport = svg.append('g');
     const view0 = viewport.append('g')
         .attr('id', 'view0');
     const view1 = viewport.append('g')
         .attr('id', 'view1');
+    const view2 = viewport.append('g')
+        .attr('id', 'view2');
     const renderer = new Renderer(this, tooltip);
     // renderer.renderDetailed(viewGraph.mdata, view0, view1);
-    renderer.render(viewGraph.mdata, view0);
+    renderer.renderDetailed(mdata.data, view0, view1, view2);
     svg.call(d3.zoom()
         .scaleExtent([zoom[0], zoom[zoom.length - 1]])
         .on('zoom', () => {
@@ -50,7 +52,10 @@ function Graph(conf, data) {
             }
         }));
 
-    this.updateLod = (lod) => view1.style('display', lod === 2 ? 'block' : 'none');
+    this.updateLod = (lod) => {
+        view1.style('display', lod === 2 ? 'block' : 'none');
+        view2.style('display', lod === 2 ? 'none' : 'block');
+    };
 
     /**
      * Update the group in the graph
@@ -63,4 +68,5 @@ function Graph(conf, data) {
         renderer.renderDetailed(viewGraph.mdata, view0, view1);
     };
 
+    this.updateLod(lod);
 }
