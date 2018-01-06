@@ -14,15 +14,25 @@ function Graph(conf, data) {
     const zoom = conf.zoom;
 
     let scale = 1;
-    let lod = 1;
+    let lod = 2;
+    // let lod = 1;
 
     const svg = d3.select("svg")
         .attr("width", width)
         .attr("height", height);
     const tooltip = d3.select(".tooltip");
     const viewGraph = new ViewGraph(conf, data);
-    viewGraph.create();
-    let viewport = svg.append('g');
+    const mdata = viewGraph.render(lod);
+    const viewport = svg.append('g');
+    const view0 = viewport.append('g')
+        .attr('id', 'view0');
+    const view1 = viewport.append('g')
+        .attr('id', 'view1');
+    const view2 = viewport.append('g')
+        .attr('id', 'view2');
+    const renderer = new Renderer(this, tooltip);
+    // renderer.renderDetailed(viewGraph.mdata, view0, view1);
+    renderer.renderDetailed(mdata.data, view0, view1, view2);
     svg.call(d3.zoom()
         .scaleExtent([zoom[0], zoom[zoom.length - 1]])
         .on('zoom', () => {
@@ -32,29 +42,21 @@ function Graph(conf, data) {
                 scale = e.k;
                 if (scale < zoom[lod]) {
                     lod--;
-                    console.log(`scale: ${scale}\nlevel of detail: ${lod}`);
-                    update(lod);
+                    console.log(`Changed level of detail to: ${lod}\nscale: ${scale}`);
+                    this.updateLod(lod);
                 } else if (scale >= zoom[lod + 1] && lod < zoom.length - 2) {
                     lod++;
-                    console.log(`scale: ${scale}\nlevel of detail: ${lod}`);
-                    update(lod);
+                    console.log(`Changed level of detail to: ${lod}\nscale: ${scale}`);
+                    this.updateLod(lod);
                 }
             }
         }));
-    const renderer = new Renderer(this, tooltip);
-    renderer.initGraph(viewport, viewGraph.mdata, lod);
 
-    /**
-     * Updates the graph
-     * Actually used for changed lod
-     * @param lod level of detail
-     */
-    let update = (lod) => {
-        renderer.updateNodes(viewport, lod);
-        renderer.updateEdges(viewport, lod);
+    this.updateLod = (lod) => {
+        view1.style('display', lod === 2 ? 'none' : 'block');
+        view2.style('display', lod === 2 ? 'block' : 'none');
     };
 
-    //todo improve update group, not entire graph
     /**
      * Update the group in the graph
      * @param group group node
@@ -62,8 +64,9 @@ function Graph(conf, data) {
     this.updateGroup = (group) => {
         console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
         viewport.selectAll('*').remove();
-        viewGraph.create();
-        renderer.initGraph(viewport, viewGraph.mdata, lod);
+        viewGraph.render(lod);
+        renderer.renderDetailed(viewGraph.mdata, view0, view1);
     };
 
+    this.updateLod(lod);
 }

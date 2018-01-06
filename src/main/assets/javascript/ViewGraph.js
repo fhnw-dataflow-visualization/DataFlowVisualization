@@ -11,17 +11,10 @@
 function ViewGraph(conf, data) {
     let dg; //internal dagre graph used to layout the graph
     let idEdges;
-    /**
-     * Stores hidden node ids
-     * Each node id refers to its root node id
-     * @type {{}}
-     */
-    this.mod = {};
-    /**
-     * Stores the selected (modified) graph, used for further rendering
-     * @type {{nodes: Array, edges: Array}}
-     */
-    this.mdata = {nodes: [], edges: []};
+
+    let mod = {};
+    let nodes = [];
+    let edges = [];
 
     /**
      * Creates a graph in dagre, depended if groups are expanded or reduced
@@ -29,23 +22,75 @@ function ViewGraph(conf, data) {
      * Hidden node ids are stored in {@link mod}
      * Modified graph elements are stored in {@link mdata}
      */
-    this.create = () => {
+    this.render = (lod) => {
         idEdges = {};
-        this.mdata.nodes = [];
-        this.mdata.edges = [];
-        dg = new dagre.graphlib.Graph({compound: true});
-        dg.setGraph({});
+        mod ={};
+        nodes = [];
+        edges = [];
+        dg = initDagre();
+
+        // select elements from main graph to show
+        data.nodes.forEach((node) => {
+            addNode(node, null);
+        });
+        data.edges.forEach((edge) => {
+            addEdge(edge, lod);
+        });
+        //layout graph
+        dagre.layout(dg);
+
+        //layout ports
+        if (lod === 2) {
+            data.edges.forEach((edge) => {
+                if (edge['ports']) {
+                    const nPorts = edge.ports.length;
+                    edge['points'] = [];
+                    if (nPorts & 1) {
+                        const pPoints = edge.ports[(nPorts - 1) * 0.5].points;
+                        for (let i = 0; i < pPoints.length; i++) {
+                            const point = pPoints[i];
+                            edge['points'].push({x: point.x, y: point.y});
+                        }
+                    } else {
+                        const pPoints1 = edge.ports[nPorts * 0.5 - 1].points;
+                        const pPoints2 = edge.ports[nPorts * 0.5].points;
+                        for (let i = 0; i < Math.min(pPoints1.length, pPoints2.length); i++) {
+                            const point1 = pPoints1[i];
+                            const point2 = pPoints2[i];
+                            edge['points'].push({x: (point1.x + point2.x) * 0.5, y: (point1.y + point2.y) * 0.5});
+                        }
+                    }
+
+                    const fromId = edge.from;
+                    const toId = edge.to;
+                    edge.ports.forEach((port) => {
+                        const from = dg.node(fromId);
+                        const outPort = from.out[port.out];
+                        outPort['anchor'] = port.points[0];
+                        const to = dg.node(toId);
+                        const inPort = to.in[port.in];
+                        inPort['anchor'] = port.points[port.points.length - 1];
+                    });
+                }
+            });
+        }
+        return {"mod": mod, data: {"nodes": nodes, "edges": edges}};
+    };
+
+    let initDagre = () => {
+        dg = new dagre.graphlib.Graph({
+            directed: true,
+            compound: true,
+            multigraph: true
+        });
+        //todo calculate exact value
+        dg.setGraph({
+            edgesep: conf.port.width * 5
+        });
         dg.setDefaultEdgeLabel(() => {
             return {}
         });
-
-        data.nodes.forEach((n) => {
-            addNode(n, null);
-        });
-        data.edges.forEach((e) => {
-            addEdge(e);
-        });
-        dagre.layout(dg);
+        return dg;
     };
 
     /**
@@ -62,7 +107,7 @@ function ViewGraph(conf, data) {
 
         if (rootId !== undefined) {
             //replacement for edges to children
-            this.mod[`${node.id}`] = rootId;
+            mod[`${node.id}`] = rootId;
             if (node['children']) {
                 node.children.forEach((child) => {
                     addNode(child, node, rootId);
@@ -71,7 +116,7 @@ function ViewGraph(conf, data) {
         } else {
             //set node
             dg.setNode(node.id, node);
-            this.mdata.nodes.push(node);
+            nodes.push(node);
 
             if (parent !== null) {
                 dg.setParent(node.id, parent.id);
@@ -107,16 +152,22 @@ function ViewGraph(conf, data) {
      * Adds an edge to the dagre graph
      * @param e current js edge
      */
-    let addEdge = (e) => {
+    let addEdge = (e, lod) => {
         if (idEdges[`${e.id}`]) {
             throw new Error(`Id of edge: ${edgeToString(e)} is already in use from edge: ${idEdges[`${e.id}`]}.`);
         }
-        const from = dg.hasNode(e.from) ? e.from : this.mod[`${e.from}`];
-        const to = dg.hasNode(e.to) ? e.to : this.mod[`${e.to}`];
+        const from = dg.hasNode(e.from) ? e.from : mod[`${e.from}`];
+        const to = dg.hasNode(e.to) ? e.to : mod[`${e.to}`];
         if (from !== to && !dg.hasEdge(from, to)) {
             idEdges[`${e.id}`] = edgeToString(e);
-            dg.setEdge(from, to, e);
-            this.mdata.edges.push(e);
+            if (lod === 2 && e['ports']){
+                e.ports.forEach((port) => {
+                    dg.setEdge(from, to, port, `${e.id}.${port.out}.${port.in}`);
+                });
+            } else {
+                dg.setEdge(from, to, e);
+            }
+            edges.push(e);
         }
     };
 
@@ -147,6 +198,4 @@ function ViewGraph(conf, data) {
     //     //
     //     // });
     // };
-
-    this.create();
 }
