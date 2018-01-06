@@ -3,15 +3,13 @@
     {
       "name": "START",
       "id": 0,
-      "in": [],
-      "out": [
-        {
-          "port": 0,
-          "attr": {
-            "name": "Output 0.0"
-          }
-        }
-      ],
+      "out": {
+    "0":{
+      "attr": {
+        "name": "Output 0.0"
+      }
+    }
+    },
       "attr": {
         "link": {
           "url": "hello.html",

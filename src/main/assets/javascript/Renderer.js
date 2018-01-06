@@ -220,7 +220,7 @@ function Renderer(mg, tooltip) {
      * @param line js edge
      * @param lod level of detail
      */
-    let drawLines = (e, line, lod) => {
+    let drawLines = (e,line, lod) => {
         // if (lod === 2 && line['ports']) {
         //     //draw multi lines port-to-port
         //     e.selectAll('line').data(line.ports).enter().each((port) => {
@@ -259,9 +259,9 @@ function Renderer(mg, tooltip) {
      */
     let createPath = (points) => {
         const path = [];
-        path.push(`M${points[0].x},${points[0].y}`);
-        for (let i = 1; i < points.length; i++) {
-            path.push(`L${points[i].x},${points[i].y}`);
+        path.push (`M${points[0].x},${points[0].y} Q${points[1].x},${points[1].y},${points[2].x},${points[2].y}`);
+        for (let i = 3; i < points.length; i++) {
+            path.push(`C${points[i].x},${points[i].y}`);
         }
         return path.join(' ');
     };
