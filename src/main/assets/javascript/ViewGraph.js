@@ -74,7 +74,7 @@ function ViewGraph(conf, data) {
                 }
             });
         }
-        return {"mod": mod, data: {"nodes": nodes, "edges": edges}};
+        return {"mod": mod, data: {"nodes": nodes, "edges": edges}, "graph": {"width": dg.width, "heigth": dg.height}};
     };
 
     let initDagre = () => {

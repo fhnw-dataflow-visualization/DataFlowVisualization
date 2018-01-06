@@ -33,6 +33,12 @@ function Graph(conf, data) {
     const renderer = new Renderer(this, tooltip);
     // renderer.renderDetailed(viewGraph.mdata, view0, view1);
     renderer.renderDetailed(mdata.data, view0, view1, view2);
+    const map = svg.append('g')
+        .attr('transform', `translate(${width-conf.map.width},0)`);
+    const minimap = map.append('g')
+        .attr('transform', `scale(${Math.max(conf.map.width/mdata.graph.width,conf.map.height/mdata.graph.heigth) })`);
+    renderer.render(mdata.data,minimap);
+
     svg.call(d3.zoom()
         .scaleExtent([zoom[0], zoom[zoom.length - 1]])
         .on('zoom', () => {
