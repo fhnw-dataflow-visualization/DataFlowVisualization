@@ -4,12 +4,12 @@
       "name": "START",
       "id": 0,
       "out": {
-    "0":{
-      "attr": {
-        "name": "Output 0.0"
-      }
-    }
-    },
+        "0": {
+          "attr": {
+            "name": "Output 0.0"
+          }
+        }
+      },
       "attr": {
         "link": {
           "url": "hello.html",
@@ -26,27 +26,25 @@
         {
           "name": "map",
           "id": 1,
-          "in": [
-            {
-              "port": 0,
+          "in": {
+            "0": {
               "attr": {
                 "name": "Input 1.0"
               }
-            }
-          ],
-          "out": [
-            {
-              "port": 0,
-              "attr": {
-                "name": "Output 1.0"
+            },
+            "out": [
+              {
+                "port": 0,
+                "attr": {
+                  "name": "Output 1.0"
+                }
               }
+            ],
+            "attr": {
+              "a": "A",
+              "b": "B"
             }
-          ],
-          "attr": {
-            "a": "A",
-            "b": "B"
           }
-        },
         {
           "name": "group",
           "id": 30,
