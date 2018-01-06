@@ -14,15 +14,23 @@ function Graph(conf, data) {
     const zoom = conf.zoom;
 
     let scale = 1;
-    let lod = 2;
+    // let lod = 2;
+    let lod = 1;
 
     const svg = d3.select("svg")
         .attr("width", width)
         .attr("height", height);
     const tooltip = d3.select(".tooltip");
     const viewGraph = new ViewGraph(conf, data);
-    viewGraph.create();
-    let viewport = svg.append('g');
+    viewGraph.render(lod);
+    const viewport = svg.append('g');
+    const view0 = viewport.append('g')
+        .attr('id', 'view0');
+    const view1 = viewport.append('g')
+        .attr('id', 'view1');
+    const renderer = new Renderer(this, tooltip);
+    // renderer.renderDetailed(viewGraph.mdata, view0, view1);
+    renderer.render(viewGraph.mdata, view0);
     svg.call(d3.zoom()
         .scaleExtent([zoom[0], zoom[zoom.length - 1]])
         .on('zoom', () => {
@@ -41,11 +49,8 @@ function Graph(conf, data) {
                 }
             }
         }));
-    const renderer = new Renderer(this, viewport, tooltip);
-    renderer.initGraph(viewGraph.mdata, lod);
 
-
-    this.updateLod = (lod) => renderer.updateLod(lod);
+    this.updateLod = (lod) => view1.style('display', lod === 2 ? 'block' : 'none');
 
     /**
      * Update the group in the graph
@@ -54,8 +59,8 @@ function Graph(conf, data) {
     this.updateGroup = (group) => {
         console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
         viewport.selectAll('*').remove();
-        viewGraph.create();
-        renderer.initGraph(viewGraph.mdata, lod);
+        viewGraph.render(lod);
+        renderer.renderDetailed(viewGraph.mdata, view0, view1);
     };
 
 }
