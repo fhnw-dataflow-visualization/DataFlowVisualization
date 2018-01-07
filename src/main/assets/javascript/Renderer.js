@@ -80,9 +80,9 @@ function Renderer(mg, tooltip) {
             if (node['color'])
                 r.style('stroke', `${node.color}`);
             n.append("text")
-                .attr('x', 5)
+                .attr('x', portWidthHalf + 5)
                 .attr('y', nodeHeightHalf + 5)
-                .html(node.name);
+                .html(`${node.name} (${node.id})`);
             addHover(r, node, node.x + nodeWidth + 12, node.y - 73);
 
             if (lod === 2) {
