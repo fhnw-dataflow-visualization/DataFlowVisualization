@@ -33,10 +33,27 @@
             width: 10,
             height: 7,
         },
-        map:{
-            width:200,
+        map: {
+            width: 200,
             height: 200,
         },
+//        drawing: {
+//            drawNode: (root, node) => {
+//                const n = root.append("g")
+//                    .attr('id', `n${node.id}`)
+//                    .attr("class", "nodes")
+//                    .attr("transform", `translate(${node.x - 62.5},${node.y - 20})`);
+//                const r = n.append("rect")
+//                    .attr("width", 125)
+//                    .attr("height", 40)
+//                    .attr("class", "node")
+//                    .style('stroke', `blue`);
+//                n.append("text")
+//                    .attr('x', 10)
+//                    .attr('y', 25)
+//                    .html(`${node.name} (${node.id})`);
+//            }
+//        },
         zoom: [0.1, 0.4, 1, 2]
     };
     d3.json('./dataGroup.json', (data) => {

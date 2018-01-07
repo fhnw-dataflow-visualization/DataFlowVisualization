@@ -15,16 +15,17 @@ function Graph(conf, data) {
 
     let scale = 1;
     let lod = 2;
-    let renderlevel = 2;
     // let lod = 1;
+    let renderLevel = 2;
 
     const svg = d3.select("svg")
         .attr("width", width)
         .attr("height", height);
     const tooltip = d3.select(".tooltip");
     const viewGraph = new ViewGraph(conf, data);
-    const mdata = viewGraph.render(renderlevel);
+    const mdata = viewGraph.render(renderLevel);
     const viewport = svg.append('g');
+    //set views: 0 always visible, 1 visible if lod < 2, 2 visible if lod = 2
     const view0 = viewport.append('g')
         .attr('id', 'view0');
     const view1 = viewport.append('g')
@@ -32,7 +33,27 @@ function Graph(conf, data) {
     const view2 = viewport.append('g')
         .attr('id', 'view2');
     const renderer = new Renderer(this, tooltip);
-    if (renderlevel === 2) {
+    //set custom drawing
+    if (conf['drawing']){
+        const d = conf.drawing;
+        if (d['drawNode']) {
+            renderer.drawNode = d.drawNode;
+        }
+        if (d['drawGroup']) {
+            renderer.drawGroup = d.drawGroup;
+        }
+        if (d['drawPorts']) {
+            renderer.drawPorts = d.drawPorts;
+        }
+        if (d['drawNodeEdge']) {
+            renderer.drawNodeEdge = d.drawNodeEdge;
+        }
+        if (d['drawPortEdge']) {
+            renderer.drawPortEdge = d.drawPortEdge
+        }
+    }
+    //render graph
+    if (renderLevel === 2) {
         renderer.renderDetailed(mdata.data, view0, view1, view2);
     } else {
         renderer.render(mdata.data, view0);
@@ -77,8 +98,8 @@ function Graph(conf, data) {
         view0.selectAll('*').remove();
         view1.selectAll('*').remove();
         view2.selectAll('*').remove();
-        const mdata = viewGraph.render(renderlevel);
-        if (renderlevel === 2) {
+        const mdata = viewGraph.render(renderLevel);
+        if (renderLevel === 2) {
             renderer.renderDetailed(mdata.data, view0, view1, view2);
         } else {
             renderer.render(mdata.data, view0);
@@ -86,4 +107,5 @@ function Graph(conf, data) {
     };
 
     this.updateLod(lod);
+
 }

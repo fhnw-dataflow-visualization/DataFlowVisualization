@@ -8,99 +8,95 @@ function Renderer(mg, tooltip) {
     const portWidthHalf = portWidth / 2;
     const portHeight = conf.port.height;
 
-    let rootGroups;
-    let rootNodes;
-    let rootPorts;
-    let rootEdges;
-
-    this.render = (data, root) => {
+    this.render = (data, view0) => {
         //init nodes
         data.nodes.forEach((node) => {
-            initNode(node, root, null, 1);
+            initNode(node, view0, null, 1);
         });
         //init edges
         data.edges.forEach((edge) => {
-            initEdges(edge, root, null, 1);
+            initEdges(edge, view0, null, 1);
         });
     };
 
-    this.renderDetailed = (data, root0, root1, root2) => {
+    this.renderDetailed = (data, view0, view1, view2) => {
         //init nodes
         data.nodes.forEach((node) => {
-            initNode(node, root0, root2, 2);
+            initNode(node, view0, view2, 2);
         });
         //init edges
         data.edges.forEach((edge) => {
-            initEdges(edge, root1, root2, 2);
+            initEdges(edge, view1, view2, 2);
         });
     };
 
-    let initNode = (node, parent0, parent1, lod,) => {
-        if (node['children']) {
-            //group node
-            const n = parent0.append("g")
-                .attr('id', `n${node.id}`)
-                .attr("class", "nodes")
-                .attr("transform", `translate(${node.x - node.width * 0.5},${node.y - node.height * 0.5})`);
-            const r = n.append("rect")
-                .attr("width", node.width)
-                .attr("height", node.height)
-                .attr("class", "group");
-            const circle = n.append("circle")
-                .attr("cx", node.width - 20)
-                .attr("cy", 20)
-                .attr("r", 10)
-                .attr("class", "groupF");
-            if (node.view === 'expanded') {
-                //expanded group
-                circle.on('click', () => {
-                    node.view = 'reduced';
-                    mg.updateGroup(node);
-                });
-                node.children.forEach((child) => {
-                    initNode(child, parent0, parent1, lod);
-                });
-            } else {
-                //reduced group
-                circle.on('click', () => {
-                    node.view = 'expanded';
-                    mg.updateGroup(node);
-                });
-            }
-        } else {
-            //normal node
-            const n = parent0.append("g")
-                .attr('id', `n${node.id}`)
-                .attr("class", "nodes")
-                .attr("transform", `translate(${node.x - nodeWidthHalf},${node.y - nodeHeightHalf})`);
-            const r = n.append("rect")
-                .attr("width", nodeWidth)
-                .attr("height", nodeHeight)
-                .attr("class", "node");
-            if (node['color'])
-                r.style('stroke', `${node.color}`);
-            n.append("text")
-                .attr('x', portWidthHalf + 5)
-                .attr('y', nodeHeightHalf + 5)
-                .html(`${node.name} (${node.id})`);
-            addHover(r, node, node.x + nodeWidth + 12, node.y - 73);
+    this.drawGroup = (root, group) => {
+        const n = root.append("g")
+            .attr('id', `n${group.id}`)
+            .attr("class", "nodes")
+            .attr("transform", `translate(${group.x - group.width * 0.5},${group.y - group.height * 0.5})`);
+        const r = n.append("rect")
+            .attr("width", group.width)
+            .attr("height", group.height)
+            .attr("class", "group");
+        return n.append("circle")
+            .attr("cx", group.width - 20)
+            .attr("cy", 20)
+            .attr("r", 10)
+            .attr("class", "groupF");
+    };
 
-            if (lod === 2) {
-                /* draw in ports */
-                const n2 = parent1.append('g');
-                if (node['in']) {
-                    const ports = n2.append('g')
-                        .attr('class', 'inPort');
-                    initInPort(ports, node);
-                }
-                /* draw out ports */
-                if (node['out']) {
-                    const ports = n2.append('g')
-                        .attr('class', 'outPort');
-                    initOutPort(ports, node);
-                }
-            }
+    this.drawNode = (root, node) => {
+        const n = root.append("g")
+            .attr('id', `n${node.id}`)
+            .attr("class", "nodes")
+            .attr("transform", `translate(${node.x - nodeWidthHalf},${node.y - nodeHeightHalf})`);
+        const r = n.append("rect")
+            .attr("width", nodeWidth)
+            .attr("height", nodeHeight)
+            .attr("class", "node");
+        if (node['color'])
+            r.style('stroke', `${node.color}`);
+        n.append("text")
+            .attr('x', portWidthHalf + 5)
+            .attr('y', nodeHeightHalf + 5)
+            .html(`${node.name} (${node.id})`);
+        addHover(r, node, node.x + nodeWidth + 12, node.y - 73);
+    };
+
+    this.drawPorts = (root, node) => {
+        const n2 = root.append('g');
+        if (node['in']) {
+            const ports = n2.append('g')
+                .attr('class', 'inPort');
+            initInPort(ports, node);
         }
+        /* draw out ports */
+        if (node['out']) {
+            const ports = n2.append('g')
+                .attr('class', 'outPort');
+            initOutPort(ports, node);
+        }
+    };
+
+    this.drawNodeEdge = (root, edge) => {
+        const p = root.append('path')
+            .attr('class', 'edge')
+            .attr('d', createPath(edge.points))
+            .style('marker-end', 'url(#arrow)');
+        addHover(p, edge);
+    };
+
+    this.drawPortEdge = (root, edge) => {
+        const g = root.append('g')
+            .attr('id', `e${edge.id}`)
+            .attr('class', 'edge');
+        edge.ports.forEach((port) => {
+            const p = g.append('path')
+                .attr('d', createPath(port.points))
+                .style('marker-end', 'url(#arrow)');
+            addHover(p, port);
+        });
     };
 
     /**
@@ -141,6 +137,42 @@ function Renderer(mg, tooltip) {
         }
     };
 
+    let initNode = (node, parent0, parent1, lod,) => {
+        if (node['children']) {
+            const changeView = this.drawGroup(parent0, node);
+            if (node.view === 'expanded') {
+                //expanded group
+                changeView.on('click', () => {
+                    node.view = 'reduced';
+                    mg.updateGroup(node);
+                });
+                node.children.forEach((child) => {
+                    initNode(child, parent0, parent1, lod);
+                });
+            } else {
+                //reduced group
+                changeView.on('click', () => {
+                    node.view = 'expanded';
+                    mg.updateGroup(node);
+                });
+            }
+        } else {
+            //normal node
+            this.drawNode(parent0, node);
+            if (lod === 2) {
+                /* draw in ports */
+                this.drawPorts(parent1, node);
+            }
+        }
+    };
+
+    let initEdges = (edge, root0, root1, lod) => {
+        if (lod === 2 && edge['ports']) {
+            this.drawPortEdge(root1, edge);
+        }
+        this.drawNodeEdge(root0, edge);
+    };
+
     /**
      * Calculates all point coordinates of this port number
      * @param posX node x coordinate
@@ -155,24 +187,6 @@ function Renderer(mg, tooltip) {
         const y2 = posY + i * portHeight;
         const x3 = posX + portWidthHalf;
         return `${x1},${y1} ${x2},${y2}, ${x3},${y1}`
-    };
-    let initEdges = (edge, root0, root1, lod) => {
-        if (lod === 2 && edge['ports']) {
-            const g = root1.append('g')
-                .attr('id', `e${edge.id}`)
-                .attr('class', 'edge');
-            edge.ports.forEach((port) => {
-                const p = g.append('path')
-                    .attr('d', createPath(port.points))
-                    .style('marker-end', 'url(#arrow)');
-                addHover(p, port);
-            });
-        }
-        const p = root0.append('path')
-            .attr('class', 'edge')
-            .attr('d', createPath(edge.points))
-            .style('marker-end', 'url(#arrow)');
-        addHover(p, edge);
     };
 
     // /**
