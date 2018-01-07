@@ -31,20 +31,20 @@
               "attr": {
                 "name": "Input 1.0"
               }
-            },
-            "out": [
-              {
-                "port": 0,
-                "attr": {
-                  "name": "Output 1.0"
-                }
-              }
-            ],
-            "attr": {
-              "a": "A",
-              "b": "B"
             }
+          },
+          "out": {
+            "0": {
+              "attr": {
+                "name": "Output 1.0"
+              }
+            }
+          },
+          "attr": {
+            "a": "A",
+            "b": "B"
           }
+        },
         {
           "name": "group",
           "id": 30,
@@ -52,22 +52,20 @@
             {
               "name": "map",
               "id": 2,
-              "in": [
-                {
-                  "port": 0,
+              "in": {
+                "0": {
                   "attr": {
                     "name": "Input 2.0"
                   }
                 }
-              ],
-              "out": [
-                {
-                  "port": 0,
+              },
+              "out": {
+                "0": {
                   "attr": {
                     "name": "Output 2.0"
                   }
                 }
-              ]
+              }
             },
             {
               "name": "group",
@@ -76,22 +74,20 @@
                 {
                   "name": "A",
                   "id": 3,
-                  "in": [
-                    {
-                      "port": 0,
+                  "in": {
+                    "0": {
                       "attr": {
                         "name": "Input 3.0"
                       }
                     }
-                  ],
-                  "out": [
-                    {
-                      "port": 0,
+                  },
+                  "out": {
+                    "0": {
                       "attr": {
                         "name": "Output 3.0"
                       }
                     }
-                  ],
+                  },
                   "attr": {
                     "a": "A",
                     "b": "B"
@@ -100,22 +96,20 @@
                 {
                   "name": "map",
                   "id": 6,
-                  "in": [
-                    {
-                      "port": 0,
+                  "in": {
+                    "0": {
                       "attr": {
                         "name": "Input 6.0"
                       }
                     }
-                  ],
-                  "out": [
-                    {
-                      "port": 0,
+                  },
+                  "out": {
+                    "0": {
                       "attr": {
                         "name": "Output 6.0"
                       }
                     }
-                  ],
+                  },
                   "attr": {
                     "a": "A",
                     "b": "B"
@@ -124,22 +118,20 @@
                 {
                   "name": "D",
                   "id": 9,
-                  "in": [
-                    {
-                      "port": 0,
+                  "in": {
+                    "0": {
                       "attr": {
                         "name": "Input 9.0"
                       }
                     }
-                  ],
-                  "out": [
-                    {
-                      "port": 0,
+                  },
+                  "out": {
+                    "0": {
                       "attr": {
                         "name": "Output 9.0"
                       }
                     }
-                  ],
+                  },
                   "attr": {
                     "a": "A",
                     "b": "B"
@@ -148,22 +140,20 @@
                 {
                   "name": "E",
                   "id": 10,
-                  "in": [
-                    {
-                      "port": 0,
+                  "in": {
+                    "0": {
                       "attr": {
                         "name": "Input 10.0"
                       }
                     }
-                  ],
-                  "out": [
-                    {
-                      "port": 0,
+                  },
+                  "out": {
+                    "0": {
                       "attr": {
                         "name": "Output 00"
                       }
                     }
-                  ],
+                  },
                   "attr": {
                     "a": "A",
                     "b": "B"
@@ -172,22 +162,20 @@
                 {
                   "name": "reduce",
                   "id": 15,
-                  "in": [
-                    {
-                      "port": 0,
+                  "in": {
+                    "0": {
                       "attr": {
                         "name": "Input 15.0"
                       }
                     }
-                  ],
-                  "out": [
-                    {
-                      "port": 0,
+                  },
+                  "out": {
+                    "0": {
                       "attr": {
                         "name": "Output 15.0"
                       }
                     }
-                  ],
+                  },
                   "attr": {
                     "a": "A",
                     "b": "B"
@@ -202,22 +190,20 @@
                 {
                   "name": "B",
                   "id": 4,
-                  "in": [
-                    {
-                      "port": 0,
+                  "in": {
+                    "0": {
                       "attr": {
                         "name": "Input 4.0"
                       }
                     }
-                  ],
-                  "out": [
-                    {
-                      "port": 0,
+                  },
+                  "out": {
+                    "0": {
                       "attr": {
                         "name": "Output 4.0"
                       }
                     }
-                  ],
+                  },
                   "attr": {
                     "a": "A",
                     "b": "B"
@@ -226,22 +212,20 @@
                 {
                   "name": "map",
                   "id": 7,
-                  "in": [
-                    {
-                      "port": 0,
+                  "in": {
+                    "0": {
                       "attr": {
                         "name": "Input 7.0"
                       }
                     }
-                  ],
-                  "out": [
-                    {
-                      "port": 0,
+                  },
+                  "out": {
+                    "0": {
                       "attr": {
                         "name": "Output 7.0"
                       }
                     }
-                  ],
+                  },
                   "attr": {
                     "a": "A",
                     "b": "B"
@@ -250,22 +234,22 @@
                 {
                   "name": "F",
                   "id": 11,
-                  "in": [
-                    {
+                  "in": {
+                    "0": {
                       "port": 0,
                       "attr": {
                         "name": "Input 11.0"
                       }
                     }
-                  ],
-                  "out": [
-                    {
+                  },
+                  "out": {
+                    "0": {
                       "port": 0,
                       "attr": {
                         "name": "Output 11.0"
                       }
                     }
-                  ],
+                  },
                   "attr": {
                     "a": "A",
                     "b": "B"
@@ -274,22 +258,20 @@
                 {
                   "name": "G",
                   "id": 12,
-                  "in": [
-                    {
-                      "port": 0,
+                  "in": {
+                    "0": {
                       "attr": {
                         "name": "Input 12.0"
                       }
                     }
-                  ],
-                  "out": [
-                    {
-                      "port": 0,
+                  },
+                  "out": {
+                    "0": {
                       "attr": {
                         "name": "Output 12.0"
                       }
                     }
-                  ],
+                  },
                   "attr": {
                     "a": "A",
                     "b": "B"
@@ -298,22 +280,20 @@
                 {
                   "name": "reduce",
                   "id": 16,
-                  "in": [
-                    {
-                      "port": 0,
+                  "in": {
+                    "0": {
                       "attr": {
                         "name": "Input 16.0"
                       }
                     }
-                  ],
-                  "out": [
-                    {
-                      "port": 0,
+                  },
+                  "out": {
+                    "0": {
                       "attr": {
                         "name": "Output 16.0"
                       }
                     }
-                  ],
+                  },
                   "attr": {
                     "a": "A",
                     "b": "B"
@@ -324,22 +304,21 @@
             {
               "name": "J",
               "id": 18,
-              "in": [
-                {
-                  "port": 0,
+              "in": {
+                "0": {
                   "attr": {
                     "name": "Input 18.0"
                   }
                 }
-              ],
-              "out": [
-                {
+              },
+              "out": {
+                "0": {
                   "port": 0,
                   "attr": {
                     "name": "Output 18.0"
                   }
                 }
-              ],
+              },
               "attr": {
                 "a": "A",
                 "b": "B"
@@ -348,22 +327,20 @@
             {
               "name": "K",
               "id": 19,
-              "in": [
-                {
-                  "port": 0,
+              "in": {
+                "0": {
                   "attr": {
                     "name": "Input 19.0"
                   }
                 }
-              ],
-              "out": [
-                {
-                  "port": 0,
+              },
+              "out": {
+                "0": {
                   "attr": {
                     "name": "Output 19.0"
                   }
                 }
-              ],
+              },
               "attr": {
                 "a": "A",
                 "b": "B"
@@ -372,22 +349,20 @@
             {
               "name": "reduce",
               "id": 21,
-              "in": [
-                {
-                  "port": 0,
+              "in": {
+                "0": {
                   "attr": {
                     "name": "Input 21.0"
                   }
                 }
-              ],
-              "out": [
-                {
-                  "port": 0,
+              },
+              "out": {
+                "0": {
                   "attr": {
                     "name": "Output 21.0"
                   }
                 }
-              ],
+              },
               "attr": {
                 "a": "A",
                 "b": "B"
@@ -402,22 +377,20 @@
             {
               "name": "C",
               "id": 5,
-              "in": [
-                {
-                  "port": 0,
+              "in": {
+                "0": {
                   "attr": {
                     "name": "Input 6.0"
                   }
                 }
-              ],
-              "out": [
-                {
-                  "port": 0,
+              },
+              "out": {
+                "0": {
                   "attr": {
                     "name": "Output 7.0"
                   }
                 }
-              ],
+              },
               "attr": {
                 "a": "A",
                 "b": "B"
@@ -426,22 +399,20 @@
             {
               "name": "map",
               "id": 8,
-              "in": [
-                {
-                  "port": 0,
+              "in": {
+                "0": {
                   "attr": {
                     "name": "Input 8.0"
                   }
                 }
-              ],
-              "out": [
-                {
-                  "port": 0,
+              },
+              "out": {
+                "0": {
                   "attr": {
                     "name": "Output 8.0"
                   }
                 }
-              ],
+              },
               "attr": {
                 "a": "A",
                 "b": "B"
@@ -450,22 +421,20 @@
             {
               "name": "H",
               "id": 13,
-              "in": [
-                {
-                  "port": 0,
+              "in": {
+                "0": {
                   "attr": {
                     "name": "Input 13.0"
                   }
                 }
-              ],
-              "out": [
-                {
-                  "port": 0,
+              },
+              "out": {
+                "0": {
                   "attr": {
                     "name": "Output 13.0"
                   }
                 }
-              ],
+              },
               "attr": {
                 "a": "A",
                 "b": "B"
@@ -474,22 +443,20 @@
             {
               "name": "I",
               "id": 14,
-              "in": [
-                {
-                  "port": 0,
+              "in": {
+                "0": {
                   "attr": {
                     "name": "Input 14.0"
                   }
                 }
-              ],
-              "out": [
-                {
-                  "port": 0,
+              },
+              "out": {
+                "0": {
                   "attr": {
                     "name": "Output 14.0"
                   }
                 }
-              ],
+              },
               "attr": {
                 "a": "A",
                 "b": "B"
@@ -498,22 +465,20 @@
             {
               "name": "reduce",
               "id": 17,
-              "in": [
-                {
-                  "port": 0,
+              "in": {
+                "0": {
                   "attr": {
                     "name": "Input 17.0"
                   }
                 }
-              ],
-              "out": [
-                {
-                  "port": 0,
+              },
+              "out": {
+                "0": {
                   "attr": {
                     "name": "Output 17.0"
                   }
                 }
-              ],
+              },
               "attr": {
                 "a": "A",
                 "b": "B"
@@ -524,22 +489,22 @@
         {
           "name": "L",
           "id": 20,
-          "in": [
-            {
+          "in": {
+            "0": {
               "port": 0,
               "attr": {
                 "name": "Input 20.0"
               }
             }
-          ],
-          "out": [
-            {
+          },
+          "out": {
+            "0": {
               "port": 0,
               "attr": {
                 "name": "Output 20.0"
               }
             }
-          ],
+          },
           "attr": {
             "a": "A",
             "b": "B"
@@ -548,22 +513,20 @@
         {
           "name": "M",
           "id": 22,
-          "in": [
-            {
-              "port": 0,
+          "in": {
+            "0": {
               "attr": {
                 "name": "Input 22.0"
               }
             }
-          ],
-          "out": [
-            {
-              "port": 0,
+          },
+          "out": {
+            "0": {
               "attr": {
                 "name": "Output 22.0"
               }
             }
-          ],
+          },
           "attr": {
             "a": "A",
             "b": "B"
@@ -572,22 +535,20 @@
         {
           "name": "reduce",
           "id": 23,
-          "in": [
-            {
-              "port": 0,
+          "in": {
+            "0": {
               "attr": {
                 "name": "Input 23.0"
               }
             }
-          ],
-          "out": [
-            {
-              "port": 0,
+          },
+          "out": {
+            "0": {
               "attr": {
                 "name": "Output 23.0"
               }
             }
-          ],
+          },
           "attr": {
             "a": "A",
             "b": "B"
@@ -598,22 +559,20 @@
     {
       "name": "N",
       "id": 24,
-      "in": [
-        {
-          "port": 0,
+      "in": {
+        "0": {
           "attr": {
             "name": "Input 24.0"
           }
         }
-      ],
-      "out": [
-        {
-          "port": 0,
+      },
+      "out": {
+        "0": {
           "attr": {
             "name": "Output 24.0"
           }
         }
-      ],
+      },
       "attr": {
         "a": "A",
         "b": "B"
@@ -622,14 +581,13 @@
     {
       "name": "END",
       "id": 25,
-      "in": [
-        {
-          "port": 0,
+      "in": {
+        "0": {
           "attr": {
             "name": "Input 5.0"
           }
         }
-      ],
+      },
       "attr": {
         "a": "AA",
         "b": "BB"

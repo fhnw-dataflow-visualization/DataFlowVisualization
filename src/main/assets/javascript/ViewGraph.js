@@ -64,12 +64,16 @@ function ViewGraph(conf, data) {
                     const fromId = edge.from;
                     const toId = edge.to;
                     edge.ports.forEach((port) => {
-                        const from = dg.node(fromId);
-                        const outPort = from.out[port.out];
-                        outPort['anchor'] = port.points[0];
-                        const to = dg.node(toId);
-                        const inPort = to.in[port.in];
-                        inPort['anchor'] = port.points[port.points.length - 1];
+                        const from =  dg.node(dg.hasNode(fromId) ? fromId : mod[`${fromId}`]);
+                        if (from['out']) {
+                            const outPort = from.out[port.out];
+                            outPort['anchor'] = port.points[0];
+                        }
+                        const to = dg.node(dg.hasNode(toId) ? toId : mod[`${toId}`]);
+                        if (to['in']) {
+                            const inPort = to.in[port.in];
+                            inPort['anchor'] = port.points[port.points.length - 1];
+                        }
                     });
                 }
             });

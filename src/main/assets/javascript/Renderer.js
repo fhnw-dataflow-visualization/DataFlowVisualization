@@ -8,10 +8,15 @@ function Renderer(mg, tooltip) {
     const portWidthHalf = portWidth / 2;
     const portHeight = conf.port.height;
 
+    let rootGroups;
+    let rootNodes;
+    let rootPorts;
+    let rootEdges;
+
     this.render = (data, root) => {
         //init nodes
         data.nodes.forEach((node) => {
-            initNode(node, root, null, 0, 0, 1);
+            initNode(node, root, null, 1);
         });
         //init edges
         data.edges.forEach((edge) => {
@@ -22,7 +27,7 @@ function Renderer(mg, tooltip) {
     this.renderDetailed = (data, root0, root1, root2) => {
         //init nodes
         data.nodes.forEach((node) => {
-            initNode(node, root0, root2, 0, 0, 2);
+            initNode(node, root0, root2, 2);
         });
         //init edges
         data.edges.forEach((edge) => {
@@ -30,13 +35,13 @@ function Renderer(mg, tooltip) {
         });
     };
 
-    let initNode = (node, parent0, parent1, x, y, lod,) => {
+    let initNode = (node, parent0, parent1, lod,) => {
         if (node['children']) {
             //group node
             const n = parent0.append("g")
                 .attr('id', `n${node.id}`)
                 .attr("class", "nodes")
-                .attr("transform", `translate(${node.x - x - node.width * 0.5},${node.y - y - node.height * 0.5})`);
+                .attr("transform", `translate(${node.x - node.width * 0.5},${node.y - node.height * 0.5})`);
             const r = n.append("rect")
                 .attr("width", node.width)
                 .attr("height", node.height)
@@ -53,7 +58,7 @@ function Renderer(mg, tooltip) {
                     mg.updateGroup(node);
                 });
                 node.children.forEach((child) => {
-                    initNode(child, n, node.x - node.width * 0.5, node.y - node.height * 0.5, lod);
+                    initNode(child, parent0, parent1, lod);
                 });
             } else {
                 //reduced group
@@ -67,7 +72,7 @@ function Renderer(mg, tooltip) {
             const n = parent0.append("g")
                 .attr('id', `n${node.id}`)
                 .attr("class", "nodes")
-                .attr("transform", `translate(${node.x - x - nodeWidthHalf},${node.y - y - nodeHeightHalf})`);
+                .attr("transform", `translate(${node.x - nodeWidthHalf},${node.y - nodeHeightHalf})`);
             const r = n.append("rect")
                 .attr("width", nodeWidth)
                 .attr("height", nodeHeight)
@@ -170,6 +175,21 @@ function Renderer(mg, tooltip) {
         addHover(p, edge);
     };
 
+    // /**
+    //  * Creates a svg path according to the point array
+    //  *
+    //  * @param points point array
+    //  * @return {string} svg path
+    //  */
+    // let createPath = (points) => {
+    //     const path = [];
+    //     path.push (`M${points[0].x},${points[0].y} Q${points[1].x},${points[1].y},${points[2].x},${points[2].y}`);
+    //     for (let i = 3; i < points.length; i++) {
+    //         path.push(`C${points[i].x},${points[i].y}`);
+    //     }
+    //     return path.join(' ');
+    // };
+
     /**
      * Creates a svg path according to the point array
      *
@@ -178,9 +198,9 @@ function Renderer(mg, tooltip) {
      */
     let createPath = (points) => {
         const path = [];
-        path.push (`M${points[0].x},${points[0].y} Q${points[1].x},${points[1].y},${points[2].x},${points[2].y}`);
-        for (let i = 3; i < points.length; i++) {
-            path.push(`C${points[i].x},${points[i].y}`);
+        path.push (`M${points[0].x},${points[0].y}`);
+        for (let i = 1; i < points.length; i++) {
+            path.push(`L${points[i].x},${points[i].y}`);
         }
         return path.join(' ');
     };

@@ -15,6 +15,7 @@ function Graph(conf, data) {
 
     let scale = 1;
     let lod = 2;
+    let renderlevel = 2;
     // let lod = 1;
 
     const svg = d3.select("svg")
@@ -22,7 +23,7 @@ function Graph(conf, data) {
         .attr("height", height);
     const tooltip = d3.select(".tooltip");
     const viewGraph = new ViewGraph(conf, data);
-    const mdata = viewGraph.render(lod);
+    const mdata = viewGraph.render(renderlevel);
     const viewport = svg.append('g');
     const view0 = viewport.append('g')
         .attr('id', 'view0');
@@ -31,13 +32,17 @@ function Graph(conf, data) {
     const view2 = viewport.append('g')
         .attr('id', 'view2');
     const renderer = new Renderer(this, tooltip);
-    // renderer.renderDetailed(viewGraph.mdata, view0, view1);
-    renderer.renderDetailed(mdata.data, view0, view1, view2);
-    const map = svg.append('g')
-        .attr('transform', `translate(${width-conf.map.width},0)`);
-    const minimap = map.append('g')
-        .attr('transform', `scale(${Math.max(conf.map.width/mdata.graph.width,conf.map.height/mdata.graph.heigth) })`);
-    renderer.render(mdata.data,minimap);
+    if (renderlevel === 2) {
+        renderer.renderDetailed(mdata.data, view0, view1, view2);
+    } else {
+        renderer.render(mdata.data, view0);
+    }
+
+    // const map = svg.append('g')
+    //     .attr('transform', `translate(${width-conf.map.width},0)`);
+    // const minimap = map.append('g')
+    //     .attr('transform', `scale(${Math.max(conf.map.width/mdata.graph.width,conf.map.height/mdata.graph.heigth) })`);
+    // renderer.render(mdata.data,minimap);
 
     svg.call(d3.zoom()
         .scaleExtent([zoom[0], zoom[zoom.length - 1]])
@@ -69,9 +74,15 @@ function Graph(conf, data) {
      */
     this.updateGroup = (group) => {
         console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
-        viewport.selectAll('*').remove();
-        viewGraph.render(lod);
-        renderer.renderDetailed(viewGraph.mdata, view0, view1);
+        view0.selectAll('*').remove();
+        view1.selectAll('*').remove();
+        view2.selectAll('*').remove();
+        const mdata = viewGraph.render(renderlevel);
+        if (renderlevel === 2) {
+            renderer.renderDetailed(mdata.data, view0, view1, view2);
+        } else {
+            renderer.render(mdata.data, view0);
+        }
     };
 
     this.updateLod(lod);
