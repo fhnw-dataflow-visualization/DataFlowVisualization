@@ -47,7 +47,7 @@ function Renderer(mg, tooltip) {
 
     this.drawGroup = (root, group) => {
         const n = root.append("g")
-            .attr('id', `n${group.id}`)
+            .attr('id', `n ${group.id}`)
             .attr("class", "nodes")
             .attr("transform", `translate(${group.x - group.width * 0.5},${group.y - group.height * 0.5})`);
         const r = n.append("rect")
@@ -64,7 +64,7 @@ function Renderer(mg, tooltip) {
             .attr("height", height);
 
         var img = n.append("svg:image")
-            .attr('href','./resources/Collabsin.png')
+            .attr('xlink:href', group.view==='reduced'?'./resources/Collabsout.png':'./resources/Collabsin.png')
             .attr("width", 23)
             .attr("height", 23)
             .attr("x", group.width-30)
@@ -82,7 +82,7 @@ function Renderer(mg, tooltip) {
             .attr("height", nodeHeight)
             .attr("class", "node");
         if (node['color'])
-            r.style('stroke', `${node.color}`);
+            r.style('fill', `${node.color}`);
         n.append("text")
             .attr('x', portWidthHalf + 5)
             .attr('y', nodeHeightHalf + 5)
