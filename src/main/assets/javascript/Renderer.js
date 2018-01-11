@@ -1,3 +1,18 @@
+// window.onload = function () {
+//     var img = new Image();
+//     img.src = 'main/resources/Collabsout.png';
+//
+//     img.onload = function () {
+//         // CREATE CANVAS CONTEXT.
+//         var canvas = document.getElementById('canvas');
+//         var ctx = canvas.getContext('2d');
+//         canvas.width = img.width;
+//         canvas.height = img.height;
+//
+//         ctx.drawImage(img, 0, 0);  // DRAW THE IMAGE TO THE CANVAS.
+//     }
+// }
+
 function Renderer(mg, tooltip) {
     const conf = mg.conf;
     const nodeWidth = conf.node.width;
@@ -39,11 +54,22 @@ function Renderer(mg, tooltip) {
             .attr("width", group.width)
             .attr("height", group.height)
             .attr("class", "group");
-        return n.append("circle")
-            .attr("cx", group.width - 20)
-            .attr("cy", 20)
-            .attr("r", 10)
-            .attr("class", "groupF");
+        if (group['color'])
+            r.style('fill', `${group.color}`);
+        var width = 800,
+            height = 800;
+
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        var img = n.append("svg:image")
+            .attr('href','./resources/Collabsin.png')
+            .attr("width", 23)
+            .attr("height", 23)
+            .attr("x", group.width-30)
+            .attr("y",5);
+        return img;
     };
 
     this.drawNode = (root, node) => {
