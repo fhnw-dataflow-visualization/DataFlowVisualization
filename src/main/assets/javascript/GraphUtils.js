@@ -35,18 +35,18 @@ edgeToString = (e) => `{id: ${e.id}, from: ${e.from}, to: ${e.to}}`;
 
 /**
  * Finds the node group in DOM
- * @param node node id
+ * @param id node id
  */
-findDNode = (node) => d3.select(`#n${node}`);
+findDNode = (id) => d3.select(`#n${id}`);
 
 
 /**
  * Finds the port in DOM
- * @param node node id
- * @param port port id
+ * @param nodeId node id
+ * @param portId port id
  * @param type 'in' or 'out'
  */
-findDPort = (node, port, type) => d3.select(`#n${node}${type}${port}`);
+findDPort = (nodeId, portId, type) => d3.select(`#n${nodeId}${type}${portId}`);
 
 /**
  * Finds the edge group in DOM

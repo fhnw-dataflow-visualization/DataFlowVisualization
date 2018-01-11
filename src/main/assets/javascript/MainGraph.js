@@ -8,9 +8,6 @@
  */
 function Graph(conf, data) {
     this.conf = conf;
-
-    const width = conf.width;
-    const height = conf.height;
     const zoom = conf.zoom;
 
     let scale = 1;
@@ -18,9 +15,7 @@ function Graph(conf, data) {
     // let lod = 1;
     let renderLevel = 2;
 
-    const svg = d3.select("svg")
-        .attr("width", width)
-        .attr("height", height);
+    const svg = d3.select("svg");
     const tooltip = d3.select(".tooltip");
     const viewGraph = new ViewGraph(conf, data);
     const mdata = viewGraph.render(renderLevel);
@@ -93,7 +88,8 @@ function Graph(conf, data) {
      * Update the group in the graph
      * @param group group node
      */
-    this.updateGroup = (group) => {
+    this.changeGroupView = (group) => {
+
         console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
         view0.selectAll('*').remove();
         view1.selectAll('*').remove();
@@ -104,6 +100,13 @@ function Graph(conf, data) {
         } else {
             renderer.render(mdata.data, view0);
         }
+    };
+
+    this.updateColor = (id, g, color) => {
+        const dgNode = viewGraph.getNode(id);
+        dgNode.color = color;
+        const r = findDNode(id).select(g);
+        r.style('fill', color);
     };
 
     this.updateLod(lod);

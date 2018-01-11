@@ -19,10 +19,9 @@ function ViewGraph(conf, data) {
     /**
      * Creates a graph in dagre, depended if groups are expanded or reduced
      * Layouts this created graph
-     * Hidden node ids are stored in {@link mod}
-     * Modified graph elements are stored in {@link mdata}
+     * @param rl render level, 1 render
      */
-    this.render = (lod) => {
+    this.render = (rl) => {
         idEdges = {};
         mod ={};
         nodes = [];
@@ -34,13 +33,13 @@ function ViewGraph(conf, data) {
             addNode(node, null);
         });
         data.edges.forEach((edge) => {
-            addEdge(edge, lod);
+            addEdge(edge, rl);
         });
         //layout graph
         dagre.layout(dg);
 
         //layout ports
-        if (lod === 2) {
+        if (rl === 2) {
             data.edges.forEach((edge) => {
                 if (edge['ports']) {
                     const nPorts = edge.ports.length;
@@ -174,6 +173,8 @@ function ViewGraph(conf, data) {
             edges.push(e);
         }
     };
+
+    this.getNode = (id) => dg.node(id);
 
     // this.updateGroup = (group) => {
     //     if (group['view'] === 'expanded') {
