@@ -3,20 +3,6 @@
     stroke-width: 2;
 }
 
-.nodes .node {
-    fill: white;
-}
-
-.nodes .group {
-    fill: #FFEEEE;
-}
-
-.groupF {
-    fill: red;
-    stroke: black;
-    stroke-width: 1;
-}
-
 text {
     font-size: 0.7em;
     stroke-width: 1;

@@ -13,8 +13,7 @@
 //     }
 // }
 
-function Renderer(mg, tooltip) {
-    const conf = mg.conf;
+function Renderer(conf, changeGroupView, tooltip) {
     const nodeWidth = conf.node.width;
     const nodeWidthHalf = nodeWidth / 2;
     const nodeHeight = conf.node.height;
@@ -47,29 +46,22 @@ function Renderer(mg, tooltip) {
 
     this.drawGroup = (root, group) => {
         const n = root.append("g")
-            .attr('id', `n ${group.id}`)
+            .attr('id', `n${group.id}`)
             .attr("class", "nodes")
             .attr("transform", `translate(${group.x - group.width * 0.5},${group.y - group.height * 0.5})`);
         const r = n.append("rect")
             .attr("width", group.width)
             .attr("height", group.height)
-            .attr("class", "group");
-        if (group['color'])
-            r.style('fill', `${group.color}`);
-        var width = 800,
-            height = 800;
-
-        var svg = d3.select("body").append("svg")
-            .attr("width", width)
-            .attr("height", height);
-
-        var img = n.append("svg:image")
-            .attr('xlink:href', group.view==='reduced'?'./resources/Collabsout.png':'./resources/Collabsin.png')
+            .style('fill', group['color'] ? `${group.color}` : 'white');
+        group.area = r;
+        return img = n.append("svg:image")
+            .attr('xlink:href', group.view==='reduced'
+                ? './resources/Collabsout.png'
+                : './resources/Collabsin.png')
             .attr("width", 23)
             .attr("height", 23)
             .attr("x", group.width-30)
             .attr("y",5);
-        return img;
     };
 
     this.drawNode = (root, node) => {
@@ -80,9 +72,8 @@ function Renderer(mg, tooltip) {
         const r = n.append("rect")
             .attr("width", nodeWidth)
             .attr("height", nodeHeight)
-            .attr("class", "node");
-        if (node['color'])
-            r.style('fill', `${node.color}`);
+            .style('fill', node['color'] ? `${node.color}` : 'white');
+        node.area = r;
         n.append("text")
             .attr('x', portWidthHalf + 5)
             .attr('y', nodeHeightHalf + 5)
@@ -92,14 +83,15 @@ function Renderer(mg, tooltip) {
 
     this.drawPorts = (root, node) => {
         const n2 = root.append('g');
+        let ports = null;
         if (node['in']) {
-            const ports = n2.append('g')
+            ports = n2.append('g')
                 .attr('class', 'inPort');
             initInPort(ports, node);
         }
         /* draw out ports */
         if (node['out']) {
-            const ports = n2.append('g')
+            ports = n2.append('g')
                 .attr('class', 'outPort');
             initOutPort(ports, node);
         }
@@ -170,7 +162,7 @@ function Renderer(mg, tooltip) {
                 //expanded group
                 changeView.on('click', () => {
                     node.view = 'reduced';
-                    mg.updateGroup(node);
+                    changeGroupView(node);
                 });
                 node.children.forEach((child) => {
                     initNode(child, parent0, parent1, lod);
@@ -179,7 +171,7 @@ function Renderer(mg, tooltip) {
                 //reduced group
                 changeView.on('click', () => {
                     node.view = 'expanded';
-                    mg.updateGroup(node);
+                    changeGroupView(node);
                 });
             }
         } else {

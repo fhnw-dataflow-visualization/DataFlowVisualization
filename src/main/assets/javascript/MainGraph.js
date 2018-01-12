@@ -7,7 +7,6 @@
  * @constructor
  */
 function Graph(conf, data) {
-    this.conf = conf;
     const zoom = conf.zoom;
 
     let scale = 1;
@@ -15,10 +14,28 @@ function Graph(conf, data) {
     // let lod = 1;
     let renderLevel = 2;
 
-    const svg = d3.select("svg");
-    const tooltip = d3.select(".tooltip");
     const viewGraph = new ViewGraph(conf, data);
     const mdata = viewGraph.render(renderLevel);
+
+    /**
+     * Update the group in the graph
+     * @param group group node
+     */
+    let changeGroupView = (group) => {
+        console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
+        view0.selectAll('*').remove();
+        view1.selectAll('*').remove();
+        view2.selectAll('*').remove();
+        const mdata = viewGraph.render(renderLevel);
+        if (renderLevel === 2) {
+            renderer.renderDetailed(mdata.data, view0, view1, view2);
+        } else {
+            renderer.render(mdata.data, view0);
+        }
+    };
+
+    const svg = d3.select("svg");
+    const tooltip = d3.select(".tooltip");
     const viewport = svg.append('g');
     //set views: 0 always visible, 1 visible if lod < 2, 2 visible if lod = 2
     const view0 = viewport.append('g')
@@ -27,7 +44,8 @@ function Graph(conf, data) {
         .attr('id', 'view1');
     const view2 = viewport.append('g')
         .attr('id', 'view2');
-    const renderer = new Renderer(this, tooltip);
+
+    const renderer = new Renderer(conf, changeGroupView, tooltip);
     //set custom drawing
     if (conf['drawing']){
         const d = conf.drawing;
@@ -60,6 +78,7 @@ function Graph(conf, data) {
     //     .attr('transform', `scale(${Math.max(conf.map.width/mdata.graph.width,conf.map.height/mdata.graph.heigth) })`);
     // renderer.render(mdata.data,minimap);
 
+
     svg.call(d3.zoom()
         .scaleExtent([zoom[0], zoom[zoom.length - 1]])
         .on('zoom', () => {
@@ -84,29 +103,12 @@ function Graph(conf, data) {
         view2.style('display', lod === 2 ? 'block' : 'none');
     };
 
-    /**
-     * Update the group in the graph
-     * @param group group node
-     */
-    this.changeGroupView = (group) => {
-
-        console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
-        view0.selectAll('*').remove();
-        view1.selectAll('*').remove();
-        view2.selectAll('*').remove();
-        const mdata = viewGraph.render(renderLevel);
-        if (renderLevel === 2) {
-            renderer.renderDetailed(mdata.data, view0, view1, view2);
-        } else {
-            renderer.render(mdata.data, view0);
-        }
-    };
-
-    this.updateColor = (id, g, color) => {
+    this.updateColor = (id, color) => {
         const dgNode = viewGraph.getNode(id);
         dgNode.color = color;
-        const r = findDNode(id).select(g);
-        r.style('fill', color);
+        if (dgNode['area']) {
+            dgNode.area.style('fill', color);
+        }
     };
 
     this.updateLod(lod);
