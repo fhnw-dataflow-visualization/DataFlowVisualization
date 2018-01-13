@@ -12,6 +12,10 @@ function Graph(conf, data) {
     const edgeSet = {};
     const stucture = data.compound;
 
+    //todo adjust lod
+    //todo implement minimap
+    //todo implement modify compound
+
     let portGraph = false;
     let compound = data.hasOwnProperty('compound');
 
@@ -40,7 +44,7 @@ function Graph(conf, data) {
     this.hasEdge = (id) => edgeSet.hasOwnProperty(id);
 
     /**
-     * Returns true if the graph contains ports
+     * Returns true if some nodes of the graph contains ports
      */
     this.isPortGraph = () => portGraph;
 
@@ -66,8 +70,9 @@ function Graph(conf, data) {
         }
         edgeSet[edge.id] = edge;
     });
+    //override portGraph by conf
     if (conf.hasOwnProperty('portGraph')) {
-        portGraph = true;
+        portGraph = conf.portGraph;
     }
 
     let checkCompound = (c) => {
@@ -87,6 +92,7 @@ function Graph(conf, data) {
         }
     };
     if (compound){
+        checkCompound(stucture);
         checkCompound(stucture);
     }
 
@@ -205,7 +211,7 @@ function Graph(conf, data) {
 
     /**
      * Modifies current graph
-     * @param mod modification {nodes: [nodes], edges: [edges]}
+     * @param mod modification {nodes: [], edges: [], compound, portGraph}
      */
     this.modify = (mod) => {
         if (mod.hasOwnProperty('nodes')) {
@@ -215,9 +221,10 @@ function Graph(conf, data) {
                     portGraph = true;
                 nodeSet[node.id] = node;
             });
-            if (conf.hasOwnProperty('portGraph')) {
-                portGraph = true;
-            }
+        }
+        //override portGraph by mod
+        if (mod.hasOwnProperty('portGraph')) {
+            portGraph = mod.portGraph;
         }
         if (mod.hasOwnProperty('edges')) {
             mod.edges.forEach((edge) => {
