@@ -39,7 +39,6 @@ edgeToString = (e) => `{id: ${e.id}, from: ${e.from}, to: ${e.to}}`;
  */
 findDNode = (id) => d3.select(`#n${id}`);
 
-
 /**
  * Finds the port in DOM
  * @param nodeId node id

@@ -7,52 +7,137 @@
  * @constructor
  */
 function Graph(conf, data) {
-    const zoom = conf.zoom;
+    // --- basic graph methods ---
+    const nodeSet = {};
+    const edgeSet = {};
+    const stucture = data.compound;
 
-    let scale = 1;
-    let lod = 2;
-    // let lod = 1;
-    let renderLevel = 2;
+    let portGraph = false;
+    let compound = data.hasOwnProperty('compound');
 
-    const viewGraph = new ViewGraph(conf, data);
-    let mdata = viewGraph.render(renderLevel);
+    /**
+     * Returns the stored node
+     * @param id node id
+     */
+    this.getNode = (id) => nodeSet[id];
 
+    /**
+     * Returns if the graph contains a node
+     * @param id node id
+     */
+    this.hasNode = (id) => nodeSet.hasOwnProperty(id);
 
-    let renderGraph = () => {
-        view0.selectAll('*').remove();
-        view1.selectAll('*').remove();
-        view2.selectAll('*').remove();
-        if (renderLevel === 2) {
-            renderer.renderDetailed(mdata.data, view0, view1, view2);
-        } else {
-            renderer.render(mdata.data, view0);
+    /**
+     * Returns the stored edge
+     * @param id edge id
+     */
+    this.getEdge = (id) => edgeSet[id];
+
+    /**
+     * Returns if the graph contains an edge
+     * @param id edge id
+     */
+    this.hasEdge = (id) => edgeSet.hasOwnProperty(id);
+
+    /**
+     * Returns true if the graph contains ports
+     */
+    this.isPortGraph = () => portGraph;
+
+    /**
+     * Returns true if the graph is a compound graph
+     */
+    this.isCompound = () => compound;
+
+    //--- input validation ---
+    data.nodes.forEach((node) => {
+        if (this.hasNode(node.id)) {
+            throw new Error(`Id of node: ${toString(node)} is already in use
+            from node: ${toString(this.getNode(node.id))}.`);
+        }
+        if (!portGraph && (node['in'] || node['out']))
+            portGraph = true;
+        nodeSet[node.id] = node;
+    });
+    data.edges.forEach((edge) => {
+        if (this.hasEdge(edge.id)) {
+            throw new Error(`Id of edge: ${edgeToString(edge)} is already in use
+            from edge: ${edgeToString(this.getEdge(edge.id))}.`);
+        }
+        edgeSet[edge.id] = edge;
+    });
+    if (conf.hasOwnProperty('portGraph')) {
+        portGraph = true;
+    }
+
+    let checkCompound = (c) => {
+        if (c['children']) {
+            c.children.forEach((child) => {
+                if (!child.hasOwnProperty('group') && !child.hasOwnProperty('nodes')) {
+                    throw new Error(`Invalid node in compound structure`);
+                }
+                const group = nodeSet[child.group];
+                if (!group.hasOwnProperty('view')) {
+                    group['view'] = 'expanded';
+                } else if (group.view !== 'expanded' || group.view !== 'reduced') {
+                    throw new Error(`Group attribute \'view\' is not \'expanded\' or \'reduced\' at ${toString(group)}`);
+                }
+                checkCompound(child);
+            });
         }
     };
+    if (compound){
+        checkCompound(stucture);
+    }
 
+    let scale = conf.hasOwnProperty('scale') ? conf.scale : 1; //start scale
+    let lod = conf.hasOwnProperty('lod') ? conf.lod : 2;   //start lod
+    // --- DOM elements ---
+    const svg = d3.select("svg");
+    const tooltip = d3.select(".tooltip");
+    const viewport = svg.append('g');                           //viewport, transformed by user input
+    const view0 = viewport.append('g').attr('id', 'view0');     //permanent visible view
+    const view1 = viewport.append('g').attr('id', 'view1');     //visible if lod < 2
+    const view2 = viewport.append('g').attr('id', 'view2');     //visible if lod = 2
+
+    //todo implement minimap
+    // const map = svg.append('g')
+    //     .attr('transform', `translate(${width-conf.map.width},0)`);
+    // const minimap = map.append('g')
+    //     .attr('transform', `scale(${Math.max(conf.map.width/mdata.graph.width,conf.map.height/mdata.graph.heigth) })`);
+    // renderer.render(mdata.data,minimap);
+
+    // --- layout graph ---
+    const viewGraph = new ViewGraph(conf, nodeSet, edgeSet, stucture); //layout class
+    /**
+     * Layout meta info data object
+     * vis: currently visible nodes and edges
+     * meta: meta information about the graph
+     * @type {{vis, meta}}
+     */
+    let layoutData;
+    /**
+     * Layouts the graph using dagre
+     */
+    let layoutGraph = () => {
+        viewGraph.setMode(portGraph, compound);
+        layoutData = viewGraph.layout();
+    };
+    layoutGraph();
+
+    // --- rendering graph ---
     /**
      * Update the group in the graph
      * @param group group node
      */
     let changeGroupView = (group) => {
         console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
-        mdata = viewGraph.render(renderLevel);
+        layoutGraph();
         renderGraph();
     };
-
-    const svg = d3.select("svg");
-    const tooltip = d3.select(".tooltip");
-    const viewport = svg.append('g');
-    //set views: 0 always visible, 1 visible if lod < 2, 2 visible if lod = 2
-    const view0 = viewport.append('g')
-        .attr('id', 'view0');
-    const view1 = viewport.append('g')
-        .attr('id', 'view1');
-    const view2 = viewport.append('g')
-        .attr('id', 'view2');
-
-    const renderer = new Renderer(conf, changeGroupView, tooltip);
+    const renderer = new Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip); //drawer
     //set custom drawing
-    if (conf['drawing']){
+    if (conf['drawing']) {
         const d = conf.drawing;
         if (d['drawNode']) {
             renderer.drawNode = d.drawNode;
@@ -71,16 +156,34 @@ function Graph(conf, data) {
         }
     }
 
+    /**
+     * Draws the graph onto the svg element
+     */
+    let renderGraph = () => {
+        view0.selectAll('*').remove();
+        view1.selectAll('*').remove();
+        view2.selectAll('*').remove();
+        if (portGraph) {
+            renderer.renderDetailed(layoutData.vis, view0, view1, view2);
+        } else {
+            renderer.render(layoutData.vis, view0);
+        }
+    };
     renderGraph();
 
+    // -- modification graph methods ---
 
-    // const map = svg.append('g')
-    //     .attr('transform', `translate(${width-conf.map.width},0)`);
-    // const minimap = map.append('g')
-    //     .attr('transform', `scale(${Math.max(conf.map.width/mdata.graph.width,conf.map.height/mdata.graph.heigth) })`);
-    // renderer.render(mdata.data,minimap);
+    /**
+     * Changed the lod view
+     * @param lod level of detail
+     */
+    this.updateLod = (lod) => {
+        view1.style('display', lod === 2 ? 'none' : 'block');
+        view2.style('display', lod === 2 ? 'block' : 'none');
+    };
 
 
+    const zoom = conf.zoom;
     svg.call(d3.zoom()
         .scaleExtent([zoom[0], zoom[zoom.length - 1]])
         .on('zoom', () => {
@@ -100,20 +203,28 @@ function Graph(conf, data) {
             }
         }));
 
-    this.updateLod = (lod) => {
-        view1.style('display', lod === 2 ? 'none' : 'block');
-        view2.style('display', lod === 2 ? 'block' : 'none');
-    };
-
-    this.updateColor = (id, color) => {
-        const dgNode = viewGraph.getNode(id);
-        dgNode.color = color;
-        // if (dgNode['area']) {
-        //     dgNode.area.style('fill', color);
-        // }
+    /**
+     * Modifies current graph
+     * @param mod modification {nodes: [nodes], edges: [edges]}
+     */
+    this.modify = (mod) => {
+        if (mod['nodes']) {
+            mod.nodes.forEach((node) => {
+                //modify existing edges, add new edges
+                if (!portGraph && (node['in'] || node['out']))
+                    portGraph = true;
+                nodes[node.id] = node;
+            });
+        }
+        if (mod['edges']) {
+            mod.edges.forEach((edge) => {
+                //modify existing edges, add new edges
+                edgeSet[edge.id] = edge;
+            });
+        }
+        layoutGraph();
         renderGraph();
     };
 
     this.updateLod(lod);
-
 }

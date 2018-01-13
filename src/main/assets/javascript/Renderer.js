@@ -1,19 +1,6 @@
-// window.onload = function () {
-//     var img = new Image();
-//     img.src = 'main/resources/Collabsout.png';
-//
-//     img.onload = function () {
-//         // CREATE CANVAS CONTEXT.
-//         var canvas = document.getElementById('canvas');
-//         var ctx = canvas.getContext('2d');
-//         canvas.width = img.width;
-//         canvas.height = img.height;
-//
-//         ctx.drawImage(img, 0, 0);  // DRAW THE IMAGE TO THE CANVAS.
-//     }
-// }
 
-function Renderer(conf, changeGroupView, tooltip) {
+
+function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
     const nodeWidth = conf.node.width;
     const nodeWidthHalf = nodeWidth / 2;
     const nodeHeight = conf.node.height;
@@ -22,25 +9,25 @@ function Renderer(conf, changeGroupView, tooltip) {
     const portWidthHalf = portWidth / 2;
     const portHeight = conf.port.height;
 
-    this.render = (data, view0) => {
+    this.render = (vis, view0) => {
         //init nodes
-        data.nodes.forEach((node) => {
-            initNode(node, view0, null, 1);
+        vis.nodes.forEach((id) => {
+            initNode(nodeSet[id], view0, null, 1);
         });
         //init edges
-        data.edges.forEach((edge) => {
-            initEdges(edge, view0, null, 1);
+        vis.edges.forEach((id) => {
+            initEdges(edgeSet[id], view0, null, 1);
         });
     };
 
-    this.renderDetailed = (data, view0, view1, view2) => {
+    this.renderDetailed = (vis, view0, view1, view2) => {
         //init nodes
-        data.nodes.forEach((node) => {
-            initNode(node, view0, view2, 2);
+        vis.nodes.forEach((id) => {
+            initNode(nodeSet[id], view0, view2, 2);
         });
         //init edges
-        data.edges.forEach((edge) => {
-            initEdges(edge, view1, view2, 2);
+        vis.edges.forEach((id) => {
+            initEdges(edgeSet[id], view1, view2, 2);
         });
     };
 
@@ -53,8 +40,7 @@ function Renderer(conf, changeGroupView, tooltip) {
             .attr("width", group.width)
             .attr("height", group.height)
             .style('fill', group['color'] ? `${group.color}` : 'white');
-        // group.area = r;
-        return img = n.append("svg:image")
+        return n.append("svg:image")
             .attr('xlink:href', group.view==='reduced'
                 ? './resources/Collabsout.png'
                 : './resources/Collabsin.png')
@@ -73,7 +59,6 @@ function Renderer(conf, changeGroupView, tooltip) {
             .attr("width", nodeWidth)
             .attr("height", nodeHeight)
             .style('fill', node['color'] ? `${node.color}` : 'white');
-        // node.area = r;
         n.append("text")
             .attr('x', portWidthHalf + 5)
             .attr('y', nodeHeightHalf + 5)
@@ -84,13 +69,13 @@ function Renderer(conf, changeGroupView, tooltip) {
     this.drawPorts = (root, node) => {
         const n2 = root.append('g');
         let ports = null;
-        if (node['in']) {
+        if (node.hasOwnProperty('in')) {
             ports = n2.append('g')
                 .attr('class', 'inPort');
             initInPort(ports, node);
         }
         /* draw out ports */
-        if (node['out']) {
+        if (node.hasOwnProperty('out')) {
             ports = n2.append('g')
                 .attr('class', 'outPort');
             initOutPort(ports, node);
@@ -156,16 +141,13 @@ function Renderer(conf, changeGroupView, tooltip) {
     };
 
     let initNode = (node, parent0, parent1, lod,) => {
-        if (node['children']) {
+        if (node.hasOwnProperty('view')) {
             const changeView = this.drawGroup(parent0, node);
             if (node.view === 'expanded') {
                 //expanded group
                 changeView.on('click', () => {
                     node.view = 'reduced';
                     changeGroupView(node);
-                });
-                node.children.forEach((child) => {
-                    initNode(child, parent0, parent1, lod);
                 });
             } else {
                 //reduced group
@@ -243,7 +225,7 @@ function Renderer(conf, changeGroupView, tooltip) {
      * @param o js object
      */
     let addHover = (tag, o) => {
-        if (o['attr']) {
+        if (o.hasOwnProperty('attr')) {
             tag.on('mouseover', () => {
                 tooltip.style("display", "block")
                     .style('left', `${d3.event.pageX + 5}px`)
@@ -263,64 +245,4 @@ function Renderer(conf, changeGroupView, tooltip) {
             });
         }
     };
-
-
-// /**
-//  * Updates all nodes in the graph
-//  * Actually used for changed level of detail
-//  * @param viewport <g> viewport
-//  * @param lod level of detail
-//  */
-// this.updateNodes = (viewport, nodes, lod) => {
-//     const n = viewport.selectAll('.nodes');
-//     n.data(nodes).each((node) => {
-//         updateNode(node, lod)
-//     });
-// };
-//
-// let updateNode = (node, lod) => {
-//     if (node['children']) {
-//         node.children.forEach((child) => {
-//             updateNode(child, lod);
-//         });
-//     } else {
-//         const n = findDNode(node.id);
-//         const inPorts = n.select('.inPort');
-//         const outPorts = n.select('.outPort');
-//         if (lod === 2) {
-//             if (node['in']) {
-//                 initInPort(inPorts, node);
-//             }
-//             if (node['out']) {
-//                 initOutPort(outPorts, node);
-//             }
-//         } else {
-//             removePorts(inPorts);
-//             removePorts(outPorts);
-//         }
-//     }
-// };
-//
-// /**
-//  * Removes all <polygon> ports from current node
-//  * @param g <g> in- or output ports
-//  */
-// let removePorts = (g) => {
-//     g.selectAll('polygon').remove();
-// };
-//
-// /**
-//  * Updates all edges in the graph
-//  * Actually used for changed level of detail
-//  * @param viewport <g> viewport
-//  * @param lod level of detail
-//  */
-// this.updateEdges = (viewport, edges, lod) => {
-//     viewport.selectAll(".edge").data(edges).each((line) => {
-//         const g = findDEdge(line.id);
-//         g.selectAll('line').remove();
-//         g.selectAll('path').remove();
-//         initEdges(g, line, lod);
-//     });
-// };
 }
