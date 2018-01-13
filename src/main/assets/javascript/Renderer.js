@@ -53,7 +53,7 @@ function Renderer(conf, changeGroupView, tooltip) {
             .attr("width", group.width)
             .attr("height", group.height)
             .style('fill', group['color'] ? `${group.color}` : 'white');
-        group.area = r;
+        // group.area = r;
         return img = n.append("svg:image")
             .attr('xlink:href', group.view==='reduced'
                 ? './resources/Collabsout.png'
@@ -73,7 +73,7 @@ function Renderer(conf, changeGroupView, tooltip) {
             .attr("width", nodeWidth)
             .attr("height", nodeHeight)
             .style('fill', node['color'] ? `${node.color}` : 'white');
-        node.area = r;
+        // node.area = r;
         n.append("text")
             .attr('x', portWidthHalf + 5)
             .attr('y', nodeHeightHalf + 5)

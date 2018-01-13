@@ -15,7 +15,19 @@ function Graph(conf, data) {
     let renderLevel = 2;
 
     const viewGraph = new ViewGraph(conf, data);
-    const mdata = viewGraph.render(renderLevel);
+    let mdata = viewGraph.render(renderLevel);
+
+
+    let renderGraph = () => {
+        view0.selectAll('*').remove();
+        view1.selectAll('*').remove();
+        view2.selectAll('*').remove();
+        if (renderLevel === 2) {
+            renderer.renderDetailed(mdata.data, view0, view1, view2);
+        } else {
+            renderer.render(mdata.data, view0);
+        }
+    };
 
     /**
      * Update the group in the graph
@@ -23,15 +35,8 @@ function Graph(conf, data) {
      */
     let changeGroupView = (group) => {
         console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
-        view0.selectAll('*').remove();
-        view1.selectAll('*').remove();
-        view2.selectAll('*').remove();
-        const mdata = viewGraph.render(renderLevel);
-        if (renderLevel === 2) {
-            renderer.renderDetailed(mdata.data, view0, view1, view2);
-        } else {
-            renderer.render(mdata.data, view0);
-        }
+        mdata = viewGraph.render(renderLevel);
+        renderGraph();
     };
 
     const svg = d3.select("svg");
@@ -65,12 +70,9 @@ function Graph(conf, data) {
             renderer.drawPortEdge = d.drawPortEdge
         }
     }
-    //render graph
-    if (renderLevel === 2) {
-        renderer.renderDetailed(mdata.data, view0, view1, view2);
-    } else {
-        renderer.render(mdata.data, view0);
-    }
+
+    renderGraph();
+
 
     // const map = svg.append('g')
     //     .attr('transform', `translate(${width-conf.map.width},0)`);
@@ -106,9 +108,10 @@ function Graph(conf, data) {
     this.updateColor = (id, color) => {
         const dgNode = viewGraph.getNode(id);
         dgNode.color = color;
-        if (dgNode['area']) {
-            dgNode.area.style('fill', color);
-        }
+        // if (dgNode['area']) {
+        //     dgNode.area.style('fill', color);
+        // }
+        renderGraph();
     };
 
     this.updateLod(lod);
