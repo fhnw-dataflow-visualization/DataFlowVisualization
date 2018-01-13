@@ -66,7 +66,7 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
                 const node = nodeSet[id];
                 if (!hidden[node.id]) {
                     dg.setNode(node.id, node);
-                    if (!node.hasOwnProperty('view')) {
+                    if (!node.hasOwnProperty('view') || node.view === 'reduced') {
                         //normal node
                         node['width'] = conf.node.width;
                         node['height'] = conf.node.height;
@@ -79,7 +79,7 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
         //todo clarify parallelism
         if (dgCompound) {
             for (let id in parents) {
-                if (nodeSet.hasOwnProperty(id)) {
+                if (parents.hasOwnProperty(id)) {
                     dg.setParent(id, parents[id]);
                 }
             }
@@ -90,8 +90,8 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
         for (let id in edgeSet) {
             if (edgeSet.hasOwnProperty(id)) {
                 const edge = edgeSet[id];
-                const from = nodeSet.hasOwnProperty(edge.from) ? edge.from : hidden[edge.from];
-                const to = nodeSet.hasOwnProperty(edge.to) ? edge.to : hidden[edge.to];
+                const from = !hidden.hasOwnProperty(edge.from) ? edge.from : hidden[edge.from];
+                const to = !hidden.hasOwnProperty(edge.to) ? edge.to : hidden[edge.to];
                 if (from !== to && !dg.hasEdge(from, to)) {
                     if (dgMultiEdge && edge.hasOwnProperty('ports')) {
                         edge.ports.forEach((port) => {
@@ -111,7 +111,7 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
         //render ports
         //todo clarify parallelism
         if (dgMultiEdge) {
-            for (let id in edgeSet){
+            for (let id in edgeSet) {
                 if (edgeSet.hasOwnProperty(id)) {
                     const edge = edgeSet[id];
                     if (edge.hasOwnProperty('ports')) {

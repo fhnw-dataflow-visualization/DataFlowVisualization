@@ -11,10 +11,12 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
 
     this.render = (vis, view0) => {
         //init nodes
+        //todo clarify parallelism
         vis.nodes.forEach((id) => {
             initNode(nodeSet[id], view0, null, 1);
         });
         //init edges
+        //todo clarify parallelism
         vis.edges.forEach((id) => {
             initEdges(edgeSet[id], view0, null, 1);
         });
@@ -22,10 +24,12 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
 
     this.renderDetailed = (vis, view0, view1, view2) => {
         //init nodes
+        //todo clarify parallelism
         vis.nodes.forEach((id) => {
             initNode(nodeSet[id], view0, view2, 2);
         });
         //init edges
+        //todo clarify parallelism
         vis.edges.forEach((id) => {
             initEdges(edgeSet[id], view1, view2, 2);
         });
