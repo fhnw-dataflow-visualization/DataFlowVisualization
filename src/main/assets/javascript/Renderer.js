@@ -1,5 +1,16 @@
-
-
+/**
+ * @author Claudio Seitz
+ * @version 1.0
+ *
+ * Draws the graph as svg
+ *
+ * @param conf config object
+ * @param changeGroupView group view update method
+ * @param nodeSet set of all nodes
+ * @param edgeSet set of all edges
+ * @param tooltip <div> tooltip
+ * @constructor
+ */
 function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
     const nodeWidth = conf.node.width;
     const nodeWidthHalf = nodeWidth / 2;
@@ -9,41 +20,105 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
     const portWidthHalf = portWidth / 2;
     const portHeight = conf.port.height;
 
+    /**
+     * Renders the graph rough
+     * @param vis visible data
+     * @param view0 <g> view element
+     */
     this.render = (vis, view0) => {
         //init nodes
         //todo clarify parallelism
         vis.nodes.forEach((id) => {
-            initNode(nodeSet[id], view0, null, 1);
+            const node = nodeSet[id];
+            if (node.hasOwnProperty('view')) {
+                const changeView = this.drawGroup(view0, node);
+                if (node.view === 'expanded') {
+                    //expanded group
+                    changeView.on('click', () => {
+                        node.view = 'reduced';
+                        changeGroupView(node);
+                    });
+                } else {
+                    //reduced group
+                    changeView.on('click', () => {
+                        node.view = 'expanded';
+                        changeGroupView(node);
+                    });
+                }
+            } else {
+                //normal node
+                this.drawNode(view0, node);
+            }
         });
         //init edges
         //todo clarify parallelism
         vis.edges.forEach((id) => {
-            initEdges(edgeSet[id], view0, null, 1);
+            const edge = edgeSet[id];
+            this.drawNodeEdge(view0, edge);
         });
     };
 
+    /**
+     * Render the graph detailed
+     *
+     * @param vis visible data
+     * @param view0 <g> view element 0
+     * @param view1 <g> view element 1
+     * @param view2 <g> view element 2
+     */
     this.renderDetailed = (vis, view0, view1, view2) => {
         //init nodes
         //todo clarify parallelism
         vis.nodes.forEach((id) => {
-            initNode(nodeSet[id], view0, view2, 2);
+            const node = nodeSet[id];
+            if (node.hasOwnProperty('view')) {
+                const changeView = this.drawGroup(view0, node);
+                if (node.view === 'expanded') {
+                    //expanded group
+                    changeView.on('click', () => {
+                        node.view = 'reduced';
+                        changeGroupView(node);
+                    });
+                } else {
+                    //reduced group
+                    changeView.on('click', () => {
+                        node.view = 'expanded';
+                        changeGroupView(node);
+                    });
+                }
+            } else {
+                //normal node
+                this.drawNode(view0, node);
+                this.drawPorts(view2, node);
+            }
         });
         //init edges
         //todo clarify parallelism
         vis.edges.forEach((id) => {
-            initEdges(edgeSet[id], view1, view2, 2);
+            const edge = edgeSet[id];
+            if (edge['ports']) {
+                this.drawPortEdge(view2, edge);
+            }
+            this.drawNodeEdge(view1, edge);
         });
     };
 
+    /**
+     * Draws a group
+     * @param root parent dom element
+     * @param group group object
+     */
     this.drawGroup = (root, group) => {
         const n = root.append("g")
             .attr('id', `n${group.id}`)
-            .attr("class", "nodes")
+            .attr("class", "node")
             .attr("transform", `translate(${group.x - group.width * 0.5},${group.y - group.height * 0.5})`);
         const r = n.append("rect")
             .attr("width", group.width)
-            .attr("height", group.height)
-            .style('fill', group['color'] ? `${group.color}` : 'white');
+            .attr("height", group.height);
+        if (group.hasOwnProperty('color')){
+            r.style('fill', group.color);
+        }
         return n.append("svg:image")
             .attr('xlink:href', group.view==='reduced'
                 ? './resources/Collabsout.png'
@@ -54,15 +129,22 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
             .attr("y",5);
     };
 
+    /**
+     * Draws a node
+     * @param root parent dom element
+     * @param node node object
+     */
     this.drawNode = (root, node) => {
         const n = root.append("g")
             .attr('id', `n${node.id}`)
-            .attr("class", "nodes")
+            .attr("class", "node")
             .attr("transform", `translate(${node.x - nodeWidthHalf},${node.y - nodeHeightHalf})`);
         const r = n.append("rect")
             .attr("width", nodeWidth)
-            .attr("height", nodeHeight)
-            .style('fill', node['color'] ? `${node.color}` : 'white');
+            .attr("height", nodeHeight);
+        if (node.hasOwnProperty('color')){
+            r.style('fill', node.color);
+        }
         n.append("text")
             .attr('x', portWidthHalf + 5)
             .attr('y', nodeHeightHalf + 5)
@@ -70,115 +152,110 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
         addHover(r, node, node.x + nodeWidth + 12, node.y - 73);
     };
 
+    /**
+     * Draws the ports of a node
+     * @param root parent dom element
+     * @param node node object
+     */
     this.drawPorts = (root, node) => {
-        const n2 = root.append('g');
-        let ports = null;
+        const p = root.append('g')
+            .attr('class', 'port');
+        // draw in ports
         if (node.hasOwnProperty('in')) {
-            ports = n2.append('g')
-                .attr('class', 'inPort');
-            initInPort(ports, node);
+            drawInPort(p, node);
         }
-        /* draw out ports */
+        // draw out ports
         if (node.hasOwnProperty('out')) {
-            ports = n2.append('g')
-                .attr('class', 'outPort');
-            initOutPort(ports, node);
+            drawOutPort(p, node);
         }
-    };
-
-    this.drawNodeEdge = (root, edge) => {
-        const p = root.append('path')
-            .attr('class', 'edge')
-            .attr('d', createPath(edge.points))
-            .style('marker-end', 'url(#arrow)');
-        addHover(p, edge);
-    };
-
-    this.drawPortEdge = (root, edge) => {
-        const g = root.append('g')
-            .attr('id', `e${edge.id}`)
-            .attr('class', 'edge');
-        edge.ports.forEach((port) => {
-            const p = g.append('path')
-                .attr('d', createPath(port.points))
-                .style('marker-end', 'url(#arrow)');
-            addHover(p, port);
-        });
     };
 
     /**
      * Draws all input ports of current node
-     * @param g <g> node
+     * @param root parent dom element
      * @param node js node
      */
-    let initInPort = (g, node) => {
+    let drawInPort = (root, node) => {
         for (let key in node.in) {
             if (node.in.hasOwnProperty(key)) {
                 const port = node.in[key];
                 const x = port.anchor.x;
                 const y = port.anchor.y;
-                g.append('polygon')
+                const p = root.append('polygon')
                     .attr('id', `n${node.id}in${port.port}`)
                     .attr('points', calculatePort(x, y, 1));
-                addHover(g, port);
+                if (port.hasOwnProperty('color')){
+                    p.style('fill', port.color);
+                }
+                addHover(p, port);
             }
         }
     };
 
     /**
      * Draws all <polygon> output ports of current node
-     * @param g <g> node
+     * @param root parent dom element
      * @param node js node
      */
-    let initOutPort = (g, node) => {
+    let drawOutPort = (root, node) => {
         for (let key in node.out) {
             if (node.out.hasOwnProperty(key)) {
                 const port = node.out[key];
                 const x = port.anchor.x;
                 const y = port.anchor.y;
-                g.append('polygon')
+                const p = root.append('polygon')
                     .attr('id', `n${node.id}out${port.port}`)
                     .attr('points', calculatePort(x, y, -1));
-                addHover(g, port);
+                if (port.hasOwnProperty('color')){
+                    p.style('fill', port.color);
+                }
+                addHover(p, port);
             }
         }
     };
 
-    let initNode = (node, parent0, parent1, lod,) => {
-        if (node.hasOwnProperty('view')) {
-            const changeView = this.drawGroup(parent0, node);
-            if (node.view === 'expanded') {
-                //expanded group
-                changeView.on('click', () => {
-                    node.view = 'reduced';
-                    changeGroupView(node);
-                });
-            } else {
-                //reduced group
-                changeView.on('click', () => {
-                    node.view = 'expanded';
-                    changeGroupView(node);
-                });
-            }
-        } else {
-            //normal node
-            this.drawNode(parent0, node);
-            if (lod === 2) {
-                /* draw in ports */
-                this.drawPorts(parent1, node);
-            }
+    /**
+     * Draws an node-node edge
+     * @param root parent dom element
+     * @param edge edge object
+     */
+    this.drawNodeEdge = (root, edge) => {
+        const p = root.append('path')
+            .attr('class', 'edge')
+            .attr('d', createPath(edge.points))
+            .style('marker-end', 'url(#arrow)');
+        if (edge.hasOwnProperty('color')){
+            p.style('stroke', edge.color);
         }
+        addHover(p, edge);
     };
 
-    let initEdges = (edge, root0, root1, lod) => {
-        if (lod === 2 && edge['ports']) {
-            this.drawPortEdge(root1, edge);
+    /**
+     * Draws all port-port edges of a node-node edge
+     * @param root parent dom element
+     * @param edge edge object
+     */
+    this.drawPortEdge = (root, edge) => {
+        const g = root.append('g')
+            .attr('id', `e${edge.id}`)
+            .attr('class', 'edge');
+        if (edge.hasOwnProperty('color')){
+            g.style('stroke', edge.color);
         }
-        this.drawNodeEdge(root0, edge);
+        edge.ports.forEach((port) => {
+            const p = g.append('path')
+                .attr('d', createPath(port.points))
+                .style('marker-end', 'url(#arrow)');
+            if (port.hasOwnProperty('color')){
+                p.style('stroke', port.color);
+            }
+            addHover(p, port);
+        });
     };
 
     /**
      * Calculates all point coordinates of this port number
+     *
      * @param posX node x coordinate
      * @param posY node y coordinate
      * @param i port number
@@ -225,12 +302,13 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
 
     /**
      * Adds hover function to a tag using field attr of o
-     * @param tag dom element
+     *
+     * @param dom element
      * @param o js object
      */
-    let addHover = (tag, o) => {
+    let addHover = (dom, o) => {
         if (o.hasOwnProperty('attr')) {
-            tag.on('mouseover', () => {
+            dom.on('mouseover', () => {
                 tooltip.style("display", "block")
                     .style('left', `${d3.event.pageX + 5}px`)
                     .style('top', `${d3.event.pageY + 5}px`)
@@ -243,8 +321,7 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
                         .delay(2000)
                         .style("display", "none");
                 } else {
-                    tooltip
-                        .style("display", "none");
+                    tooltip.style("display", "none");
                 }
             });
         }

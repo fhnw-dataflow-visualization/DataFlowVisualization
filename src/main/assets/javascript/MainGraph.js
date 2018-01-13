@@ -119,11 +119,11 @@ function Graph(conf, data) {
     /**
      * Layouts the graph using dagre
      */
-    let layoutGraph = () => {
+    this.layout = () => {
         viewGraph.setMode(portGraph, compound);
         layoutData = viewGraph.layout();
     };
-    layoutGraph();
+    this.layout();
 
     // --- rendering graph ---
     /**
@@ -132,8 +132,8 @@ function Graph(conf, data) {
      */
     let changeGroupView = (group) => {
         console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
-        layoutGraph();
-        renderGraph();
+        this.layout();
+        this.render();
     };
     const renderer = new Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip); //drawer
     //set custom drawing
@@ -159,7 +159,7 @@ function Graph(conf, data) {
     /**
      * Draws the graph onto the svg element
      */
-    let renderGraph = () => {
+    this.render = () => {
         view0.selectAll('*').remove();
         view1.selectAll('*').remove();
         view2.selectAll('*').remove();
@@ -169,7 +169,7 @@ function Graph(conf, data) {
             renderer.render(layoutData.vis, view0);
         }
     };
-    renderGraph();
+    this.render();
 
     // -- modification graph methods ---
 
@@ -208,22 +208,28 @@ function Graph(conf, data) {
      * @param mod modification {nodes: [nodes], edges: [edges]}
      */
     this.modify = (mod) => {
-        if (mod['nodes']) {
+        if (mod.hasOwnProperty('nodes')) {
             mod.nodes.forEach((node) => {
                 //modify existing edges, add new edges
                 if (!portGraph && (node['in'] || node['out']))
                     portGraph = true;
-                nodes[node.id] = node;
+                nodeSet[node.id] = node;
             });
+            if (conf.hasOwnProperty('portGraph')) {
+                portGraph = true;
+            }
         }
-        if (mod['edges']) {
+        if (mod.hasOwnProperty('edges')) {
             mod.edges.forEach((edge) => {
                 //modify existing edges, add new edges
                 edgeSet[edge.id] = edge;
             });
         }
-        layoutGraph();
-        renderGraph();
+        if (mod.hasOwnProperty('compound')) {
+            //todo handle
+        }
+        this.layout();
+        this.render();
     };
 
     this.updateLod(lod);
