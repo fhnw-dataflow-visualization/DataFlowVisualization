@@ -61,19 +61,15 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
 
         // add nodes from main graph
         //todo clarify parallelism
-        for (let id in nodeSet) {
-            if (nodeSet.hasOwnProperty(id)) {
-                const node = nodeSet[id];
-                if (!hidden[node.id]) {
-                    dg.setNode(node.id, node);
-                    if (!node.hasOwnProperty('view') || node.view === 'reduced') {
-                        //normal node
-                        node['width'] = conf.node.width;
-                        node['height'] = conf.node.height;
-                    }
-                }
+        visNodes.forEach((id) => {
+            const node = nodeSet[id];
+            dg.setNode(node.id, node);
+            if (!node.hasOwnProperty('view') || node.view === 'reduced') {
+                //normal node
+                node['width'] = conf.node.width;
+                node['height'] = conf.node.height;
             }
-        }
+        });
 
         // set Parents from compound structure
         //todo clarify parallelism
@@ -179,10 +175,9 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
     /**
      * Initializes the mod object
      * @param e compound node
-     * @param parentId compound parent node id
      * @param rootId compound root node id
      */
-    let buildCompound = (e, parentId, rootId) => {
+    let buildCompound = (e, rootId) => {
         if (rootId !== undefined) {
             //hidden children
             e.nodes.forEach((id) => {
@@ -190,27 +185,30 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
             });
             if (e.hasOwnProperty('children')) {
                 e.children.forEach((child) => {
-                    buildCompound(child, undefined, rootId);
+                    buildCompound(child, rootId);
                 });
             }
         } else {
+            //visible children node
             e.nodes.forEach((node) => {
                 visNodes.push(node);
             });
-            //visible children node
-            if (parentId !== undefined) {
-                e.nodes.forEach((id) => {
-                    parents[id] = parentId;
+            if (e.hasOwnProperty('group')) {
+                e.nodes.forEach((node) => {
+                    parents[node] = e.group;
                 });
             }
             if (e.hasOwnProperty('children')) {
                 e.children.forEach((child) => {
                     const group = nodeSet[child.group];
+                    if (e.hasOwnProperty('group')) {
+                        parents[group.id] = e.group;
+                    }
                     visNodes.push(group.id);
                     if (group.view === 'expanded') {
-                        buildCompound(child, group.id)
+                        buildCompound(child)
                     } else {
-                        buildCompound(child, undefined, group.id);
+                        buildCompound(child, group.id);
                     }
                 });
             }
