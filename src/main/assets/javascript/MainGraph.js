@@ -84,7 +84,7 @@ function Graph(conf, data) {
                 const group = nodeSet[child.group];
                 if (!group.hasOwnProperty('view')) {
                     group['view'] = 'expanded';
-                } else if (group.view !== 'expanded' || group.view !== 'reduced') {
+                } else if (group.view !== 'expanded' && group.view !== 'reduced') {
                     throw new Error(`Group attribute \'view\' is not \'expanded\' or \'reduced\' at ${toString(group)}`);
                 }
                 checkCompound(child);
@@ -92,7 +92,6 @@ function Graph(conf, data) {
         }
     };
     if (compound){
-        checkCompound(stucture);
         checkCompound(stucture);
     }
 
