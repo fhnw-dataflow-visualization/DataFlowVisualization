@@ -48,7 +48,7 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
      * @returns {{vis: {nodes: Array, edges: Array}, meta: {width, height}}}
      */
     this.layout = () => {
-        hidden = {};        // set of hidden child node or group ids, each refers to itself root id
+        hidden = {};        // set of hidden child node ids, each refers to itself root id
         parents = {};       // set of child node or group ids, each refers to itself parent id
         visNodes = [];      // array of visible nodes
         visEdges = [];      // array of visible edges

@@ -61,6 +61,12 @@ function Graph(conf, data) {
 
     //--- input validation ---
     data.nodes.forEach((node) => {
+        if (!node.hasOwnProperty('id')){
+            throw new Error(`Id of node is missing`);
+        }
+        if (!node.hasOwnProperty('name')){
+            throw new Error(`Name of node (${node.id}) is missing`);
+        }
         if (this.hasNode(node.id)) {
             throw new Error(`Id of node: ${toString(node)} is already in use
             from node: ${toString(this.getNode(node.id))}.`);
@@ -70,6 +76,12 @@ function Graph(conf, data) {
         nodeSet[node.id] = node;
     });
     data.edges.forEach((edge) => {
+        if (!edge.hasOwnProperty('id')){
+            throw new Error(`Id of edge is missing`);
+        }
+        if (!edge.hasOwnProperty('name')){
+            throw new Error(`Name of edge (${edge.id}) is missing`);
+        }
         if (this.hasEdge(edge.id)) {
             throw new Error(`Id of edge: ${edgeToString(edge)} is already in use
             from edge: ${edgeToString(this.getEdge(edge.id))}.`);
@@ -130,6 +142,7 @@ function Graph(conf, data) {
     this.layout();
 
     let mapSvg;
+    let userView;
     let map;
     // append  minimap dom
     if (minimap) {
@@ -195,7 +208,7 @@ function Graph(conf, data) {
             // const s = 0.2;
             const x = (map.width - graphWidth * s) * 0.5;
             const y = (map.height - graphHeight * s) * 0.5;
-            renderer.drawMimimap(layoutData.vis, mapSvg, x, y, s);
+            userView = renderer.drawMimimap(layoutData.vis, mapSvg, x, y, s);
         }
     };
     this.render();
@@ -220,6 +233,7 @@ function Graph(conf, data) {
         .on('zoom', () => {
             const e = d3.event.transform;
             viewport.attr('transform', e);
+            userView.attr('transform', e);
             if (scale !== e.k) {  //new scale
                 scale = e.k;
                 if (scale < zoom[lod]) {
