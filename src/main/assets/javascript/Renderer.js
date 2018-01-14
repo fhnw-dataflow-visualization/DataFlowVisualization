@@ -261,7 +261,6 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
 
     this.drawMimimap = (vis, mapSvg, x, y, s) => {
         const g = mapSvg.append('g').attr('transform', `translate(${x},${y})scale(${s})`);
-        const r = g.append('rect');
         const mapNodes = g.append('g').attr('class', 'node');
         const mapEdges = g.append('g').attr('class', 'edge');
         //init nodes
@@ -289,7 +288,7 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
                 p.style('stroke', edge.color);
             }
         });
-        return r;
+        return g.append('rect');;
     };
 
     /**

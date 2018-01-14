@@ -61,10 +61,10 @@ function Graph(conf, data) {
 
     //--- input validation ---
     data.nodes.forEach((node) => {
-        if (!node.hasOwnProperty('id')){
+        if (!node.hasOwnProperty('id')) {
             throw new Error(`id of node is missing`);
         }
-        if (!node.hasOwnProperty('name')){
+        if (!node.hasOwnProperty('name')) {
             throw new Error(`name of node (${node.id}) is missing`);
         }
         if (this.hasNode(node.id)) {
@@ -76,13 +76,13 @@ function Graph(conf, data) {
         nodeSet[node.id] = node;
     });
     data.edges.forEach((edge) => {
-        if (!edge.hasOwnProperty('id')){
+        if (!edge.hasOwnProperty('id')) {
             throw new Error(`id of edge is missing`);
         }
-        if (!edge.hasOwnProperty('from')){
+        if (!edge.hasOwnProperty('from')) {
             throw new Error(`from of edge (${edge.id}) is missing`);
         }
-        if (!edge.hasOwnProperty('to')){
+        if (!edge.hasOwnProperty('to')) {
             throw new Error(`to of edge (${edge.id}) is missing`);
         }
         if (this.hasEdge(edge.id)) {
@@ -115,11 +115,12 @@ function Graph(conf, data) {
     if (compound) {
         checkCompound(stucture);
     }
-
-    let scale = conf.hasOwnProperty('scale') ? conf.scale : 1; //start scale
+    let e = null;
     let lod = conf.hasOwnProperty('lod') ? conf.lod : 2;   //start lod
     // --- DOM elements ---
     const svg = d3.select("svg");
+    const svgWidth = svg.attr('width');
+    const svgHeight = svg.attr('height');
     const tooltip = d3.select(".tooltip");
     const viewport = svg.append('g');                           //viewport, transformed by user input
     const view0 = viewport.append('g').attr('id', 'view0');     //permanent visible view
@@ -141,6 +142,8 @@ function Graph(conf, data) {
     this.layout = () => {
         viewGraph.setMode(portGraph, compound);
         layoutData = viewGraph.layout();
+        //todo remove
+        console.log(`graph width: ${layoutData.meta.width}, graph height: ${layoutData.meta.height}`);
     };
     this.layout();
 
@@ -150,7 +153,7 @@ function Graph(conf, data) {
     // append  minimap dom
     if (minimap) {
         map = conf.map;
-        const mapArea = svg.append('g').attr('transform', `translate(${svg.attr('width') - map.width},${svg.attr('height') - map.height})`);
+        const mapArea = svg.append('g').attr('transform', `translate(${svgWidth - map.width},${svgHeight - map.height})`);
         mapSvg = mapArea.append('svg')
             .attr('width', map.width)
             .attr('height', map.height);
@@ -212,14 +215,24 @@ function Graph(conf, data) {
             const x = (map.width - graphWidth * s) * 0.5;
             const y = (map.height - graphHeight * s) * 0.5;
             userView = renderer.drawMimimap(layoutData.vis, mapSvg, x, y, s);
+            userView.attr('class', 'userView');
+            if (e !== null) {
+                const dk = 1 / e.k;
+                userView
+                    .attr('x', -e.x * dk)
+                    .attr('y', -e.y * dk)
+                    .attr('width', svgWidth * dk)
+                    .attr('height', svgHeight * dk);
+            } else {
+                userView
+                    .attr('width', svgWidth)
+                    .attr('height', svgHeight);
+            }
         }
     };
     this.render();
 
-
-
     // -- modification graph methods ---
-
     /**
      * Changed the lod view
      * @param lod level of detail
@@ -229,14 +242,20 @@ function Graph(conf, data) {
         view2.style('display', lod === 2 ? 'block' : 'none');
     };
 
-
+    //handle user transformation
+    let scale = 1;
     const zoom = conf.zoom;
     svg.call(d3.zoom()
         .scaleExtent([zoom[0], zoom[zoom.length - 1]])
         .on('zoom', () => {
-            const e = d3.event.transform;
+            e = d3.event.transform;
             viewport.attr('transform', e);
-            userView.attr('transform', e);
+            const dk = 1 / e.k;
+            userView.attr('class', 'userView')
+                .attr('x', -e.x * dk)
+                .attr('y', -e.y * dk)
+                .attr('width', svgWidth * dk)
+                .attr('height', svgHeight * dk);
             if (scale !== e.k) {  //new scale
                 scale = e.k;
                 if (scale < zoom[lod]) {

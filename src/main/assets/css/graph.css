@@ -26,6 +26,12 @@ text {
     fill: #F7F7F7;
 }
 
+.userView {
+    stroke: none;
+    opacity: 0.6;
+    fill: #808080;
+}
+
 .tooltip {
     position: absolute;
     text-align: center;
