@@ -62,10 +62,10 @@ function Graph(conf, data) {
     //--- input validation ---
     data.nodes.forEach((node) => {
         if (!node.hasOwnProperty('id')){
-            throw new Error(`Id of node is missing`);
+            throw new Error(`id of node is missing`);
         }
         if (!node.hasOwnProperty('name')){
-            throw new Error(`Name of node (${node.id}) is missing`);
+            throw new Error(`name of node (${node.id}) is missing`);
         }
         if (this.hasNode(node.id)) {
             throw new Error(`Id of node: ${toString(node)} is already in use
@@ -77,10 +77,13 @@ function Graph(conf, data) {
     });
     data.edges.forEach((edge) => {
         if (!edge.hasOwnProperty('id')){
-            throw new Error(`Id of edge is missing`);
+            throw new Error(`id of edge is missing`);
         }
-        if (!edge.hasOwnProperty('name')){
-            throw new Error(`Name of edge (${edge.id}) is missing`);
+        if (!edge.hasOwnProperty('from')){
+            throw new Error(`from of edge (${edge.id}) is missing`);
+        }
+        if (!edge.hasOwnProperty('to')){
+            throw new Error(`to of edge (${edge.id}) is missing`);
         }
         if (this.hasEdge(edge.id)) {
             throw new Error(`Id of edge: ${edgeToString(edge)} is already in use
