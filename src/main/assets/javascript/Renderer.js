@@ -121,6 +121,10 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
         if (group.hasOwnProperty('color')){
             r.style('fill', group.color);
         }
+        n.append("text")
+            .attr('x', portWidthHalf + 5)
+            .attr('y', nodeHeightHalf + 5)
+            .html(`${group.name} (${group.id})`);
         return n.append("svg:image")
             .attr('xlink:href', group.view==='reduced'
                 ? './resources/Collabsout.png'
