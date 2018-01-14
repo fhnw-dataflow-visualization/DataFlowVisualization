@@ -1,0 +1,16 @@
+#info {
+    margin:10px;
+}
+#map {
+    height: 85%;
+    margin-top:10px;
+    border: 1px solid grey;
+}
+#zoomlevel {
+    color:green;
+    font-weight:bold;
+}
+#layername {
+    color:orange;
+    font-weight:bold;
+}

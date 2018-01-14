@@ -1,0 +1,43 @@
+.node {
+    fill: white;
+    stroke: black;
+    stroke-width: 2;
+}
+
+text {
+    font-size: 0.7em;
+    stroke-width: 1;
+}
+
+.port {
+    fill: white;
+    stroke: black;
+    stroke-width: 1;
+}
+
+.edge {
+    stroke: black;
+    stroke-width: 1.5;
+    fill: none;
+}
+
+.map {
+    stroke: none;
+    fill: #F7F7F7;
+}
+
+.userView {
+    stroke: none;
+    opacity: 0.6;
+    fill: #808080;
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 140px;
+    height: 70px;
+    border: 1px solid black;
+    border-radius: 5px;
+    background: white;
+}

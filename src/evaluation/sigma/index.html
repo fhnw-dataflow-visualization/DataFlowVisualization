@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basic sigma.js example</title>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+        #container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        #graph-container {
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            position: absolute;
+    </style>
+</head>
+<body>
+<div id="container">
+    <div id="graph-container"></div>
+</div>
+<script src="./lib/sigma.js"></script>
+<script src="./lib/plugins/sigma.renderers.parallelEdges.min.js"></script>
+<script src="./lib/plugins/sigma.renderers.edgeLabels.min.js"></script>
+<script src="./lib/plugins/sigma.renderers.edgeDots.min.js"></script>
+<script src="./lib/plugins/sigma.renderers.customEdgeShapes.min.js"></script>
+<script src="./lib/plugins/sigma.renderers.customShapes.min.js"></script>
+<script src="./lib/plugins/sigma.renderers.snapshot.min.js"></script>
+<script src="./lib/plugins/sigma.plugins.relativeSize.min.js"></script>
+<script>
+    const g = {
+        nodes: [],
+        edges: []
+    };
+
+    g.nodes.push({
+        id: 'n0',
+        label: 'START',
+        x: 0,
+        y: 0,
+        size: 1,
+        color: '#f00'
+    });
+    g.nodes.push({
+        id: 'n1',
+        label: 'END',
+        x: 1,
+        y: 1,
+        size: 1,
+        color: '#00f'
+    });
+    g.edges.push({
+        id: 'e0',
+        source: 'n0',
+        target: 'n1',
+    });
+
+    new sigma({
+        graph: g,
+        renderer: {
+            container: document.getElementById('graph-container'),
+            type: 'canvas'
+        }
+    });
+</script>
+</body>
+</html>

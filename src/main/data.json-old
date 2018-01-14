@@ -1,0 +1,289 @@
+{
+  "nodes": [
+    {
+      "name": "START",
+      "id": 0,
+      "in": [],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 0"
+          }
+        },
+        {
+          "port": 1,
+          "attr": {
+            "name": "Output 1"
+          }
+        },
+        {
+          "port": 2,
+          "attr": {
+            "name": "Output 2"
+          }
+        }
+      ],
+      "sub": [],
+      "attr": {
+        "link": {
+          "url": "hello.html",
+          "text": "example"
+        },
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "ialtest_split_images 1",
+      "id": 1,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 0"
+          }
+        },
+        {
+          "port": 1,
+          "attr": {
+            "name": "Input 1"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 3"
+          }
+        },
+        {
+          "port": 1,
+          "attr": {
+            "name": "Output 4"
+          }
+        }
+      ],
+      "sub": [],
+      "attr": {
+        "a": "A",
+        "b": "B",
+        "c": "C"
+      }
+    },
+    {
+      "name": "correct 2",
+      "id": 2,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 0"
+          }
+        },
+        {
+          "port": 1,
+          "attr": {
+            "name": "Input 1"
+          }
+        },
+        {
+          "port": 2,
+          "attr": {
+            "name": "Input 2"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 9"
+          }
+        },
+        {
+          "port": 1,
+          "attr": {
+            "name": "Output 10"
+          }
+        },
+        {
+          "port": 2,
+          "attr": {
+            "name": "Output 11"
+          }
+        }
+      ],
+      "sub": [],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "ialtest_combine_images 3",
+      "id": 3,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 3"
+          }
+        },
+        {
+          "port": 1,
+          "attr": {
+            "name": "Input 4"
+          }
+        },
+        {
+          "port": 2,
+          "attr": {
+            "name": "Input 5"
+          }
+        }
+      ],
+      "out": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Output 0"
+          }
+        }
+      ],
+      "sub": [],
+      "attr": {
+        "a": "A",
+        "b": "B"
+      }
+    },
+    {
+      "name": "END",
+      "id": 4,
+      "in": [
+        {
+          "port": 0,
+          "attr": {
+            "name": "Input 9"
+          }
+        }
+      ],
+      "out": [],
+      "sub": [],
+      "attr": {
+        "a": "AA",
+        "b": "BB"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": 0,
+      "from": 0,
+      "to": 1,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "0.0 - 1.0",
+            "data": "Path-to-data-file"
+          }
+        },
+        {
+          "out": 1,
+          "in": 1,
+          "attr": {
+            "name": "0.1 - 1.1",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "from": 0,
+      "to": 2,
+      "ports": [
+        {
+          "out": 2,
+          "in": 2,
+          "attr": {
+            "name": "0.2 - 2.2",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "from": 1,
+      "to": 2,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "1.0 - 2.0",
+            "data": "Path-to-data-file"
+          }
+        },
+        {
+          "out": 1,
+          "in": 1,
+          "attr": {
+            "name": "1.1 - 2.1",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "from": 2,
+      "to": 3,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "2.0 - 3.0",
+            "data": "Path-to-data-file"
+          }
+        },
+        {
+          "out": 1,
+          "in": 1,
+          "attr": {
+            "name": "2.1 - 3.1",
+            "data": "Path-to-data-file"
+          }
+        },
+        {
+          "out": 2,
+          "in": 2,
+          "attr": {
+            "name": "2.2 - 3.2",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "from": 3,
+      "to": 4,
+      "ports": [
+        {
+          "out": 0,
+          "in": 0,
+          "attr": {
+            "name": "3.0 - 4.0",
+            "data": "Path-to-data-file"
+          }
+        }
+      ]
+    }
+  ]
+}
