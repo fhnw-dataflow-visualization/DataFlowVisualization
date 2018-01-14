@@ -118,7 +118,7 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
         const r = n.append("rect")
             .attr("width", group.width)
             .attr("height", group.height);
-        if (group.hasOwnProperty('color')){
+        if (group.hasOwnProperty('color')) {
             r.style('fill', group.color);
         }
         n.append("text")
@@ -126,13 +126,13 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
             .attr('y', nodeHeightHalf + 5)
             .html(`${group.name} (${group.id})`);
         return n.append("svg:image")
-            .attr('xlink:href', group.view==='reduced'
+            .attr('xlink:href', group.view === 'reduced'
                 ? './resources/Collabsout.png'
                 : './resources/Collabsin.png')
             .attr("width", 23)
             .attr("height", 23)
-            .attr("x", group.width-30)
-            .attr("y",5);
+            .attr("x", group.width - 30)
+            .attr("y", 5);
     };
 
     /**
@@ -148,7 +148,7 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
         const r = n.append("rect")
             .attr("width", nodeWidth)
             .attr("height", nodeHeight);
-        if (node.hasOwnProperty('color')){
+        if (node.hasOwnProperty('color')) {
             r.style('fill', node.color);
         }
         n.append("text")
@@ -190,7 +190,7 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
                 const p = root.append('polygon')
                     .attr('id', `n${node.id}in${port.port}`)
                     .attr('points', calculatePort(x, y, 1));
-                if (port.hasOwnProperty('color')){
+                if (port.hasOwnProperty('color')) {
                     p.style('fill', port.color);
                 }
                 addHover(p, port);
@@ -212,7 +212,7 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
                 const p = root.append('polygon')
                     .attr('id', `n${node.id}out${port.port}`)
                     .attr('points', calculatePort(x, y, -1));
-                if (port.hasOwnProperty('color')){
+                if (port.hasOwnProperty('color')) {
                     p.style('fill', port.color);
                 }
                 addHover(p, port);
@@ -230,7 +230,7 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
             .attr('class', 'edge')
             .attr('d', createPath(edge.points))
             .style('marker-end', 'url(#arrow)');
-        if (edge.hasOwnProperty('color')){
+        if (edge.hasOwnProperty('color')) {
             p.style('stroke', edge.color);
         }
         addHover(p, edge);
@@ -245,18 +245,51 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
         const g = root.append('g')
             .attr('id', `e${edge.id}`)
             .attr('class', 'edge');
-        if (edge.hasOwnProperty('color')){
+        if (edge.hasOwnProperty('color')) {
             g.style('stroke', edge.color);
         }
         edge.ports.forEach((port) => {
             const p = g.append('path')
                 .attr('d', createPath(port.points))
                 .style('marker-end', 'url(#arrow)');
-            if (port.hasOwnProperty('color')){
+            if (port.hasOwnProperty('color')) {
                 p.style('stroke', port.color);
             }
             addHover(p, port);
         });
+    };
+
+    this.drawMimimap = (vis, mapSvg, x, y, s) => {
+        const g = mapSvg.append('g').attr('transform', `translate(${x},${y})scale(${s})`);
+        const r = g.append('rect');
+        const mapNodes = g.append('g').attr('class', 'node');
+        const mapEdges = g.append('g').attr('class', 'edge');
+        //init nodes
+        //todo clarify parallelism
+        vis.nodes.forEach((id) => {
+            const node = nodeSet[id];
+            const r = mapNodes.append("rect")
+                .attr('x', node.x - node.width * 0.5)
+                .attr('y', node.y - node.height * 0.5)
+                .attr('width', node.width)
+                .attr('height', node.height);
+            if (node.hasOwnProperty('color')) {
+                r.style('fill', node.color);
+            }
+        });
+        //init edges
+        //todo clarify parallelism
+        vis.edges.forEach((id) => {
+            const edge = edgeSet[id];
+            const p = mapEdges.append('path')
+                .attr('class', 'edge')
+                .attr('d', createPath(edge.points))
+                .style('marker-end', 'url(#arrow)');
+            if (edge.hasOwnProperty('color')) {
+                p.style('stroke', edge.color);
+            }
+        });
+        return r;
     };
 
     /**
@@ -276,20 +309,20 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
         return `${x1},${y1} ${x2},${y2}, ${x3},${y1}`
     };
 
-    // /**
-    //  * Creates a svg path according to the point array
-    //  *
-    //  * @param points point array
-    //  * @return {string} svg path
-    //  */
-    // let createPath = (points) => {
-    //     const path = [];
-    //     path.push (`M${points[0].x},${points[0].y} Q${points[1].x},${points[1].y},${points[2].x},${points[2].y}`);
-    //     for (let i = 3; i < points.length; i++) {
-    //         path.push(`C${points[i].x},${points[i].y}`);
-    //     }
-    //     return path.join(' ');
-    // };
+// /**
+//  * Creates a svg path according to the point array
+//  *
+//  * @param points point array
+//  * @return {string} svg path
+//  */
+// let createPath = (points) => {
+//     const path = [];
+//     path.push (`M${points[0].x},${points[0].y} Q${points[1].x},${points[1].y},${points[2].x},${points[2].y}`);
+//     for (let i = 3; i < points.length; i++) {
+//         path.push(`C${points[i].x},${points[i].y}`);
+//     }
+//     return path.join(' ');
+// };
 
     /**
      * Creates a svg path according to the point array
@@ -299,7 +332,7 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
      */
     let createPath = (points) => {
         const path = [];
-        path.push (`M${points[0].x},${points[0].y}`);
+        path.push(`M${points[0].x},${points[0].y}`);
         for (let i = 1; i < points.length; i++) {
             path.push(`L${points[i].x},${points[i].y}`);
         }

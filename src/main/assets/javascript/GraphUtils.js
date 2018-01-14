@@ -32,23 +32,3 @@ toString = (o) => `{id: ${o.id}, name: ${o.name}}`;
  * @param e edge to stringify
  */
 edgeToString = (e) => `{id: ${e.id}, from: ${e.from}, to: ${e.to}}`;
-
-/**
- * Finds the node group in DOM
- * @param id node id
- */
-findDNode = (id) => d3.select(`#n${id}`);
-
-/**
- * Finds the port in DOM
- * @param nodeId node id
- * @param portId port id
- * @param type 'in' or 'out'
- */
-findDPort = (nodeId, portId, type) => d3.select(`#n${nodeId}${type}${portId}`);
-
-/**
- * Finds the edge group in DOM
- * @param edge edge id
- */
-findDEdge = (edge) => d3.select(`#e${edge}`);

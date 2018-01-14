@@ -18,6 +18,7 @@ function Graph(conf, data) {
 
     let portGraph = false;
     let compound = data.hasOwnProperty('compound');
+    let minimap = conf.hasOwnProperty('map');
 
     /**
      * Returns the stored node
@@ -52,6 +53,11 @@ function Graph(conf, data) {
      * Returns true if the graph is a compound graph
      */
     this.isCompound = () => compound;
+
+    /**
+     * Returns true if the graph has a minimap
+     */
+    this.hasMinimap = () => minimap;
 
     //--- input validation ---
     data.nodes.forEach((node) => {
@@ -91,7 +97,7 @@ function Graph(conf, data) {
             });
         }
     };
-    if (compound){
+    if (compound) {
         checkCompound(stucture);
     }
 
@@ -104,13 +110,6 @@ function Graph(conf, data) {
     const view0 = viewport.append('g').attr('id', 'view0');     //permanent visible view
     const view1 = viewport.append('g').attr('id', 'view1');     //visible if lod < 2
     const view2 = viewport.append('g').attr('id', 'view2');     //visible if lod = 2
-
-    //todo implement minimap
-    // const map = svg.append('g')
-    //     .attr('transform', `translate(${width-conf.map.width},0)`);
-    // const minimap = map.append('g')
-    //     .attr('transform', `scale(${Math.max(conf.map.width/mdata.graph.width,conf.map.height/mdata.graph.heigth) })`);
-    // renderer.render(mdata.data,minimap);
 
     // --- layout graph ---
     const viewGraph = new ViewGraph(conf, nodeSet, edgeSet, stucture); //layout class
@@ -129,6 +128,17 @@ function Graph(conf, data) {
         layoutData = viewGraph.layout();
     };
     this.layout();
+
+    let mapSvg;
+    let map;
+    // append  minimap dom
+    if (minimap) {
+        map = conf.map;
+        const mapArea = svg.append('g').attr('transform', `translate(${svg.attr('width') - map.width},${svg.attr('height') - map.height})`);
+        mapSvg = mapArea.append('svg')
+            .attr('width', map.width)
+            .attr('height', map.height);
+    }
 
     // --- rendering graph ---
     /**
@@ -173,8 +183,24 @@ function Graph(conf, data) {
         } else {
             renderer.render(layoutData.vis, view0);
         }
+        if (minimap) {
+            mapSvg.selectAll('*').remove();
+            mapSvg.append('rect')
+                .attr('class', 'map')
+                .attr('width', map.width)
+                .attr('height', map.height);
+            const graphWidth = layoutData.meta.width;
+            const graphHeight = layoutData.meta.height;
+            const s = Math.min(map.width / graphWidth, map.height / graphHeight);
+            // const s = 0.2;
+            const x = (map.width - graphWidth * s) * 0.5;
+            const y = (map.height - graphHeight * s) * 0.5;
+            renderer.drawMimimap(layoutData.vis, mapSvg, x, y, s);
+        }
     };
     this.render();
+
+
 
     // -- modification graph methods ---
 

@@ -21,6 +21,11 @@ text {
     fill: none;
 }
 
+.map {
+    stroke: none;
+    fill: #F7F7F7;
+}
+
 .tooltip {
     position: absolute;
     text-align: center;

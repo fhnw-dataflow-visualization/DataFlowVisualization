@@ -152,7 +152,7 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
         }
         return {
             vis: {nodes: visNodes, edges: visEdges},
-            meta: {width: dg.width, height: dg.height}
+            meta: {width: dg.graph().width, height: dg.graph().height}
         };
     };
 
