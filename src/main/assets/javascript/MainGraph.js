@@ -2,20 +2,20 @@
  * @author Claudio Seitz
  * @version 1.0
  *
+ * Main graph, stores all graph data
+ * User interacts with this class
+ *
  * @param conf graph configuration
- * @param data graph data {nodes, edges}
+ * @param data graph data
  * @constructor
  */
 function Graph(conf, data) {
     // --- basic graph methods ---
     const nodeSet = {};
     const edgeSet = {};
-    const stucture = data.compound;
+    let structure = data.compound;
 
-    //todo adjust lod
-    //todo implement modify compound
-
-    let portGraph = false;
+    let portGraph = conf.hasOwnProperty('port');
     let compound = data.hasOwnProperty('compound');
     let minimap = conf.hasOwnProperty('map');
 
@@ -59,22 +59,59 @@ function Graph(conf, data) {
     this.hasMinimap = () => minimap;
 
     //--- input validation ---
-    data.nodes.forEach((node) => {
+    if (conf.hasOwnProperty('node')) {
+        const node = conf.node;
+        if (!node.hasOwnProperty('width')){
+            throw new Error('Width in conf.node is missing');
+        }
+        if (!node.hasOwnProperty('height')){
+            throw new Error('Height in conf.node is missing');
+        }
+    } else {
+        conf.node = {
+            width: 125,
+            height: 40,
+        }
+    }
+    if (portGraph) {
+        const port = conf.port;
+        if (!port.hasOwnProperty('width')){
+            throw new Error('Width in conf.port is missing');
+        }
+        if (!port.hasOwnProperty('height')){
+            throw new Error('Height in conf.port is missing');
+        }
+    }
+    if (minimap) {
+        const map = conf.map;
+        if (!map.hasOwnProperty('width')){
+            throw new Error('Width in conf.map is missing');
+        }
+        if (!map.hasOwnProperty('height')){
+            throw new Error('Height in conf.map is missing');
+        }
+    }
+    let validateNode = (node) => {
         if (!node.hasOwnProperty('id')) {
             throw new Error(`id of node is missing`);
         }
         if (!node.hasOwnProperty('name')) {
             throw new Error(`name of node (${node.id}) is missing`);
         }
+        if (!portGraph && (node.hasOwnProperty('in') || node.hasOwnProperty('out'))) {
+            throw new Error(`ports in node ${toString(node)} defined but not in conf`);
+        }
+    };
+    //todo clarify parallelism
+    data.nodes.forEach((node) => {
+        validateNode(node);
         if (this.hasNode(node.id)) {
             throw new Error(`Id of node: ${toString(node)} is already in use
             from node: ${toString(this.getNode(node.id))}.`);
         }
-        if (!portGraph && (node['in'] || node['out']))
-            portGraph = true;
         nodeSet[node.id] = node;
     });
-    data.edges.forEach((edge) => {
+    let validateEdge = (edge) => {
         if (!edge.hasOwnProperty('id')) {
             throw new Error(`id of edge is missing`);
         }
@@ -84,6 +121,10 @@ function Graph(conf, data) {
         if (!edge.hasOwnProperty('to')) {
             throw new Error(`to of edge (${edge.id}) is missing`);
         }
+    };
+    //todo clarify parallelism
+    data.edges.forEach((edge) => {
+        validateEdge(edge);
         if (this.hasEdge(edge.id)) {
             throw new Error(`Id of edge: ${edgeToString(edge)} is already in use
             from edge: ${edgeToString(this.getEdge(edge.id))}.`);
@@ -94,7 +135,6 @@ function Graph(conf, data) {
     if (conf.hasOwnProperty('portGraph')) {
         portGraph = conf.portGraph;
     }
-
     let checkCompound = (c) => {
         if (c['children']) {
             c.children.forEach((child) => {
@@ -112,10 +152,9 @@ function Graph(conf, data) {
         }
     };
     if (compound) {
-        checkCompound(stucture);
+        checkCompound(structure);
     }
     let e = null;                                               //current user transformation of graph
-    let lod = conf.hasOwnProperty('lod') ? conf.lod : 2;        //start lod
     // --- DOM elements ---
     const svg = d3.select("svg");
     const svgWidth = svg.attr('width');
@@ -127,7 +166,7 @@ function Graph(conf, data) {
     const view2 = viewport.append('g').attr('id', 'view2');     //visible if lod = 2
 
     // --- layout graph ---
-    const viewGraph = new ViewGraph(conf, nodeSet, edgeSet, stucture); //layout class
+    const viewGraph = new ViewGraph(conf, nodeSet, edgeSet, structure); //layout class
     /**
      * Layout meta info data object
      * vis: currently visible nodes and edges
@@ -235,51 +274,67 @@ function Graph(conf, data) {
     // -- modification graph methods ---
     /**
      * Changed the lod view
-     * @param lod level of detail
+     * @param lod level of detail, 0: rough view, 1: detailed view
      */
     this.updateLod = (lod) => {
-        view1.style('display', lod === 2 ? 'none' : 'block');
-        view2.style('display', lod === 2 ? 'block' : 'none');
+        view1.style('display', lod === 1 ? 'none' : 'block');
+        view2.style('display', lod === 1 ? 'block' : 'none');
     };
 
     //handle user transformation
-    let scale = 1;
-    const zoom = conf.zoom;
-    svg.call(d3.zoom()
-        .scaleExtent([zoom[0], zoom[zoom.length - 1]])
-        .on('zoom', () => {
-            e = d3.event.transform;
-            viewport.attr('transform', e);
-            const dk = 1 / e.k;
-            userView.attr('class', 'userView')
-                .attr('x', -e.x * dk)
-                .attr('y', -e.y * dk)
-                .attr('width', svgWidth * dk)
-                .attr('height', svgHeight * dk);
-            if (scale !== e.k) {  //new scale
-                scale = e.k;
-                if (scale < zoom[lod]) {
-                    lod--;
-                    console.log(`Changed level of detail to: ${lod}\nscale: ${scale}`);
-                    this.updateLod(lod);
-                } else if (scale >= zoom[lod + 1] && lod < zoom.length - 2) {
-                    lod++;
-                    console.log(`Changed level of detail to: ${lod}\nscale: ${scale}`);
-                    this.updateLod(lod);
+    let lod = conf.hasOwnProperty('lod') ? conf.lod : 1;        //start lod
+    if (conf.hasOwnProperty('zoom')) {
+        const zoom = conf.zoom;
+        //validate zoom
+        if (!Array.isArray(zoom) || zoom.length < 2 || zoom.length > 3){
+            throw new Error(`Invalid zoom`);
+        }
+        let z = zoom[0];
+        for (let i = 1; i < zoom.length; i++) {
+            if (zoom[i] <= z) throw new Error(`Invalid zoom. Zoom at ${i} must be greater than previous`);
+            z = zoom[i];
+        }
+        svg.call(d3.zoom()
+            .scaleExtent([zoom[0], zoom[zoom.length - 1]])
+            .on('zoom', () => {
+                e = d3.event.transform;
+                viewport.attr('transform', e);
+                if (minimap) {
+                    const dk = 1 / e.k;
+                    userView.attr('class', 'userView')
+                        .attr('x', -e.x * dk)
+                        .attr('y', -e.y * dk)
+                        .attr('width', svgWidth * dk)
+                        .attr('height', svgHeight * dk);
                 }
-            }
-        }));
+                if (portGraph && zoom.length === 3) {
+                    if (lod === 1 && e.k < zoom[1]) {
+                        lod = 0;
+                        console.log(`Changed level of detail to ${lod}`);
+                        this.updateLod(lod);
+                    } else if (lod === 0 && e.k >= zoom[1]) {
+                        lod = 1;
+                        console.log(`Changed level of detail to ${lod}`);
+                        this.updateLod(lod);
+                    }
+                }
+            }));
+    }
 
     /**
      * Modifies current graph
+     * modify existing nodes, add new nodes
+     * modify existing edges, add new edges
+     * sets new compound structure
+     * sets new portGraph flag
      * @param mod modification {nodes: [], edges: [], compound, portGraph}
      */
     this.modify = (mod) => {
         if (mod.hasOwnProperty('nodes')) {
+            //todo clarify parallelism
             mod.nodes.forEach((node) => {
-                //modify existing edges, add new edges
-                if (!portGraph && (node['in'] || node['out']))
-                    portGraph = true;
+                //modify existing nodes, add new nodes
+                validateNode(node);
                 nodeSet[node.id] = node;
             });
         }
@@ -288,13 +343,17 @@ function Graph(conf, data) {
             portGraph = mod.portGraph;
         }
         if (mod.hasOwnProperty('edges')) {
+            //todo clarify parallelism
             mod.edges.forEach((edge) => {
                 //modify existing edges, add new edges
+                validateEdge(edge);
                 edgeSet[edge.id] = edge;
             });
         }
         if (mod.hasOwnProperty('compound')) {
-            //todo handle
+            //new compound structure
+            structure = mod.compound;
+            checkCompound(structure)
         }
         this.layout();
         this.render();

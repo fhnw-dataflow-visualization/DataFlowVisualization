@@ -20,8 +20,6 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
     const portWidthHalf = portWidth / 2;
     const portHeight = conf.port.height;
 
-    //todo adjust lod
-
     /**
      * Renders the graph rough
      * @param vis visible data
@@ -288,7 +286,7 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
                 p.style('stroke', edge.color);
             }
         });
-        return g.append('rect');;
+        return g.append('rect');
     };
 
     /**
