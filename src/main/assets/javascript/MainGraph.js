@@ -13,7 +13,6 @@ function Graph(conf, data) {
     const stucture = data.compound;
 
     //todo adjust lod
-    //todo implement minimap
     //todo implement modify compound
 
     let portGraph = false;
@@ -115,8 +114,8 @@ function Graph(conf, data) {
     if (compound) {
         checkCompound(stucture);
     }
-    let e = null;
-    let lod = conf.hasOwnProperty('lod') ? conf.lod : 2;   //start lod
+    let e = null;                                               //current user transformation of graph
+    let lod = conf.hasOwnProperty('lod') ? conf.lod : 2;        //start lod
     // --- DOM elements ---
     const svg = d3.select("svg");
     const svgWidth = svg.attr('width');
@@ -142,8 +141,6 @@ function Graph(conf, data) {
     this.layout = () => {
         viewGraph.setMode(portGraph, compound);
         layoutData = viewGraph.layout();
-        //todo remove
-        console.log(`graph width: ${layoutData.meta.width}, graph height: ${layoutData.meta.height}`);
     };
     this.layout();
 
@@ -171,22 +168,25 @@ function Graph(conf, data) {
     };
     const renderer = new Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip); //drawer
     //set custom drawing
-    if (conf['drawing']) {
+    if (conf.hasOwnProperty('drawing')) {
         const d = conf.drawing;
-        if (d['drawNode']) {
+        if (d.hasOwnProperty('drawNode')) {
             renderer.drawNode = d.drawNode;
         }
-        if (d['drawGroup']) {
+        if (d.hasOwnProperty('drawGroup')) {
             renderer.drawGroup = d.drawGroup;
         }
-        if (d['drawPorts']) {
+        if (d.hasOwnProperty('drawPorts')) {
             renderer.drawPorts = d.drawPorts;
         }
-        if (d['drawNodeEdge']) {
+        if (d.hasOwnProperty('drawNodeEdge')) {
             renderer.drawNodeEdge = d.drawNodeEdge;
         }
-        if (d['drawPortEdge']) {
-            renderer.drawPortEdge = d.drawPortEdge
+        if (d.hasOwnProperty('drawPortEdge')) {
+            renderer.drawPortEdge = d.drawPortEdge;
+        }
+        if (d.hasOwnProperty('drawMinimap')) {
+            renderer.drawMimimap = d.drawMimimap;
         }
     }
 
