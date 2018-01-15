@@ -178,7 +178,7 @@ function Graph(conf, data) {
      * Layouts the graph using dagre
      */
     this.layout = () => {
-        viewGraph.setMode(portGraph, compound);
+        viewGraph.setMode(portGraph, structure);
         layoutData = viewGraph.layout();
     };
     this.layout();
