@@ -27,6 +27,7 @@
 <script>
     const config = {
         zoom: [0.005, 2],
+        log: true,
         node: {
             width: 125,
             height: 40,
@@ -65,7 +66,7 @@
     console.timeEnd('build');
 
     console.time('graph');
-    const graph = new Graph(config, {nodes, edges});
+    const graph = new Graph({nodes, edges}, config);
     console.timeEnd('graph');
     console.log(graph.printSettings());
 </script>

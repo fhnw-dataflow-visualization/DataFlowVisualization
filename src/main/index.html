@@ -28,76 +28,26 @@
     let graph;
     const config = {
         zoom: [0.1, 1, 2],
+        log: true,
         node: {
             width: 125,
             height: 40,
         },
-        // port: {
-        //     width: 10,
-        //     height: 7,
-        // },
-        // map: {
-        //     width: 200,
-        //     height: 200,
-        // },
-//        drawing: {
-//            drawNode: (root, node) => {
-//                const n = root.append("g")
-//                    .attr('id', `n${node.id}`)
-//                    .attr("class", "nodes")
-//                    .attr("transform", `translate(${node.x - 62.5},${node.y - 20})`);
-//                const r = n.append("rect")
-//                    .attr("width", 125)
-//                    .attr("height", 40)
-//                    .attr("class", "node")
-//                    .style('fill', node['color'] ? `${node.color}` : 'white')
-//                    .style('stroke', `blue`);
-//                n.append("text")
-//                    .attr('x', 10)
-//                    .attr('y', 25)
-//                    .html(`${node.name} (${node.id})`);
-//            }
-//        }
+        port: {
+            width: 10,
+            height: 7,
+        },
+        map: {
+            width: 200,
+            height: 200,
+        },
     };
-    // let change2toRed = () => {
-    //     graph.getNode(2).color = 'red';
-    //     graph.render();
-    // };
-    // let change3toGreen = () => {
-    //     graph.modify({
-    //         nodes: [
-    //             {
-    //                 name: "B",
-    //                 id: 3,
-    //                 color: "green",
-    //                 in: {
-    //                     0: {
-    //                         attr: {
-    //                             "name": "Input 3.0"
-    //                         }
-    //                     }
-    //                 },
-    //                 out: {
-    //                     0: {
-    //                         attr: {
-    //                             "name": "Output 3.0"
-    //                         }
-    //                     }
-    //                 },
-    //                 attr: {
-    //                     a: "new A",
-    //                     b: "new B"
-    //                 }
-    //             }
-    //         ]
-    //     });
-    // };
 
     d3.json('./dataGroup.json', (data) => {
         console.time('graph');
-        graph = new Graph(config, data);
+        graph = new Graph(data, config);
         console.timeEnd('graph');
-        console.log(graph.printSettings());
+        // console.log(graph.printSettings());
     });
 </script>
 </body>

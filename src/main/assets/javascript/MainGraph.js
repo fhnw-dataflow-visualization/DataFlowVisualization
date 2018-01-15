@@ -5,22 +5,34 @@
  * Main graph, stores all graph data
  * User interacts with this class
  *
- * @param conf graph configuration
  * @param data graph data
+ * @param conf graph configuration
  * @constructor
  */
-function Graph(conf, data) {
+function Graph(data, conf) {
     // --- basic graph methods ---
-    let nodeCount = 0;
-    let groupCount = 0;
     const nodeSet = {};
-    let edgeCount = 0;
     const edgeSet = {};
-    let depth = 0;
+    let nodeCount = 0;
+    let edgeCount = 0;
     let structure = data.compound;
 
+    if (conf === undefined) {
+        //default config
+        conf = {
+            zoom: [0.1, 2],
+            node: {
+                width: 125,
+                height: 40
+            }
+        }
+    }
+
+    let log = conf.hasOwnProperty('log') ? conf.log : false;
     let portGraph = conf.hasOwnProperty('port');
     let compound = data.hasOwnProperty('compound');
+    let groupCount = 0;
+    let depth = 0;
     let minimap = conf.hasOwnProperty('map');
 
     /**
@@ -38,23 +50,10 @@ function Graph(conf, data) {
     this.hasNode = (id) => nodeSet.hasOwnProperty(id);
 
     /**
-     * Returns true, if the node is a group
-     * @param id node id
-     * @return {boolean}
-     */
-    this.isGroup = (id) => this.getNode(id).hasOwnProperty('view');
-
-    /**
      * Returns the number of nodes (and groups)
      * @return {number}
      */
     this.countNodes = () => nodeCount;
-
-    /**
-     * Returns the number of groups
-     * @return {number}
-     */
-    this.groupCount = () => groupCount;
 
     /**
      * Returns the stored edge
@@ -94,56 +93,63 @@ function Graph(conf, data) {
     this.getDepth = () => depth;
 
     /**
+     * Returns the number of groups
+     * @return {number}
+     */
+    this.countGroups = () => groupCount;
+
+    /**
      * Returns true if the graph has a minimap
      * @return {boolean}
      */
     this.hasMinimap = () => minimap;
 
+    this.validateNode = (node) => node.hasOwnProperty('id') && node.hasOwnProperty('name');
+
+    this.validateEdge = (edge) => edge.hasOwnProperty('id') && edge.hasOwnProperty('from') && edge.hasOwnProperty('to');
+
     //--- input validation ---
-    console.time('validation');
+    if (log) {
+        console.time('validation');
+    }
     if (conf.hasOwnProperty('node')) {
         const node = conf.node;
-        if (!node.hasOwnProperty('width')){
+        if (!node.hasOwnProperty('width')) {
             throw new Error('Width in conf.node is missing');
         }
-        if (!node.hasOwnProperty('height')){
+        if (!node.hasOwnProperty('height')) {
             throw new Error('Height in conf.node is missing');
         }
     } else {
+        //set default node config
         conf.node = {
             width: 125,
             height: 40,
         }
     }
-    if (portGraph) {
+    if (conf.hasOwnProperty('port')) {
         const port = conf.port;
-        if (!port.hasOwnProperty('width')){
+        if (!port.hasOwnProperty('width')) {
             throw new Error('Width in conf.port is missing');
         }
-        if (!port.hasOwnProperty('height')){
+        if (!port.hasOwnProperty('height')) {
             throw new Error('Height in conf.port is missing');
         }
     }
-    if (minimap) {
+    if (conf.hasOwnProperty('map')) {
         const map = conf.map;
-        if (!map.hasOwnProperty('width')){
+        if (!map.hasOwnProperty('width')) {
             throw new Error('Width in conf.map is missing');
         }
-        if (!map.hasOwnProperty('height')){
+        if (!map.hasOwnProperty('height')) {
             throw new Error('Height in conf.map is missing');
         }
     }
-    let validateNode = (node) => {
-        if (!node.hasOwnProperty('id')) {
-            throw new Error(`id of node is missing`);
-        }
-        if (!node.hasOwnProperty('name')) {
-            throw new Error(`name of node (${node.id}) is missing`);
-        }
-    };
     //todo clarify parallelism
     data.nodes.forEach((node) => {
-        validateNode(node);
+        if (!this.validateNode(node)) {
+            throw new Error(`Invalid node ${toString(node)}`);
+        }
         if (this.hasNode(node.id)) {
             throw new Error(`Id of node: ${toString(node)} is already in use
             from node: ${toString(this.getNode(node.id))}.`);
@@ -151,20 +157,11 @@ function Graph(conf, data) {
         nodeSet[node.id] = node;
         nodeCount++;
     });
-    let validateEdge = (edge) => {
-        if (!edge.hasOwnProperty('id')) {
-            throw new Error(`id of edge is missing`);
-        }
-        if (!edge.hasOwnProperty('from')) {
-            throw new Error(`from of edge (${edge.id}) is missing`);
-        }
-        if (!edge.hasOwnProperty('to')) {
-            throw new Error(`to of edge (${edge.id}) is missing`);
-        }
-    };
     //todo clarify parallelism
     data.edges.forEach((edge) => {
-        validateEdge(edge);
+        if (!this.validateEdge(edge)) {
+            throw new Error(`Invalid edge: ${edgeToString(edge)}`);
+        }
         if (this.hasEdge(edge.id)) {
             throw new Error(`Id of edge: ${edgeToString(edge)} is already in use
             from edge: ${edgeToString(this.getEdge(edge.id))}.`);
@@ -172,7 +169,7 @@ function Graph(conf, data) {
         edgeSet[edge.id] = edge;
         edgeCount++;
     });
-    let checkCompound = (c, level) => {
+    let validateCompound = (c, level) => {
         if (level > depth) {
             depth = level;
         }
@@ -188,14 +185,18 @@ function Graph(conf, data) {
                 } else if (group.view !== 'expanded' && group.view !== 'reduced') {
                     throw new Error(`Group attribute \'view\' is not \'expanded\' or \'reduced\' at ${toString(group)}`);
                 }
-                checkCompound(child, level + 1);
+                validateCompound(child, level + 1);
             });
         }
     };
     if (compound) {
-        checkCompound(structure, 0);
+        validateCompound(structure, 0);
     }
-    console.timeEnd('validation');
+    if (log) {
+        console.timeEnd('validation');
+    }
+
+
     let e = null;                                               //current user transformation of graph
     // --- DOM elements ---
     const svg = d3.select("svg");
@@ -213,7 +214,7 @@ function Graph(conf, data) {
      * Layout meta info data object
      * vis: currently visible nodes and edges
      * meta: meta information about the graph
-     * @type {{vis, meta}}
+     * @type {{vis, meta, portEdges}}
      */
     let layoutData;
     /**
@@ -221,9 +222,15 @@ function Graph(conf, data) {
      */
     this.layout = () => {
         viewGraph.setMode(portGraph, structure);
-        console.time('layout');
+        if (log) {
+            console.time('layout');
+        }
         layoutData = viewGraph.layout();
-        console.timeEnd('layout');
+        if (log) {
+            console.timeEnd('layout');
+            console.log(`Render nodes: ${layoutData.vis.nodes.length}\n` +
+                `Render edges: ${portGraph ? layoutData.portEdges : layoutData.vis.edges.length}`);
+        }
     };
     this.layout();
 
@@ -245,10 +252,11 @@ function Graph(conf, data) {
      * @param group group node
      */
     let changeGroupView = (group) => {
-        console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
+        if (log) {
+            console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
+        }
         this.layout();
         this.render();
-        console.log(this.printSettings());
     };
     const renderer = new Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip); //drawer
     //set custom drawing
@@ -278,7 +286,9 @@ function Graph(conf, data) {
      * Draws the graph onto the svg element
      */
     this.render = () => {
-        console.time('render');
+        if (log) {
+            console.time('render');
+        }
         view0.selectAll('*').remove();
         view1.selectAll('*').remove();
         view2.selectAll('*').remove();
@@ -288,6 +298,7 @@ function Graph(conf, data) {
             renderer.render(layoutData.vis, view0);
         }
         if (minimap) {
+            //update minimap
             mapSvg.selectAll('*').remove();
             mapSvg.append('rect')
                 .attr('class', 'map')
@@ -314,7 +325,9 @@ function Graph(conf, data) {
                     .attr('height', svgHeight);
             }
         }
-        console.timeEnd('render');
+        if (log) {
+            console.timeEnd('render');
+        }
     };
     this.render();
 
@@ -333,7 +346,7 @@ function Graph(conf, data) {
     if (conf.hasOwnProperty('zoom')) {
         const zoom = conf.zoom;
         //validate zoom
-        if (!Array.isArray(zoom) || zoom.length < 2 || zoom.length > 3){
+        if (!Array.isArray(zoom) || zoom.length < 2 || zoom.length > 3) {
             throw new Error(`Invalid zoom`);
         }
         let z = zoom[0];
@@ -346,6 +359,7 @@ function Graph(conf, data) {
             .on('zoom', () => {
                 e = d3.event.transform;
                 viewport.attr('transform', e);
+                //update user view minimap
                 if (minimap) {
                     const dk = 1 / e.k;
                     userView.attr('class', 'userView')
@@ -357,11 +371,15 @@ function Graph(conf, data) {
                 if (portGraph && zoom.length === 3) {
                     if (lod === 1 && e.k < zoom[1]) {
                         lod = 0;
-                        console.log(`Changed level of detail to ${lod}`);
+                        if (log) {
+                            console.log(`Changed level of detail to ${lod}`);
+                        }
                         this.updateLod(lod);
                     } else if (lod === 0 && e.k >= zoom[1]) {
                         lod = 1;
-                        console.log(`Changed level of detail to ${lod}`);
+                        if (log) {
+                            console.log(`Changed level of detail to ${lod}`);
+                        }
                         this.updateLod(lod);
                     }
                 }
@@ -381,26 +399,31 @@ function Graph(conf, data) {
             //todo clarify parallelism
             mod.nodes.forEach((node) => {
                 //modify existing nodes, add new nodes
-                validateNode(node);
+                this.validateNode(node);
+                if (!this.hasNode(node.id)) {
+                    nodeCount++;
+                }
                 nodeSet[node.id] = node;
             });
         }
         //override portGraph by mod
-        if (mod.hasOwnProperty('portGraph')) {
-            portGraph = mod.portGraph;
-        }
         if (mod.hasOwnProperty('edges')) {
             //todo clarify parallelism
             mod.edges.forEach((edge) => {
                 //modify existing edges, add new edges
-                validateEdge(edge);
+                this.validateEdge(edge);
+                if (!this.hasEdge(edge.id)) {
+                    edgeCount++;
+                }
                 edgeSet[edge.id] = edge;
             });
         }
         if (mod.hasOwnProperty('compound')) {
             //new compound structure
             structure = mod.compound;
-            checkCompound(structure)
+            groupCount = 0;
+            depth = 0;
+            validateCompound(structure)
         }
         this.layout();
         this.render();
@@ -410,14 +433,12 @@ function Graph(conf, data) {
      * Returns the stored configuration
      * @return {string}
      */
-    this.printSettings = () => `number of nodes ${nodeCount}\n`+
-        `number of edges: ${edgeCount}\n`+
-        `number of rendered nodes ${layoutData.vis.nodes.length}\n`+
-        `number of rendered edges ${layoutData.vis.edges.length}\n`+
-        `portGraph: ${portGraph}\n`+
-        `compound: ${compound}\n`+
-        `number of groups ${groupCount}\n`+
-        `max depth level ${depth}\n`+
+    this.printSettings = () => `number of nodes ${nodeCount}\n` +
+        `number of edges: ${edgeCount}\n` +
+        `portGraph: ${portGraph}\n` +
+        `compound: ${compound}\n` +
+        `number of groups ${groupCount}\n` +
+        `max depth level ${depth}\n` +
         `minimap: ${minimap}`;
 
     this.updateLod(lod);

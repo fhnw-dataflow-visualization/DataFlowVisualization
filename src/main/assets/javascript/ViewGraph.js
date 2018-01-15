@@ -48,6 +48,7 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
      * @returns {{vis: {nodes: Array, edges: Array}, meta: {width, height}}}
      */
     this.layout = () => {
+        let mEdge = 0;
         hidden = {};        // set of hidden child node ids, each refers to itself root id
         parents = {};       // set of child node or group ids, each refers to itself parent id
         visNodes = [];      // array of visible nodes
@@ -97,6 +98,7 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
                     if (dgMultiEdge && edge.hasOwnProperty('ports')) {
                         edge.ports.forEach((port) => {
                             dg.setEdge(from, to, port, `${edge.id}.${port.out}.${port.in}`);
+                            mEdge++;
                         });
                     } else {
                         dg.setEdge(from, to, edge);
@@ -157,6 +159,7 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
         }
         return {
             vis: {nodes: visNodes, edges: visEdges},
+            portEdges: mEdge,
             meta: {width: dg.graph().width, height: dg.graph().height}
         };
     };
