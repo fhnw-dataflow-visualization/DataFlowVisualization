@@ -25,47 +25,50 @@
 <script src="./assets/javascript/ViewGraph.js" type="text/javascript"></script>
 <script src="./assets/javascript/Renderer.js" type="text/javascript"></script>
 <script>
-    let graph;
-
-    let change2toRed = () => {
-        const node = graph.getNode(2);
-        node.color = 'red';
-        graph.validateNode(node);
-        graph.render();
-    };
-
-    let change3toGreen = () => {
-        const node = graph.getNode(3);
-        node.color = 'green';
-        graph.validateNode(node);
-        graph.render();
-    };
-
     const config = {
-        zoom: [0.1, 1, 2],
+        zoom: [0.005, 2],
         log: true,
         node: {
             width: 125,
             height: 40,
         },
-        port: {
-            width: 10,
-            height: 7,
-        },
+        // port: {
+        //     width: 10,
+        //     height: 7,
+        // },
         map: {
             width: 200,
             height: 200,
         },
     };
 
-    d3.json('./dataGroup.json', (data) => {
-        console.time('graph');
-        graph = new Graph(data, config);
-        console.timeEnd('graph');
-        if (config.log) {
-            console.log(graph.printSettings());
-        }
-    });
+    const n = 5000;
+    const nodes = [];
+    const edges = [];
+    const compound = {};
+
+    console.time('build');
+    for (let i = 0; i < n; i++) {
+        nodes.push({
+            id: i,
+            name: `node_${i}`,
+        });
+    }
+
+    for (let i = 0; i < n - 1; i++) {
+        edges.push({
+            id: i,
+            from: i & 1 ? (i - 1) * 0.5 : i * 0.5,
+            to: i + 1
+        })
+    }
+
+    console.timeEnd('build');
+
+    console.time('graph');
+    const graph = new Graph({nodes, edges}, config);
+    console.timeEnd('graph');
+    console.log(graph.printSettings());
 </script>
 </body>
 </html>
