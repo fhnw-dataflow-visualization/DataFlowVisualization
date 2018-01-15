@@ -127,6 +127,10 @@ function Graph(data, conf) {
             height: 40,
         }
     }
+    if (!conf.hasOwnProperty('zoom')) {
+        //set default node config
+        conf.zoom = [0.1, 2];
+    }
     if (conf.hasOwnProperty('port')) {
         const port = conf.port;
         if (!port.hasOwnProperty('width')) {
@@ -343,48 +347,38 @@ function Graph(data, conf) {
 
     //handle user transformation
     let lod = conf.hasOwnProperty('lod') ? conf.lod : 1;        //start lod
-    if (conf.hasOwnProperty('zoom')) {
-        const zoom = conf.zoom;
-        //validate zoom
-        if (!Array.isArray(zoom) || zoom.length < 2 || zoom.length > 3) {
-            throw new Error(`Invalid zoom`);
-        }
-        let z = zoom[0];
-        for (let i = 1; i < zoom.length; i++) {
-            if (zoom[i] <= z) throw new Error(`Invalid zoom. Zoom at ${i} must be greater than previous`);
-            z = zoom[i];
-        }
-        svg.call(d3.zoom()
-            .scaleExtent([zoom[0], zoom[zoom.length - 1]])
-            .on('zoom', () => {
-                e = d3.event.transform;
-                viewport.attr('transform', e);
-                //update user view minimap
-                if (minimap) {
-                    const dk = 1 / e.k;
-                    userView.attr('class', 'userView')
-                        .attr('x', -e.x * dk)
-                        .attr('y', -e.y * dk)
-                        .attr('width', svgWidth * dk)
-                        .attr('height', svgHeight * dk);
-                }
-                if (portGraph && zoom.length === 3) {
-                    if (lod === 1 && e.k < zoom[1]) {
-                        lod = 0;
-                        if (log) {
-                            console.log(`Changed level of detail to ${lod}`);
-                        }
-                        this.updateLod(lod);
-                    } else if (lod === 0 && e.k >= zoom[1]) {
-                        lod = 1;
-                        if (log) {
-                            console.log(`Changed level of detail to ${lod}`);
-                        }
-                        this.updateLod(lod);
+
+    const zoom = conf.zoom;
+    svg.call(d3.zoom()
+        .scaleExtent([zoom[0], zoom[zoom.length - 1]])
+        .on('zoom', () => {
+            e = d3.event.transform;
+            viewport.attr('transform', e);
+            //update user view minimap
+            if (minimap) {
+                const dk = 1 / e.k;
+                userView.attr('class', 'userView')
+                    .attr('x', -e.x * dk)
+                    .attr('y', -e.y * dk)
+                    .attr('width', svgWidth * dk)
+                    .attr('height', svgHeight * dk);
+            }
+            if (portGraph && zoom.length === 3) {
+                if (lod === 1 && e.k < zoom[1]) {
+                    lod = 0;
+                    if (log) {
+                        console.log(`Changed level of detail to ${lod}`);
                     }
+                    this.updateLod(lod);
+                } else if (lod === 0 && e.k >= zoom[1]) {
+                    lod = 1;
+                    if (log) {
+                        console.log(`Changed level of detail to ${lod}`);
+                    }
+                    this.updateLod(lod);
                 }
-            }));
-    }
+            }
+        }));
 
     /**
      * Modifies current graph
