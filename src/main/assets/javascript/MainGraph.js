@@ -1,6 +1,6 @@
 /**
  * @author Claudio Seitz
- * @version 1.0
+ * @version 1.1
  *
  * Main graph, stores all graph data
  * User interacts with this class
@@ -11,8 +11,12 @@
  */
 function Graph(conf, data) {
     // --- basic graph methods ---
+    let nodeCount = 0;
+    let groupCount = 0;
     const nodeSet = {};
+    let edgeCount = 0;
     const edgeSet = {};
+    let depth = 0;
     let structure = data.compound;
 
     let portGraph = conf.hasOwnProperty('port');
@@ -20,20 +24,42 @@ function Graph(conf, data) {
     let minimap = conf.hasOwnProperty('map');
 
     /**
-     * Returns the stored node
+     * Returns the stored node (group)
      * @param id node id
+     * @return {node}
      */
     this.getNode = (id) => nodeSet[id];
 
     /**
      * Returns if the graph contains a node
      * @param id node id
+     * @return {boolean}
      */
     this.hasNode = (id) => nodeSet.hasOwnProperty(id);
 
     /**
+     * Returns true, if the node is a group
+     * @param id node id
+     * @return {boolean}
+     */
+    this.isGroup = (id) => this.getNode(id).hasOwnProperty('view');
+
+    /**
+     * Returns the number of nodes (and groups)
+     * @return {number}
+     */
+    this.countNodes = () => nodeCount;
+
+    /**
+     * Returns the number of groups
+     * @return {number}
+     */
+    this.groupCount = () => groupCount;
+
+    /**
      * Returns the stored edge
      * @param id edge id
+     * @return {edge}
      */
     this.getEdge = (id) => edgeSet[id];
 
@@ -44,22 +70,37 @@ function Graph(conf, data) {
     this.hasEdge = (id) => edgeSet.hasOwnProperty(id);
 
     /**
+     * Returns the number of edges
+     * @return {number}
+     */
+    this.countEdges = () => edgeCount;
+
+    /**
      * Returns true if some nodes of the graph contains ports
+     * @return {boolean}
      */
     this.isPortGraph = () => portGraph;
 
     /**
      * Returns true if the graph is a compound graph
+     * @return {boolean}
      */
     this.isCompound = () => compound;
 
     /**
+     * Returns the compound max depth
+     * @return {number}
+     */
+    this.getDepth = () => depth;
+
+    /**
      * Returns true if the graph has a minimap
+     * @return {boolean}
      */
     this.hasMinimap = () => minimap;
 
     //--- input validation ---
-    console.log('start validation');
+    console.time('validation');
     if (conf.hasOwnProperty('node')) {
         const node = conf.node;
         if (!node.hasOwnProperty('width')){
@@ -108,6 +149,7 @@ function Graph(conf, data) {
             from node: ${toString(this.getNode(node.id))}.`);
         }
         nodeSet[node.id] = node;
+        nodeCount++;
     });
     let validateEdge = (edge) => {
         if (!edge.hasOwnProperty('id')) {
@@ -128,26 +170,32 @@ function Graph(conf, data) {
             from edge: ${edgeToString(this.getEdge(edge.id))}.`);
         }
         edgeSet[edge.id] = edge;
+        edgeCount++;
     });
-    let checkCompound = (c) => {
+    let checkCompound = (c, level) => {
+        if (level > depth) {
+            depth = level;
+        }
         if (c['children']) {
             c.children.forEach((child) => {
                 if (!child.hasOwnProperty('group') && !child.hasOwnProperty('nodes')) {
                     throw new Error(`Invalid node in compound structure`);
                 }
                 const group = nodeSet[child.group];
+                groupCount++;
                 if (!group.hasOwnProperty('view')) {
                     group['view'] = 'expanded';
                 } else if (group.view !== 'expanded' && group.view !== 'reduced') {
                     throw new Error(`Group attribute \'view\' is not \'expanded\' or \'reduced\' at ${toString(group)}`);
                 }
-                checkCompound(child);
+                checkCompound(child, level + 1);
             });
         }
     };
     if (compound) {
-        checkCompound(structure);
+        checkCompound(structure, 0);
     }
+    console.timeEnd('validation');
     let e = null;                                               //current user transformation of graph
     // --- DOM elements ---
     const svg = d3.select("svg");
@@ -173,9 +221,10 @@ function Graph(conf, data) {
      */
     this.layout = () => {
         viewGraph.setMode(portGraph, structure);
+        console.time('layout');
         layoutData = viewGraph.layout();
+        console.timeEnd('layout');
     };
-    console.log('start layout');
     this.layout();
 
     let mapSvg;
@@ -199,6 +248,7 @@ function Graph(conf, data) {
         console.log(`${group.view === 'expanded' ? 'Expanded' : 'Reduced'} group ${toString(group)}`);
         this.layout();
         this.render();
+        console.log(this.printSettings());
     };
     const renderer = new Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip); //drawer
     //set custom drawing
@@ -228,6 +278,7 @@ function Graph(conf, data) {
      * Draws the graph onto the svg element
      */
     this.render = () => {
+        console.time('render');
         view0.selectAll('*').remove();
         view1.selectAll('*').remove();
         view2.selectAll('*').remove();
@@ -263,8 +314,8 @@ function Graph(conf, data) {
                     .attr('height', svgHeight);
             }
         }
+        console.timeEnd('render');
     };
-    console.log('start render');
     this.render();
 
     // -- modification graph methods ---
@@ -354,6 +405,20 @@ function Graph(conf, data) {
         this.layout();
         this.render();
     };
+
+    /**
+     * Returns the stored configuration
+     * @return {string}
+     */
+    this.printSettings = () => `number of nodes ${nodeCount}\n`+
+        `number of edges: ${edgeCount}\n`+
+        `number of rendered nodes ${layoutData.vis.nodes.length}\n`+
+        `number of rendered edges ${layoutData.vis.edges.length}\n`+
+        `portGraph: ${portGraph}\n`+
+        `compound: ${compound}\n`+
+        `number of groups ${groupCount}\n`+
+        `max depth level ${depth}\n`+
+        `minimap: ${minimap}`;
 
     this.updateLod(lod);
 }
