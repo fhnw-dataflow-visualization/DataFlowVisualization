@@ -59,6 +59,7 @@ function Graph(conf, data) {
     this.hasMinimap = () => minimap;
 
     //--- input validation ---
+    console.log('start validation');
     if (conf.hasOwnProperty('node')) {
         const node = conf.node;
         if (!node.hasOwnProperty('width')){
@@ -178,9 +179,9 @@ function Graph(conf, data) {
      * Layouts the graph using dagre
      */
     this.layout = () => {
-        viewGraph.setMode(portGraph, compound);
         layoutData = viewGraph.layout();
     };
+    console.log('start layout');
     this.layout();
 
     let mapSvg;
@@ -269,6 +270,7 @@ function Graph(conf, data) {
             }
         }
     };
+    console.log('start render');
     this.render();
 
     // -- modification graph methods ---
