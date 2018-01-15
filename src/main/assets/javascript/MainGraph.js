@@ -99,9 +99,6 @@ function Graph(conf, data) {
         if (!node.hasOwnProperty('name')) {
             throw new Error(`name of node (${node.id}) is missing`);
         }
-        if (!portGraph && (node.hasOwnProperty('in') || node.hasOwnProperty('out'))) {
-            throw new Error(`ports in node ${toString(node)} defined but not in conf`);
-        }
     };
     //todo clarify parallelism
     data.nodes.forEach((node) => {
@@ -132,10 +129,6 @@ function Graph(conf, data) {
         }
         edgeSet[edge.id] = edge;
     });
-    //override portGraph by conf
-    if (conf.hasOwnProperty('portGraph')) {
-        portGraph = conf.portGraph;
-    }
     let checkCompound = (c) => {
         if (c['children']) {
             c.children.forEach((child) => {
@@ -179,6 +172,7 @@ function Graph(conf, data) {
      * Layouts the graph using dagre
      */
     this.layout = () => {
+        viewGraph.setMode(portGraph, structure);
         layoutData = viewGraph.layout();
     };
     console.log('start layout');

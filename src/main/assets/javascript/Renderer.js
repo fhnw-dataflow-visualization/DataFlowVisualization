@@ -16,9 +16,14 @@ function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
     const nodeWidthHalf = nodeWidth / 2;
     const nodeHeight = conf.node.height;
     const nodeHeightHalf = nodeHeight / 2;
-    const portWidth = conf.port.width;
-    const portWidthHalf = portWidth / 2;
-    const portHeight = conf.port.height;
+    let portWidth = 0;
+    let portWidthHalf = 0;
+    let portHeight = 0;
+    if (conf.hasOwnProperty('port')) {
+        portWidth = conf.port.width;
+        portWidthHalf = portWidth / 2;
+        portHeight = conf.port.height;
+    }
 
     /**
      * Renders the graph rough

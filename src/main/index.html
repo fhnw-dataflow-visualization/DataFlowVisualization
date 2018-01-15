@@ -33,14 +33,14 @@
             width: 125,
             height: 40,
         },
-        port: {
-            width: 10,
-            height: 7,
-        },
-        map: {
-            width: 200,
-            height: 200,
-        },
+        // port: {
+        //     width: 10,
+        //     height: 7,
+        // },
+        // map: {
+        //     width: 200,
+        //     height: 200,
+        // },
 //        drawing: {
 //            drawNode: (root, node) => {
 //                const n = root.append("g")
@@ -94,8 +94,13 @@
         });
     };
 
-    d3.json('./dataGroup.json', (data) => {
+    console.log('Started building graph');
+    d3.json('./dataGraph.json', (data) => {
+        const start = new Date().getMilliseconds();
+        console.log('Started graph');
         graph = new Graph(config, data);
+        const end = new Date().getMilliseconds();
+        console.log(`Finished graph in ${(end - start) * 0.001}s`)
     });
 </script>
 </body>

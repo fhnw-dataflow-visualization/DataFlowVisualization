@@ -57,7 +57,6 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
         //build compound structure tree recursively
         if (dgCompound) {
             buildCompound(structure);
-
             // add nodes from main graph
             //todo clarify parallelism
             visNodes.forEach((id) => {
@@ -79,6 +78,7 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
             for (let id in nodeSet) {
                 if (nodeSet.hasOwnProperty(id)) {
                     const node = nodeSet[id];
+                    visNodes.push(node.id);
                     dg.setNode(node.id, node);
                     node['width'] = conf.node.width;
                     node['height'] = conf.node.height;
@@ -167,11 +167,9 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
      */
     let initDagre = () => {
         dg = new dagre.graphlib.Graph(dgConf);
-        if (dgMultiEdge) {
-            dg.setGraph({
-                edgesep: conf.port.width * 5
-            });
-        }
+        dg.setGraph( dgMultiEdge
+                ? { edgesep: conf.port.width * 5 }
+                : {});
         dg.setDefaultEdgeLabel(() => {
             return {}
         });
