@@ -4,20 +4,20 @@
  *
  * Layout visible graph elements
  *
- * @param conf graph configuration
+ * @param config graph configuration
  * @param nodeSet set of all nodes
  * @param edgeSet set of all edges
- * @param structure optional compound graph structure
+ * @param compound optional compound graph structure
  * @constructor
  */
-function ViewGraph(conf, nodeSet, edgeSet, structure) {
+function ViewGraph(config, nodeSet, edgeSet, compound) {
     /**
      * internal dagre.js graph used to layout the graph
      */
     let dg;
     let hidden, parents, visNodes, visEdges;
-    let dgMultiEdge = conf.hasOwnProperty('port');
-    let dgCompound = structure !== undefined;
+    let dgMultiEdge = config.hasOwnProperty('port');
+    let dgCompound = compound !== undefined;
 
     let dgConf = {
         directed: true,
@@ -57,7 +57,7 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
 
         //build compound structure tree recursively
         if (dgCompound) {
-            buildCompound(structure);
+            buildCompound(compound);
             // add nodes from main graph
             //todo clarify parallelism
             visNodes.forEach((id) => {
@@ -65,8 +65,8 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
                 dg.setNode(node.id, node);
                 if (!node.hasOwnProperty('view') || node.view === 'reduced') {
                     //normal node
-                    node['width'] = conf.node.width;
-                    node['height'] = conf.node.height;
+                    node['width'] = config.node.width;
+                    node['height'] = config.node.height;
                 }
             });
             //todo clarify parallelism
@@ -81,8 +81,8 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
                     const node = nodeSet[id];
                     visNodes.push(node.id);
                     dg.setNode(node.id, node);
-                    node['width'] = conf.node.width;
-                    node['height'] = conf.node.height;
+                    node['width'] = config.node.width;
+                    node['height'] = config.node.height;
                 }
             }
         }
@@ -171,7 +171,7 @@ function ViewGraph(conf, nodeSet, edgeSet, structure) {
     let initDagre = () => {
         dg = new dagre.graphlib.Graph(dgConf);
         dg.setGraph( dgMultiEdge
-                ? { edgesep: conf.port.width * 5 }
+                ? { edgesep: config.port.width * 5 }
                 : {});
         dg.setDefaultEdgeLabel(() => {
             return {}

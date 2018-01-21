@@ -6,10 +6,10 @@
  * User interacts with this class
  *
  * @param data graph data
- * @param conf graph configuration
+ * @param config graph configuration
  * @constructor
  */
-function Graph(data, conf) {
+function Graph(data, config) {
     // --- basic graph methods ---
     const nodeSet = {};
     const edgeSet = {};
@@ -17,9 +17,9 @@ function Graph(data, conf) {
     let edgeCount = 0;
     let structure = data.compound;
 
-    if (conf === undefined) {
+    if (config === undefined) {
         //default config
-        conf = {
+        config = {
             zoom: [0.1, 2],
             node: {
                 width: 125,
@@ -28,12 +28,12 @@ function Graph(data, conf) {
         }
     }
 
-    let log = conf.hasOwnProperty('log') ? conf.log : false;
-    let portGraph = conf.hasOwnProperty('port');
+    let log = config.hasOwnProperty('log') ? config.log : false;
+    let portGraph = config.hasOwnProperty('port');
     let compound = data.hasOwnProperty('compound');
     let groupCount = 0;
     let depth = 0;
-    let minimap = conf.hasOwnProperty('map');
+    let minimap = config.hasOwnProperty('map');
 
     /**
      * Returns the stored node (group)
@@ -112,8 +112,8 @@ function Graph(data, conf) {
     if (log) {
         console.time('validation');
     }
-    if (conf.hasOwnProperty('node')) {
-        const node = conf.node;
+    if (config.hasOwnProperty('node')) {
+        const node = config.node;
         if (!node.hasOwnProperty('width')) {
             throw new Error('Width in conf.node is missing');
         }
@@ -122,17 +122,17 @@ function Graph(data, conf) {
         }
     } else {
         //set default node config
-        conf.node = {
+        config.node = {
             width: 125,
             height: 40,
         }
     }
-    if (!conf.hasOwnProperty('zoom')) {
+    if (!config.hasOwnProperty('zoom')) {
         //set default node config
-        conf.zoom = [0.1, 2];
+        config.zoom = [0.1, 2];
     }
-    if (conf.hasOwnProperty('port')) {
-        const port = conf.port;
+    if (config.hasOwnProperty('port')) {
+        const port = config.port;
         if (!port.hasOwnProperty('width')) {
             throw new Error('Width in conf.port is missing');
         }
@@ -140,8 +140,8 @@ function Graph(data, conf) {
             throw new Error('Height in conf.port is missing');
         }
     }
-    if (conf.hasOwnProperty('map')) {
-        const map = conf.map;
+    if (config.hasOwnProperty('map')) {
+        const map = config.map;
         if (!map.hasOwnProperty('width')) {
             throw new Error('Width in conf.map is missing');
         }
@@ -213,7 +213,7 @@ function Graph(data, conf) {
     const view2 = viewport.append('g').attr('id', 'view2');     //visible if lod = 2
 
     // --- layout graph ---
-    const viewGraph = new ViewGraph(conf, nodeSet, edgeSet, structure); //layout class
+    const viewGraph = new ViewGraph(config, nodeSet, edgeSet, structure); //layout class
     /**
      * Layout meta info data object
      * vis: currently visible nodes and edges
@@ -243,7 +243,7 @@ function Graph(data, conf) {
     let map;
     // append  minimap dom
     if (minimap) {
-        map = conf.map;
+        map = config.map;
         const mapArea = svg.append('g').attr('transform', `translate(${svgWidth - map.width},${svgHeight - map.height})`);
         mapSvg = mapArea.append('svg')
             .attr('width', map.width)
@@ -262,10 +262,10 @@ function Graph(data, conf) {
         this.layout();
         this.render();
     };
-    const renderer = new Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip); //drawer
+    const renderer = new Renderer(config, changeGroupView, nodeSet, edgeSet, tooltip); //drawer
     //set custom drawing
-    if (conf.hasOwnProperty('drawing')) {
-        const d = conf.drawing;
+    if (config.hasOwnProperty('drawing')) {
+        const d = config.drawing;
         if (d.hasOwnProperty('drawNode')) {
             renderer.drawNode = d.drawNode;
         }
@@ -346,9 +346,9 @@ function Graph(data, conf) {
     };
 
     //handle user transformation
-    let lod = conf.hasOwnProperty('lod') ? conf.lod : 1;        //start lod
+    let lod = config.hasOwnProperty('lod' && config['lod'] === 1) ? 1 : 0;        //start lod
 
-    const zoom = conf.zoom;
+    const zoom = config.zoom;
     svg.call(d3.zoom()
         .scaleExtent([zoom[0], zoom[zoom.length - 1]])
         .on('zoom', () => {

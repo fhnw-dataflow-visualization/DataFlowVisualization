@@ -4,25 +4,25 @@
  *
  * Draws the graph as svg
  *
- * @param conf config object
- * @param changeGroupView group view update method
+ * @param config config object
+ * @param changeGroupView group view update function
  * @param nodeSet set of all nodes
  * @param edgeSet set of all edges
  * @param tooltip <div> tooltip
  * @constructor
  */
-function Renderer(conf, changeGroupView, nodeSet, edgeSet, tooltip) {
-    const nodeWidth = conf.node.width;
+function Renderer(config, changeGroupView, nodeSet, edgeSet, tooltip) {
+    const nodeWidth = config.node.width;
     const nodeWidthHalf = nodeWidth / 2;
-    const nodeHeight = conf.node.height;
+    const nodeHeight = config.node.height;
     const nodeHeightHalf = nodeHeight / 2;
     let portWidth = 0;
     let portWidthHalf = 0;
     let portHeight = 0;
-    if (conf.hasOwnProperty('port')) {
-        portWidth = conf.port.width;
+    if (config.hasOwnProperty('port')) {
+        portWidth = config.port.width;
         portWidthHalf = portWidth / 2;
-        portHeight = conf.port.height;
+        portHeight = config.port.height;
     }
 
     /**

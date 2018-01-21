@@ -60,7 +60,7 @@
 
     d3.json('./dataGroup.json', (data) => {
         console.time('graph');
-        graph = new Graph(data, config);
+        const graph = new Graph(data, config);
         console.timeEnd('graph');
         if (config.log) {
             console.log(graph.printSettings());
